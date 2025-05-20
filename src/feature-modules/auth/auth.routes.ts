@@ -8,7 +8,7 @@ import { CustomRouter } from "../../routes/custom.router";
 import { Route } from "../../routes/routes.types";
 import { Role, ZRole } from "../role/role.types";
 import { generatePassword } from "../../utility/password.generator";
-import { sendmail } from "../../utility/sendmail";
+import { sendEmail } from "../../utility/sendmail";
 import roleServices from "../role/role.services";
 
 const router = CustomRouter();
@@ -23,41 +23,24 @@ router.post("/login", [validate(ZCredentials, "body")], async (req, res, next) =
     }
 }, { is_protected: false });
 
-// temporary PUBLIC route to register an admin
-router.post("/register", [validate(ZUser, 'body')], async (req, res, next) => {
-    try {
-        const body = req.body as User
-        const result = await authService.register(body, 'admin');
-        res.send(new ResponseHandler(result));
-    } catch (e) {
-        next(e);
-    }
-}, { is_protected: false });
 
 router.post("/register/:role", [validate(ZCreateUser, 'body'), validate(ZRole, 'params')], async (req, res, next) => {
     try {
-        // CHECK ROUTE ACCESS 
-        // THIS IS A VERY HACKISH WAY, NEED TO FIND A BETTER ALTERNATIVE
         const { role } = req.params as Role;
         const creatorRole = (await roleServices.getRole({ id: req.payload.role_id })).role
-
-        if (creatorRole === 'admin' && role !== 'distributor')
-            next({ status: 403, message: "FORBIDDEN" });
-        else if (creatorRole === 'distributor' && role !== 'consumer')
-            next({ status: 403, message: "FORBIDDEN" });
 
         const generatedPassword = generatePassword()
         const body = { ...req.body, password: generatedPassword } as User
 
         const result = await authService.register(body, role);
         // SEND MAIL FOR LOGIN CREDENTIALS
-        sendmail(body);
+        // sendEmail(body); 
 
         res.send(new ResponseHandler(result));
     } catch (e) {
         next(e);
     }
-}, { is_protected: true, has_Access: ["admin", 'distributor'] });
+}, { is_protected: true, has_Access: [] });
 
 router.put("/", [validate(ZChangePassWord, 'body')], async (req, res, next) => {
     try {
@@ -66,6 +49,6 @@ router.put("/", [validate(ZChangePassWord, 'body')], async (req, res, next) => {
     } catch (e) {
         next(e);
     }
-}, { is_protected: true, has_Access: ['admin', 'consumer', 'distributor'] });
+}, { is_protected: true, has_Access: [] });
 
 export default new Route("/auth", router.ExpressRouter);

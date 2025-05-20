@@ -7,10 +7,8 @@ export const CustomRouter = () => {
 
 	const addRoute = (method: Method) => {
 
-		return (path: string, extraMiddlewares: Middleware[] | null, reqMiddleware: Middleware, options?: RouteOptions) => {
-			let middlewares: Middleware[] = []
-			if (extraMiddlewares) middlewares = [...extraMiddlewares]
-
+		return (path: string, extraMiddlewares: Middleware[] , reqMiddleware: Middleware, options?: RouteOptions) => {
+			
 			if (!options) options = {
 				is_protected: true,
 				has_Access: []
@@ -18,12 +16,12 @@ export const CustomRouter = () => {
 
 			if (options.is_protected && options.has_Access) {
 				// Token Validation 
-				middlewares.push(authorizeT);
+				extraMiddlewares.push(authorizeT);
 				// authorization Fuctionaity
-				middlewares.push(authorizeR(options.has_Access))
+				extraMiddlewares.push(authorizeR(options.has_Access))
 			}
 
-			router[method](path, ...middlewares, reqMiddleware)
+			router[method](path, ...extraMiddlewares, reqMiddleware)
 		}
 	}
 

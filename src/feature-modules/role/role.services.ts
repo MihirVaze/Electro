@@ -1,3 +1,4 @@
+import { MasterRoles } from "./role.data"
 import roleRepo from "./role.repo"
 import { RoleResponses } from "./role.responces"
 import { Role } from "./role.types"
@@ -22,8 +23,15 @@ const getAllRoles = async () => {
 	}
 }
 
-const create = async (role: Role) => {
-
+const create = async () => {
+	try {
+		for (const role of MasterRoles) {
+			await roleRepo.create({ role })
+		}
+	} catch (error) {
+		console.log(error)
+		throw RoleResponses.ROLE_CREATION_FAILED
+	}
 }
 
 export default {
