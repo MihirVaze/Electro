@@ -2,7 +2,7 @@ import z from 'zod';
 
 export const ZDiscount = z.object({
     id: z.string().trim().uuid().optional(),
-    type: z.enum(['increment', 'decrement']),
+    type: z.enum(['increment', 'decrement', 'none']),
     value: z.number(),
     isDeleted: z.boolean().default(false),
     deletedBy: z.string().trim().uuid().optional(),

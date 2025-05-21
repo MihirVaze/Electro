@@ -5,7 +5,7 @@ export const ZBilling = z.object({
     planId: z.string().trim().uuid(),
     basePrice: z.number(),
     discountId: z.string().trim().uuid(),
-    discountType: z.enum(['increment', 'decrement']),
+    discountType: z.enum(['increment', 'decrement', 'none']),
     discountValue: z.number(),
     clientId: z.string().trim().uuid(),
     total: z.number(),

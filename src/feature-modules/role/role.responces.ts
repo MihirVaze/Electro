@@ -1,4 +1,4 @@
-export const RoleResponses = {
+export const ROLE_RESPONCES = {
   ROLE_NOT_FOUND: {
       status: 404,
       message: 'ROLE NOT FOUND'

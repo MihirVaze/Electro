@@ -1,36 +1,28 @@
-import { RoleSchema } from "./role.schema"
-import { Role } from "./role.types"
+import { FindOptions, UpdateOptions } from "sequelize";
+import { RoleSchema } from "./role.schema";
+import { Role } from "./role.types";
 
-const getRole = async (role: Partial<Role>) => {
-  try {
-    const result = await RoleSchema.findOne({ where: role })
-    if (!result) throw new Error("Role Not Found")
-    return result.dataValues
-  } catch (error) {
-    throw (error);
-  }
+class RoleRepo {
+
+    public async create(Role: Role) {
+        return RoleSchema.create(Role);
+    }
+
+    public async get(options: FindOptions<Role>) {
+        return RoleSchema.findOne(options);
+    }
+
+    public async getAll(options: FindOptions<Role>) {
+        return RoleSchema.findAndCountAll(options);
+    }
+
+    public async update(Role: Partial<Role>, options: UpdateOptions<Role>) {
+        return RoleSchema.update(Role, options);
+    }
+
+    public async delete(options: UpdateOptions<Role>) {
+        return RoleSchema.update({ isDeleted: true }, options);
+    }
 }
 
-const getAllRoles = async () => {
-  try {
-    const result = await RoleSchema.findAll()
-    return result
-  } catch (error) {
-    throw (error)
-  }
-}
-
-const create = async (role: Role) => {
-  try {
-    const result = await RoleSchema.create(role)
-    return result
-  } catch (error) {
-    throw (error)
-  }
-}
-
-export default {
-  create,
-  getRole,
-  getAllRoles
-}
+export default new RoleRepo()

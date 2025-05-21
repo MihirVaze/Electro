@@ -1,20 +1,25 @@
 import z from 'zod';
 
-export const ZEmployeeRole = z.object({
+export const ZEmployee = z.object({
     id: z.string().trim().uuid().optional(),
+
     userId: z.string().trim().uuid(),
     roleId: z.string().trim().uuid(),
-    isDeleted: z.boolean().default(false),
+
+    isDeleted: z.boolean().default(false).optional(),
+
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
     updatedBy: z.string().trim().uuid().optional(),
+
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
 });
 
-export type EmployeeRole = z.infer<typeof ZEmployeeRole>;
+export type Employee = z.infer<typeof ZEmployee>;
 
+// EMPLOYEE LOCATION TYPES
 export const ZStateEmployee = z.object({
     id: z.string().trim().uuid().optional(),
     employeeRoleId: z.string().trim().uuid(),
