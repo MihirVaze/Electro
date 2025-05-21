@@ -1,11 +1,9 @@
 import z from 'zod';
 
-export const ZUser = z.object({
+export const ZDiscount = z.object({
     id: z.string().trim().uuid().optional(),
-    name: z.string().trim().nonempty(),
-    phoneNo: z.string().trim().nonempty().length(10, "Enter a valid phone number"),
-    email: z.string().trim().email({ message: 'Enter a valid e-mail' }),
-    password: z.string().trim().min(5, { message: 'password must be 5 chars long' }),
+    type: z.enum(['increment', 'decrement']),
+    value: z.number(),
     isDeleted: z.boolean().default(false),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
@@ -15,4 +13,4 @@ export const ZUser = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type User = z.infer<typeof ZUser>;
+export type Discount = z.infer<typeof ZDiscount>;

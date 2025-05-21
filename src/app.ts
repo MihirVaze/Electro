@@ -8,7 +8,7 @@ export const startServer = async () => {
 
         await connectToPg();
         registerMiddlewares(app);
-        sequelize.sync({ alter: true });
+        //sequelize.sync();
 
         const { PORT } = process.env
         app.listen(

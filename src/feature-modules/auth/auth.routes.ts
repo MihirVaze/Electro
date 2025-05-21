@@ -36,10 +36,7 @@ router.post("/register", [validate(ZUser, 'body')], async (req, res, next) => {
 
 router.post("/register/:role", [validate(ZCreateUser, 'body'), validate(ZRole, 'params')], async (req, res, next) => {
     try {
-        // CHECK ROUTE ACCESS 
-        // THIS IS A VERY HACKISH WAY, NEED TO FIND A BETTER ALTERNATIVE
-        const { role } = req.params as Role;
-        const creatorRole = (await roleServices.getRole({ id: req.payload.role_id })).role
+        const { role } = req.params.role as unknown as Role;
 
         if (creatorRole === 'admin' && role !== 'distributor')
             next({ status: 403, message: "FORBIDDEN" });

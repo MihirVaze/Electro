@@ -16,12 +16,12 @@ const login = async (credentials: Credentials) => {
         const isValidUser = await bcrypt.compare(credentials.password, user.password)
         if (!isValidUser) throw AuthResponses.INVALID_CREDENTIALS;
 
-        const { id, role_id } = user;
-        if (!id || !role_id) throw new Error("id not found");
-        const token = sign({ id, role_id }, process.env.JWT_SECRET_KEY);
+        const { id } = user;
+        if (!id) throw new Error("id not found");
+        const token = sign({ id, roleIDs: [] }, process.env.JWT_SECRET_KEY);
 
-        const role = await roleServices.getRole({ id: role_id })
-        return { token, role: role.role };
+        //const role = await roleServices.getRole({ id: role_id })
+        return { token };
     } catch (e) {
         throw AuthResponses.INVALID_CREDENTIALS;
     }
@@ -35,7 +35,6 @@ const register = async (user: User, role: RoleEnum) => {
         const hashedPassword = await hashPassword(user.password);
         const result = await userService.createUser({
             ...user,
-            role_id: id,
             password: hashedPassword
         });
         return result
