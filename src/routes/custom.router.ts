@@ -1,36 +1,43 @@
-import { Router as ExpressRouter } from 'express'
+import { Router as ExpressRouter, RequestHandler } from 'express'
 import { authorizeR, authorizeT } from '../utility/authorize'
 import { Method, Middleware, RouteOptions } from './routes.types'
 
-export const CustomRouter = () => {
-	const router = ExpressRouter()
+export class CustomRouter {
 
-	const addRoute = (method: Method) => {
+	private router = ExpressRouter();
 
-		return (path: string, extraMiddlewares: Middleware[] , reqMiddleware: Middleware, options?: RouteOptions) => {
-			
+	private addRoute = (method: Method) => {
+
+		return (path: string, handler: Middleware[], options?: RouteOptions) => {
+
+			const middleware: Middleware[] = [];
+
 			if (!options) options = {
 				is_protected: true,
 				has_Access: []
-			}
+			};
 
 			if (options.is_protected && options.has_Access) {
 				// Token Validation 
-				extraMiddlewares.push(authorizeT);
+				middleware.push(authorizeT);
 				// authorization Fuctionaity
-				extraMiddlewares.push(authorizeR(options.has_Access))
-			}
+				middleware.push(authorizeR(options.has_Access))
+			};
 
-			router[method](path, ...extraMiddlewares, reqMiddleware)
+			this.router[method](path, ...middleware, ...handler);
 		}
 	}
 
-	return {
-		get: addRoute('get'),
-		post: addRoute('post'),
-		put: addRoute('put'),
-		patch: addRoute('patch'),
-		delete: addRoute('delete'),
-		ExpressRouter: router
-	}
+	public get = this.addRoute('get');
+
+	public post = this.addRoute('post');
+
+	public patch = this.addRoute('patch');
+
+	public del = this.addRoute('delete');
+
+	public put = this.addRoute('put');
+
+	public ExpressRouter = this.router;
+	
 }
