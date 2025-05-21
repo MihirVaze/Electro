@@ -1,21 +1,28 @@
+import { FindOptions, UpdateOptions } from "sequelize";
 import { UserSchema } from "./user.schema";
 import { User } from "./user.types";
 
-const findOne = (user: Partial<User>) => UserSchema.findOne({
-    where: { ...user, is_deleted: false }
-});
+class UserRepo {
 
-const create = (user: User) => {
-    return UserSchema.create(user);
+    public async create(user: User) {
+        return UserSchema.create(user);
+    }
+
+    public async get(options: FindOptions<User>) {
+        return UserSchema.findOne(options);
+    }
+
+    public async getAll(options: FindOptions<User>) {
+        return UserSchema.findAndCountAll(options);
+    }
+
+    public async update(user: Partial<User>, options: UpdateOptions<User>) {
+        return UserSchema.update(user, options);
+    }
+
+    public async delete(options: UpdateOptions<User>) {
+        return UserSchema.update({ isDeleted: true }, options);
+    }
 }
 
-const update = (user: Partial<User>) => UserSchema.update(user, { where: { id: user.id, is_deleted: false } })
-
-const deleteUser = (id: string) => UserSchema.update({ is_deleted: true }, { where: { id } })
-
-export default {
-    findOne,
-    create,
-    update,
-    deleteUser
-}
+export default new UserRepo()

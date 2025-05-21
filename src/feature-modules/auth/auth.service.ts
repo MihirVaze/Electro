@@ -2,67 +2,55 @@ import { sign } from "jsonwebtoken";
 import userService from "../user/user.service";
 import { AuthResponses } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
-import { User } from "../user/user.types";
-import { RoleEnum } from "../role/role.types";
 import roleServices from "../role/role.services";
 import bcrypt from "bcryptjs";
 import { compareEncription, hashPassword } from "../../utility/password.generator";
+import employeeService from "../employee/employee.service";
 
-const login = async (credentials: Credentials) => {
-    try {
-        const user = await userService.findOne(credentials);
-        if (!user) throw AuthResponses.INVALID_CREDENTIALS;
+class AuthenticationServices {
 
-        const isValidUser = await bcrypt.compare(credentials.password, user.password)
-        if (!isValidUser) throw AuthResponses.INVALID_CREDENTIALS;
+    async login(credentials: Credentials) {
+        try {
+            const user = await userService.findOne({ email: credentials.email });
+            if (!user) throw AuthResponses.INVALID_CREDENTIALS;
 
-        const { id, role_id } = user;
-        if (!id || !role_id) throw new Error("id not found");
-        const token = sign({ id, role_id }, process.env.JWT_SECRET_KEY);
+            const isValidUser = await bcrypt.compare(credentials.password, user.password)
+            if (!isValidUser) throw AuthResponses.INVALID_CREDENTIALS;
 
-        const role = await roleServices.getRole({ id: role_id })
-        return { token, role: role.role };
-    } catch (e) {
-        throw AuthResponses.INVALID_CREDENTIALS;
+            const { id } = user;
+            if (!id) throw new Error("id not found");
+
+            const EmployeeRoles = await employeeService.getEmpRoles({ userId: id })
+            const roleIDs = EmployeeRoles.map(e => e.id)
+            const token = sign({ id, roleIDs }, process.env.JWT_SECRET_KEY);
+
+            // THIS GIVES THE ARRAY OF ALL THE VALID ROLES FOR THAT PERTICULAR USER
+            const roles = await Promise.all(
+                roleIDs.map(
+                    async e => (await roleServices.getRole({ id: e })).role));
+
+            return { token, roles };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async update(change: ChangePassWord) {
+        try {
+            if (!change.id) throw "ID NOT FOUND";
+
+            const oldPassword = await userService.getPassword(change.id)
+            const comparePass = await compareEncription(oldPassword, change.oldPassword)
+            if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
+
+            const hashedPassword = await hashPassword(change.newPassword);
+            const result = await userService.update({ id: change.id, password: hashedPassword });
+            return AuthResponses.PASSWORD_CHANGED
+        } catch (e) {
+            console.dir(e)
+            throw e
+        }
     }
 }
 
-const register = async (user: User, role: RoleEnum) => {
-    try {
-        const { id } = await roleServices.getRole({ role })
-        if (!id) throw Error('ROLE NOT FOUND')
-
-        const hashedPassword = await hashPassword(user.password);
-        const result = await userService.createUser({
-            ...user,
-            role_id: id,
-            password: hashedPassword
-        });
-        return result
-    } catch (e) {
-        throw e;
-    }
-}
-
-const update = async (change: ChangePassWord) => {
-    try {
-        if (!change.id) throw "ID NOT FOUND";
-
-        const oldPassword = await userService.getUserPass(change.id)
-        const comparePass = await compareEncription(oldPassword, change.oldPassword)
-        if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
-
-        const hashedPassword = await hashPassword(change.newPassword);
-        const result = await userService.update({ id: change.id, password: hashedPassword });
-        return AuthResponses.PASSWORD_CHANGED
-    } catch (e) {
-        console.dir(e)
-        throw AuthResponses.PASSWORD_DIDNOT_CHANGE
-    }
-}
-
-export default {
-    login,
-    register,
-    update
-}
+export default new AuthenticationServices

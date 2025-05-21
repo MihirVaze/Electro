@@ -1,33 +1,32 @@
-import { DataTypes, Model } from "sequelize";
-import { User } from "./user.types";
+import { DataTypes, Model, UUIDV4 } from "sequelize";
 import { sequelize } from "../../connections/pg.connection";
+import { Employee } from "../employee/employee.type"
+import { UserSchema } from "../user/user.schema";
+import { RoleSchema } from "../role/role.schema";
 
-export class UserSchema extends Model<User, User> { }
+export class EmployeeSchema extends Model<Employee, Employee> { }
 
-UserSchema.init({
+EmployeeSchema.init({
     id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: UUIDV4,
         primaryKey: true
     },
-    name: {
-        type: DataTypes.STRING,
+    userId: {
+        type: DataTypes.UUID,
         allowNull: false,
-        unique: false
+        references: {
+            model: UserSchema,
+            key: 'id'
+        }
     },
-    email: {
-        type: DataTypes.STRING,
+    roleId: {
+        type: DataTypes.UUID,
         allowNull: false,
-        unique: true
-    },
-    phoneNo: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
+        references: {
+            model: RoleSchema,
+            key: 'id'
+        }
     },
     isDeleted: {
         type: DataTypes.BOOLEAN,
@@ -65,10 +64,22 @@ UserSchema.init({
         type: DataTypes.DATE,
     },
     restoredAt: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATE,        
     }
 }, {
-    sequelize,
-    modelName: 'User',
-    tableName: 'User',
-})
+    sequelize: sequelize,
+    modelName: 'Employee',
+    tableName: 'Employee'
+});
+
+EmployeeSchema.belongsTo(RoleSchema, {
+    foreignKey: 'role_id',
+    targetKey: 'id',
+    as: 'role'
+});
+
+RoleSchema.hasMany(EmployeeSchema, {
+    foreignKey: 'role_id',
+    sourceKey: 'id',
+    as: 'employee'
+});
