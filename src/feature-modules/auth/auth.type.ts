@@ -16,9 +16,11 @@ export const ZCreateUser = ZUser.pick({
 export type CreateUser = z.infer<typeof ZCreateUser>;
 
 export const ZChangePassWord = z.object({
+    body:z.object({
     id: z.string().optional(),
     oldPassword: z.string().nonempty().min(5, { message: 'password must be 5 chars long' }),
     newPassword: z.string().nonempty().min(5, { message: 'password must be 5 chars long' })
+    })
 })
 export type ChangePassWord = z.infer<typeof ZChangePassWord>;
 
