@@ -76,7 +76,11 @@ DistrictSchema.init({
     },
     stateId:{
         type:DataTypes.UUID,
-        allowNull:false
+        allowNull:false,
+        references:{
+            model:StateSchema,
+            key:'id'
+        }
     },
     name: {
         type: DataTypes.STRING,
@@ -144,7 +148,11 @@ CitySchema.init({
     },
     districtId:{
         type:DataTypes.UUID,
-        allowNull:false
+        allowNull:false,
+        references:{
+            model:DistrictSchema,
+            key:'id'
+        }
     },
     name: {
         type: DataTypes.STRING,
