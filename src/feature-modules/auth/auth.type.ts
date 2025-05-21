@@ -11,8 +11,7 @@ export type Credentials = z.infer<typeof ZCredentials>;
 export const ZCreateUser = ZUser.pick({
     email: true,
     name: true,
-    phone_num: true,
-    address: true
+    phoneNo: true,
 })
 export type CreateUser = z.infer<typeof ZCreateUser>;
 
@@ -25,5 +24,5 @@ export type ChangePassWord = z.infer<typeof ZChangePassWord>;
 
 export type Payload = {
     id: string,
-    role_id: string
+    roleId: string[]
 }

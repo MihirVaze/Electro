@@ -26,8 +26,7 @@ router.post("/login", [validate(ZCredentials, "body")], async (req, res, next) =
 
 router.post("/register/:role", [validate(ZCreateUser, 'body'), validate(ZRole, 'params')], async (req, res, next) => {
     try {
-        const { role } = req.params as Role;
-        const creatorRole = (await roleServices.getRole({ id: req.payload.role_id })).role
+        const { role } = req.params.role as unknown as Role;
 
         const generatedPassword = generatePassword()
         const body = { ...req.body, password: generatedPassword } as User
