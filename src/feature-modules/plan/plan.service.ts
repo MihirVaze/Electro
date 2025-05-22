@@ -27,50 +27,50 @@ class planServices {
         }
     }
 
-    async getPlans(limit: number, page: number, plan: Partial<Plan>){
-      try {
-  
-          let where: any = {};
-  
-          const { minCustomers, maxCustomers, minPrice, maxPrice, basePrice,...remainingPlan } = plan;
-  
-          if (maxCustomers) {
-              where.customers = { [Op.lte]: maxCustomers }
-          }
-  
-          if (minCustomers) {
-              where.customers = { [Op.gte]: minCustomers }
-          }
-  
-          if (maxPrice) {
-              where.price = { [Op.lte]: maxPrice }
-          }
-  
-          if (minPrice) {
-              where.price = { [Op.gte]: minPrice }
-          }
+    async getPlans(limit: number, page: number, plan: Partial<Plan>) {
+        try {
 
-          if(basePrice) {
-              where.price = { [Op.eq]: basePrice}
-          }
-  
-          where = { ...remainingPlan, ...where };
-  
-          const offset = (page - 1) * limit;
-  
-          const result = await planRepo.getAll({
-              where: { isDeleted: false, ...where },
-              limit,
-              offset
-          });
-  
-          return result;
-  
-      } catch (e) {
-          console.log(e);
-          throw e;
-      }
-  }
+            let where: any = {};
+
+            const { minCustomers, maxCustomers, minPrice, maxPrice, basePrice, ...remainingPlan } = plan;
+
+            if (maxCustomers) {
+                where.customers = { [Op.lte]: maxCustomers }
+            }
+
+            if (minCustomers) {
+                where.customers = { [Op.gte]: minCustomers }
+            }
+
+            if (maxPrice) {
+                where.price = { [Op.lte]: maxPrice }
+            }
+
+            if (minPrice) {
+                where.price = { [Op.gte]: minPrice }
+            }
+
+            if (basePrice) {
+                where.price = { [Op.eq]: basePrice }
+            }
+
+            where = { ...remainingPlan, ...where };
+
+            const offset = (page - 1) * limit;
+
+            const result = await planRepo.getAll({
+                where: { isDeleted: false, ...where },
+                limit,
+                offset
+            });
+
+            return result;
+
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
 
     async createPlan(plan: Plan) {
         try {
@@ -82,7 +82,7 @@ class planServices {
         }
     }
 
-    async updatePlan(plan: Partial<Plan>) {
+    async updatePlan(id: string, plan: Partial<Plan>) {
         try {
             if (!plan.id) throw "ID NOT FOUND"
             const result = await planRepo.update(plan, { where: { id: plan.id } });
