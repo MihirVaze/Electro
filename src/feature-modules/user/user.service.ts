@@ -4,6 +4,7 @@ import userRepo from "./user.repo";
 import { USER_RESPONSES } from "./user.responses";
 import { User, UserRole } from "./user.types";
 
+
 class UserServices {
 
     async findOne(user: Partial<Credentials>) {
@@ -52,7 +53,8 @@ class UserServices {
     async createUser(user: User) {
         try {
             const result = await userRepo.createUser(user);
-            return USER_RESPONSES.USER_CREATED
+            const responses = USER_RESPONSES.USER_CREATED;
+            return { result, responses };
         } catch (e) {
             console.dir(e)
             throw e;

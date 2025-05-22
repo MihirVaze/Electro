@@ -83,6 +83,7 @@ class planServices {
     }
 
     async updatePlan(id: string, plan: Partial<Plan>) {
+
         try {
             if (!plan.id) throw "ID NOT FOUND"
             const result = await planRepo.update(plan, { where: { id: plan.id } });

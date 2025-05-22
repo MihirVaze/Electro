@@ -1,20 +1,27 @@
 import { DataTypes, Model } from "sequelize";
-import { Role } from "./role.types";
 import { sequelize } from "../../connections/pg.connection";
+import { Client } from "./client.type";
 import { UserSchema } from "../user/user.schema";
 
-export class RoleSchema extends Model<Role, Role> { }
+export class ClientSchema extends Model<Client, Client> { }
 
-RoleSchema.init({
+ClientSchema.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
-    role: {
-        type: DataTypes.ENUM('superadmin', 'client_manager', 'state_manager'
-            , 'district_manager', 'city_manager', 'worker', 'client_admin'),
+    clientName: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    userId: {
+        type: DataTypes.UUID,
         allowNull: false
+    },
+    schemaName: {
+        type:DataTypes.STRING,
+        allowNull:false
     },
     isDeleted: {
         type: DataTypes.BOOLEAN,
@@ -55,7 +62,10 @@ RoleSchema.init({
         type: DataTypes.DATE,
     }
 }, {
-    modelName: 'Role',
-    tableName: 'Role',
-    sequelize
+    sequelize,
+    modelName: 'Client',
+    tableName: 'Client',
 });
+
+ClientSchema.belongsTo(UserSchema,{foreignKey:'userId'});
+UserSchema.hasMany(ClientSchema,{foreignKey:'userId'});

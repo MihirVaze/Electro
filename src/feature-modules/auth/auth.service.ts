@@ -6,14 +6,12 @@ import roleServices from "../role/role.services";
 import { compareEncryption, hashPassword } from "../../utility/password.generator";
 
 
-
 class AuthenticationServices {
 
     async login(credentials: Credentials) {
         try {
             const user = await userService.findOne({ email: credentials.email });
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
-           
             const isValidUser = await compareEncryption(user.password,credentials.password)
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
@@ -42,13 +40,8 @@ class AuthenticationServices {
             const oldPassword = await userService.getPassword(change.id)
             const comparePass = await compareEncryption(oldPassword, change.oldPassword)
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
-
-            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
-
-
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
-            return AUTH_RESPONSES.PASSWORD_CHANGED
             return AUTH_RESPONSES.PASSWORD_CHANGED
         } catch (e) {
             console.dir(e)
