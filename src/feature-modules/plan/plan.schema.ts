@@ -5,6 +5,11 @@ import { sequelize } from "../../connections/pg.connection";
 export class PlanSchema extends Model<Plan, Plan> { };
 
 PlanSchema.init({
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
   minCustomers: {
     type: DataTypes.INTEGER,
     allowNull: false
