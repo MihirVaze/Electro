@@ -1,7 +1,7 @@
 import { CustomRouter } from "../../routes/custom.router";
 import { Route } from "../../routes/routes.types";
 import { ResponseHandler } from "../../utility/response-handler";
-import locationService from "./locationService";
+import locationService from "./location.service";
 
 const router = new CustomRouter();
 //STATE
