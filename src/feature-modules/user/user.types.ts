@@ -8,7 +8,7 @@ export const ZUser = z.object({
     email: z.string().trim().email({ message: 'Enter a valid e-mail' }),
     password: z.string().trim().min(5, { message: 'password must be 5 chars long' }),
     
-    isDeleted: z.boolean().default(false),
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
@@ -18,3 +18,22 @@ export const ZUser = z.object({
 });
 
 export type User = z.infer<typeof ZUser>;
+
+export const ZUserRole = z.object({
+    id: z.string().trim().uuid().optional(),
+
+    userId: z.string().trim().uuid(),
+    roleId: z.string().trim().uuid(),
+
+    isDeleted: z.boolean().default(false).optional(),
+
+    deletedBy: z.string().trim().uuid().optional(),
+    restoredBy: z.string().trim().uuid().optional(),
+    createdBy: z.string().trim().uuid().optional(),
+    updatedBy: z.string().trim().uuid().optional(),
+
+    deletedAt: z.date().optional(),
+    restoredAt: z.date().optional(),
+});
+
+export type UserRole = z.infer<typeof ZUserRole>;

@@ -27,4 +27,8 @@ export const USER_RESPONSES = {
         status: 200,
         message: 'USER UPDATED SUCCESSFULLY'
     },
+    USER_ROLE_CREATION_FAILED: {
+        status: 500,
+        message: 'USER ROLE COULD NOT BE CREATED'
+    }
 }

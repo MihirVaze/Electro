@@ -4,7 +4,12 @@ import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
 import { compareEncryption, hashPassword } from "../../utility/password.generator";
+<<<<<<< HEAD
 import employeeService from "../employee/employee.service";
+=======
+
+
+>>>>>>> feature/plan-module
 
 class AuthenticationServices {
 
@@ -12,14 +17,18 @@ class AuthenticationServices {
         try {
             const user = await userService.findOne({ email: credentials.email });
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
+<<<<<<< HEAD
 
+=======
+           
+>>>>>>> feature/plan-module
             const isValidUser = await compareEncryption(user.password,credentials.password)
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const { id } = user;
             if (!id) throw new Error("id not found");
 
-            const EmployeeRoles = await employeeService.getEmpRoles({ userId: id })
+            const EmployeeRoles = await userService.getUserRoles({ userId: id })
             const roleIDs = EmployeeRoles.map(e => e.id)
             const token = sign({ id, roleIDs }, process.env.JWT_SECRET_KEY);
 
@@ -42,9 +51,19 @@ class AuthenticationServices {
             const comparePass = await compareEncryption(oldPassword, change.oldPassword)
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
+<<<<<<< HEAD
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
             return AUTH_RESPONSES.PASSWORD_CHANGED
+=======
+            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
+
+
+            const hashedPassword = await hashPassword(change.newPassword);
+            const result = await userService.update({ id: change.id, password: hashedPassword });
+            return AUTH_RESPONSES.PASSWORD_CHANGED
+            return AUTH_RESPONSES.PASSWORD_CHANGED
+>>>>>>> feature/plan-module
         } catch (e) {
             console.dir(e)
             throw e

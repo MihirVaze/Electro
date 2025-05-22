@@ -18,6 +18,10 @@ class RoleServices {
 				},
 			})
 			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+<<<<<<< HEAD
+=======
+			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+>>>>>>> feature/plan-module
 			return result.dataValues
 		} catch (e) {
 			console.log(e)
