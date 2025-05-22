@@ -1,19 +1,31 @@
-import { NextFunction, Request, Response } from "express";
-import { Schema } from "zod";
+import { z, AnyZodObject } from "zod";
+import { RequestHandler } from "express";
+import { ZUser } from "../feature-modules/user/user.types";
 
-export const validate = (schema: Schema, part: "body" | "params" | "query") => {
-    return (req: Request, res: Response, next: NextFunction) => {
+export const validate = (schema: AnyZodObject): RequestHandler => {
+    return async (req, res, next) => {
         try {
-            const {success, data, error} = schema.safeParse(req[part]);
-            if(error) throw { status: 400, error, message: 'BAD REQUEST' }
-            if(part !== "query") {
-                req[part] = data;
-            } req.parsedQuery = data;
-            
+            await schema.parseAsync({
+                body: req.body,
+                query: req.query,
+                params: req.params,
+            });
             next();
-        } catch (e) {
-            console.error(e);
-            next(e);
+        } catch (error) {
+            res.status(400).json(error);
         }
-    }
-}
+    };
+};
+
+//example object for user update
+export const dataSchema = z.object({
+    body: ZUser.pick({
+        name: true,
+        email: true,
+        password: true,
+        phoneNo: true
+    }),
+    params: ZUser.pick({
+        id: true
+    })
+});

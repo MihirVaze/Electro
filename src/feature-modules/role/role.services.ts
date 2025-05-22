@@ -1,6 +1,6 @@
 import { MasterRoles } from "./role.data"
 import roleRepo from "./role.repo"
-import { ROLE_RESPONCES } from "./role.responces"
+import { ROLE_RESPONSES } from "./role.responses"
 import { Role } from "./role.types"
 
 class RoleServices {
@@ -17,7 +17,8 @@ class RoleServices {
 					]
 				},
 			})
-			if (!result) throw ROLE_RESPONCES.ROLE_NOT_FOUND;
+			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
 			return result.dataValues
 		} catch (e) {
 			console.log(e)
