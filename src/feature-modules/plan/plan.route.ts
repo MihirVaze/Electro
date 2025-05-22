@@ -3,11 +3,11 @@ import { Route } from "../../routes/routes.types";
 import { ResponseHandler } from "../../utility/response-handler";
 import { validate } from "../../utility/validate";
 import planService from "./plan.service";
-import { ZCreatePlan, ZDeletePlan, ZFindPlan, ZUpdatePlan } from "./plan.type";
+import { ZCreatePlan, ZDeletePlan, ZFindPlan, ZFindPlans, ZUpdatePlan } from "./plan.type";
 
 const router = new CustomRouter();
 
-router.get("/", [async (req, res, next) => {
+router.get("/", [validate(ZFindPlans), async (req, res, next) => {
   try {
     const { limit, page, ...search } = req.query;
     const result = planService.getPlans(Number(limit), Number(page), search);
