@@ -1,10 +1,9 @@
 import { sign } from "jsonwebtoken";
 import userService from "../user/user.service";
-import { AuthResponses } from "./auth.responses";
+import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
-import bcrypt from "bcryptjs";
-import { compareEncription, hashPassword } from "../../utility/password.generator";
+import { compareEncryption, hashPassword } from "../../utility/password.generator";
 import employeeService from "../employee/employee.service";
 
 class AuthenticationServices {
@@ -12,10 +11,10 @@ class AuthenticationServices {
     async login(credentials: Credentials) {
         try {
             const user = await userService.findOne({ email: credentials.email });
-            if (!user) throw AuthResponses.INVALID_CREDENTIALS;
+            if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
-            const isValidUser = await bcrypt.compare(credentials.password, user.password)
-            if (!isValidUser) throw AuthResponses.INVALID_CREDENTIALS;
+            const isValidUser = await compareEncryption(user.password,credentials.password)
+            if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const { id } = user;
             if (!id) throw new Error("id not found");
@@ -40,12 +39,12 @@ class AuthenticationServices {
             if (!change.id) throw "ID NOT FOUND";
 
             const oldPassword = await userService.getPassword(change.id)
-            const comparePass = await compareEncription(oldPassword, change.oldPassword)
-            if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
+            const comparePass = await compareEncryption(oldPassword, change.oldPassword)
+            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
-            return AuthResponses.PASSWORD_CHANGED
+            return AUTH_RESPONSES.PASSWORD_CHANGED
         } catch (e) {
             console.dir(e)
             throw e

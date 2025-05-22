@@ -1,4 +1,4 @@
-export const AuthResponses = {
+export const AUTH_RESPONSES = {
     INVALID_CREDENTIALS: {
         status: 400,
         message: "Invalid Credentials"
