@@ -3,19 +3,11 @@ import { Route } from "../../routes/routes.types";
 import { ResponseHandler } from "../../utility/response-handler";
 import { validate } from "../../utility/validate";
 import planService from "./plan.service";
-<<<<<<< HEAD
 import { ZCreatePlan, ZDeletePlan, ZFindPlan, ZFindPlans, ZUpdatePlan } from "./plan.type";
 
 const router = new CustomRouter();
 
 router.get("/", [validate(ZFindPlans), async (req, res, next) => {
-=======
-import { ZCreatePlan, ZDeletePlan, ZFindPlan, ZUpdatePlan } from "./plan.type";
-
-const router = new CustomRouter();
-
-router.get("/", [async (req, res, next) => {
->>>>>>> da9fa93040dcce2eb25957b486551613b447b643
   try {
     const { limit, page, ...search } = req.query;
     const result = planService.getPlans(Number(limit), Number(page), search);
