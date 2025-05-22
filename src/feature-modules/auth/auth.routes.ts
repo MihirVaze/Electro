@@ -18,13 +18,13 @@ router.post("/login", [async (req, res, next) => {
 }], { is_protected: false });
 
 
-router.put("/", [async (req, res, next) => {
-    try {
-        const result = await authService.update({ ...req.body, id: req.payload.id })
-        res.send(result);
-    } catch (e) {
-        next(e);
-    }
-}], { is_protected: true, has_Access: [] });
+// router.put("/", [async (req, res, next) => {
+//     try {
+//         const result = await authService.update({ ...req.body, id: req.payload.id })
+//         res.send(result);
+//     } catch (e) {
+//         next(e);
+//     }
+// }], { is_protected: true, has_Access: [] });
 
 export default new Route("/auth", router.ExpressRouter);

@@ -35,22 +35,22 @@ class AuthenticationServices {
         }
     }
 
-    async update(change: ChangePassWord) {
-        try {
-            if (!change.id) throw "ID NOT FOUND";
+    // async update(change: ChangePassWord) {
+    //     try {
+    //         if (!change.id) throw "ID NOT FOUND";
 
-            const oldPassword = await userService.getPassword(change.id)
-            const comparePass = await compareEncription(oldPassword, change.oldPassword)
-            if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
+    //         const oldPassword = await userService.getPassword(change.id)
+    //         const comparePass = await compareEncription(oldPassword, change.oldPassword)
+    //         if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
 
-            const hashedPassword = await hashPassword(change.newPassword);
-            const result = await userService.update({ id: change.id, password: hashedPassword });
-            return AuthResponses.PASSWORD_CHANGED
-        } catch (e) {
-            console.dir(e)
-            throw e
-        }
-    }
+    //         const hashedPassword = await hashPassword(change.newPassword);
+    //         const result = await userService.update({ id: change.id, password: hashedPassword });
+    //         return AuthResponses.PASSWORD_CHANGED
+    //     } catch (e) {
+    //         console.dir(e)
+    //         throw e
+    //     }
+    // }
 }
 
 export default new AuthenticationServices
