@@ -2,6 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    await queryInterface.bulkInsert('State', [
+      {
+        id: 'e2a62af6-aa9c-4c6a-9e67-69e4128939a6',
+        name: 'Maharashtra',
+        isDeleted: false,
+        deletedBy: null,
+        restoredBy: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedAt: null,
+        restoredAt: null
+      },
+      {
+        id: '8e11968f-0c7d-46bd-beb2-beb6c0ac22d4',
+        name: 'Madhya Pradesh',
+        isDeleted: false,
+        deletedBy: null,
+        restoredBy: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedAt: null,
+        restoredAt: null
+      },
+    ], {});
+
     await queryInterface.bulkInsert('District', [
       {
         id: 'b59686a2-51d8-4cef-b97d-5c7228d0c8e7',
