@@ -1,7 +1,7 @@
 import { Credentials } from "../auth/auth.type";
 import { RoleSchema } from "../role/role.schema";
 import userRepo from "./user.repo";
-import { USER_RESPONCES } from "./user.responses";
+import { USER_RESPONSES } from "./user.responses";
 import { User, UserRole } from "./user.types";
 
 class UserServices {
@@ -52,7 +52,7 @@ class UserServices {
     async createUser(user: User) {
         try {
             const result = await userRepo.createUser(user);
-            return USER_RESPONCES.USER_CREATED
+            return USER_RESPONSES.USER_CREATED
         } catch (e) {
             console.dir(e)
             throw e;
@@ -63,8 +63,8 @@ class UserServices {
         try {
             if (!user.id) throw "ID NOT FOUND"
             const result = await userRepo.updateUser(user, { where: { id: user.id } });
-            if (!result[0]) throw USER_RESPONCES.USER_UPDATION_FAILED;
-            return USER_RESPONCES.USER_UPDATED
+            if (!result[0]) throw USER_RESPONSES.USER_UPDATION_FAILED;
+            return USER_RESPONSES.USER_UPDATED
         } catch (e) {
             console.dir(e)
             throw e;
@@ -74,8 +74,8 @@ class UserServices {
     async deleteUser(id: string) {
         try {
             const result = await userRepo.deleteUser({ where: { id } });
-            if (!result[0]) throw USER_RESPONCES.USER_DELETION_FAILED;
-            return USER_RESPONCES.USER_DELETED
+            if (!result[0]) throw USER_RESPONSES.USER_DELETION_FAILED;
+            return USER_RESPONSES.USER_DELETED
         } catch (e) {
             console.dir(e)
             throw e
@@ -129,7 +129,7 @@ class UserServices {
     async create(UserRole: UserRole) {
         try {
             const result = await userRepo.createUserRole(UserRole);
-            return USER_RESPONCES.USER_ROLE_CREATION_FAILED
+            return USER_RESPONSES.USER_ROLE_CREATION_FAILED
 
         } catch (error) {
             console.log(error)

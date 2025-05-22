@@ -3,13 +3,10 @@ import userService from "../user/user.service";
 import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
-<<<<<<< HEAD
+
 import { compareEncryption, hashPassword } from "../../utility/password.generator";
 import employeeService from "../employee/employee.service";
-=======
-import bcrypt from "bcryptjs";
-import { compareEncryption, hashPassword } from "../../utility/password.generator";
->>>>>>> 04dd1a4a5c773a42211b047a08383204c9af14fc
+
 
 class AuthenticationServices {
 
@@ -45,11 +42,9 @@ class AuthenticationServices {
 
             const oldPassword = await userService.getPassword(change.id)
             const comparePass = await compareEncryption(oldPassword, change.oldPassword)
-<<<<<<< HEAD
+
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
-=======
-            if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
->>>>>>> 04dd1a4a5c773a42211b047a08383204c9af14fc
+
 
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
