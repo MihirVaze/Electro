@@ -11,7 +11,8 @@
     "migration:status": "npx sequelize-cli db:migrate:status --config=config/config.js --migrations-path=migrations",
     "seed:run": "npx sequelize-cli db:seed:all --config=config/config.js --seeders-path=seeders",
     "seed:undo": "npx sequelize-cli db:seed:undo --config=config/config.js --seeders-path=seeders",
-    "seed:undo:all": "npx sequelize-cli db:seed:undo:all --config=config/config.js --seeders-path=seeders"
+    "seed:undo:all": "npx sequelize-cli db:seed:undo:all --config=config/config.js --seeders-path=seeders",
+    "format": "prettier --write \"{src,test}/**/*.{js,ts}\""
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
     "path-to-regexp": "^8.2.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
+    "prettier": "^3.5.3",
     "sequelize": "^6.37.7",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
