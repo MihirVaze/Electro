@@ -51,8 +51,9 @@ class UserServices {
 
     async createUser(user: User) {
         try {
-            const result = await userRepo.createUser(user);
-            return USER_RESPONSES.USER_CREATED
+            const result = (await userRepo.create(user)).dataValues;
+            const response = USER_RESPONCES.USER_CREATED;
+            return { result, response }
         } catch (e) {
             console.dir(e)
             throw e;
