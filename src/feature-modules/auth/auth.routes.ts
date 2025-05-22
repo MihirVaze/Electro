@@ -7,7 +7,7 @@ import { Route } from "../../routes/routes.types";
 
 const router = new CustomRouter();
 
-router.post("/login", [validate(ZCredentials, "body"), async (req, res, next) => {
+router.post("/login", [validate(ZCredentials), async (req, res, next) => {
     try {
         const body = req.body as Credentials
         const result = await authService.login(body);
@@ -18,7 +18,7 @@ router.post("/login", [validate(ZCredentials, "body"), async (req, res, next) =>
 }], { is_protected: false });
 
 
-router.put("/", [validate(ZChangePassWord, 'body'), async (req, res, next) => {
+router.put("/", [validate(ZChangePassWord), async (req, res, next) => {
     try {
         const result = await authService.update({ ...req.body, id: req.payload.id })
         res.send(result);
