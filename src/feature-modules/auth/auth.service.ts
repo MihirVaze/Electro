@@ -1,26 +1,25 @@
 import { sign } from "jsonwebtoken";
 import userService from "../user/user.service";
-import { AuthResponses } from "./auth.responses";
+import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
 import bcrypt from "bcryptjs";
-import { compareEncription, hashPassword } from "../../utility/password.generator";
-import employeeService from "../employee/employee.service";
+import { compareEncryption, hashPassword } from "../../utility/password.generator";
 
 class AuthenticationServices {
 
     async login(credentials: Credentials) {
         try {
             const user = await userService.findOne({ email: credentials.email });
-            if (!user) throw AuthResponses.INVALID_CREDENTIALS;
+            if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const isValidUser = await bcrypt.compare(credentials.password, user.password)
-            if (!isValidUser) throw AuthResponses.INVALID_CREDENTIALS;
+            if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const { id } = user;
             if (!id) throw new Error("id not found");
 
-            const EmployeeRoles = await employeeService.getEmpRoles({ userId: id })
+            const EmployeeRoles = await userService.getUserRoles({ userId: id })
             const roleIDs = EmployeeRoles.map(e => e.id)
             const token = sign({ id, roleIDs }, process.env.JWT_SECRET_KEY);
 
@@ -35,22 +34,22 @@ class AuthenticationServices {
         }
     }
 
-    // async update(change: ChangePassWord) {
-    //     try {
-    //         if (!change.id) throw "ID NOT FOUND";
+    async update(change: ChangePassWord) {
+        try {
+            if (!change.id) throw "ID NOT FOUND";
 
-    //         const oldPassword = await userService.getPassword(change.id)
-    //         const comparePass = await compareEncription(oldPassword, change.oldPassword)
-    //         if (!comparePass) throw AuthResponses.INVALID_CREDENTIALS
+            const oldPassword = await userService.getPassword(change.id)
+            const comparePass = await compareEncryption(oldPassword, change.oldPassword)
+            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
-    //         const hashedPassword = await hashPassword(change.newPassword);
-    //         const result = await userService.update({ id: change.id, password: hashedPassword });
-    //         return AuthResponses.PASSWORD_CHANGED
-    //     } catch (e) {
-    //         console.dir(e)
-    //         throw e
-    //     }
-    // }
+            const hashedPassword = await hashPassword(change.newPassword);
+            const result = await userService.update({ id: change.id, password: hashedPassword });
+            return AUTH_RESPONSES.PASSWORD_CHANGED
+        } catch (e) {
+            console.dir(e)
+            throw e
+        }
+    }
 }
 
 export default new AuthenticationServices
