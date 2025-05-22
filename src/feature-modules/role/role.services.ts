@@ -1,6 +1,5 @@
 import { MasterRoles } from "./role.data"
 import roleRepo from "./role.repo"
-import { ROLE_RESPONSES } from "./role.RESPONSES"
 import { ROLE_RESPONSES } from "./role.responses"
 import { Role } from "./role.types"
 
