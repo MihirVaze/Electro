@@ -1,30 +1,10 @@
 import z from 'zod';
 
-export const ZEmployee = z.object({
+export const ZStateUser = z.object({
     id: z.string().trim().uuid().optional(),
-
     userId: z.string().trim().uuid(),
-    roleId: z.string().trim().uuid(),
-
-    isDeleted: z.boolean().default(false).optional(),
-
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-});
-
-export type Employee = z.infer<typeof ZEmployee>;
-
-// EMPLOYEE LOCATION TYPES
-export const ZStateEmployee = z.object({
-    id: z.string().trim().uuid().optional(),
-    employeeRoleId: z.string().trim().uuid(),
     stateId: z.string().trim().uuid(),
-    isDeleted: z.boolean().default(false),
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
@@ -33,13 +13,13 @@ export const ZStateEmployee = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type StateEmployee = z.infer<typeof ZStateEmployee>;
+export type StateUser = z.infer<typeof ZStateUser>;
 
-export const ZDistrictEmployee = z.object({
+export const ZDistrictUser = z.object({
     id: z.string().trim().uuid().optional(),
-    employeeRoleId: z.string().trim().uuid(),
+    userId: z.string().trim().uuid(),
     districtId: z.string().trim().uuid(),
-    isDeleted: z.boolean().default(false),
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
@@ -48,13 +28,13 @@ export const ZDistrictEmployee = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type DistrictEmployee = z.infer<typeof ZDistrictEmployee>;
+export type DistrictUser = z.infer<typeof ZDistrictUser>;
 
-export const ZCityEmployee = z.object({
+export const ZCityUser = z.object({
     id: z.string().trim().uuid().optional(),
-    employeeRoleId: z.string().trim().uuid(),
+    userId: z.string().trim().uuid(),
     cityId: z.string().trim().uuid(),
-    isDeleted: z.boolean().default(false),
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
@@ -63,4 +43,5 @@ export const ZCityEmployee = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type CityEmployee = z.infer<typeof ZCityEmployee>;
+export type CityUser = z.infer<typeof ZCityUser>;
+

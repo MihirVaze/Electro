@@ -5,7 +5,7 @@ import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
 import bcrypt from "bcryptjs";
 import { compareEncription, hashPassword } from "../../utility/password.generator";
-import employeeService from "../employee/employee.service";
+import employeeService from "../userLocation/employee.service";
 
 class AuthenticationServices {
 
