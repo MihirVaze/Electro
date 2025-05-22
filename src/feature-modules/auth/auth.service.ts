@@ -3,8 +3,9 @@ import userService from "../user/user.service";
 import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
-import bcrypt from "bcryptjs";
 import { compareEncryption, hashPassword } from "../../utility/password.generator";
+
+
 
 class AuthenticationServices {
 
@@ -12,8 +13,8 @@ class AuthenticationServices {
         try {
             const user = await userService.findOne({ email: credentials.email });
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
-
-            const isValidUser = await bcrypt.compare(credentials.password, user.password)
+           
+            const isValidUser = await compareEncryption(user.password,credentials.password)
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const { id } = user;
@@ -42,8 +43,12 @@ class AuthenticationServices {
             const comparePass = await compareEncryption(oldPassword, change.oldPassword)
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
+            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
+
+
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
+            return AUTH_RESPONSES.PASSWORD_CHANGED
             return AUTH_RESPONSES.PASSWORD_CHANGED
         } catch (e) {
             console.dir(e)
