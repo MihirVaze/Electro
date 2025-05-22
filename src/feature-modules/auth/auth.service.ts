@@ -1,6 +1,7 @@
 import { sign } from "jsonwebtoken";
 import userService from "../user/user.service";
 import { AUTH_RESPONSES } from "./auth.responses";
+import { AUTH_RESPONSES } from "./auth.responses";
 import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
 
@@ -14,7 +15,10 @@ class AuthenticationServices {
         try {
             const user = await userService.findOne({ email: credentials.email });
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
+            if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
+            const isValidUser = await bcrypt.compare(credentials.password, user.password)
+            if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const isValidUser = await compareEncryption(user.password,credentials.password)
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
@@ -42,12 +46,14 @@ class AuthenticationServices {
 
             const oldPassword = await userService.getPassword(change.id)
             const comparePass = await compareEncryption(oldPassword, change.oldPassword)
+            if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
 
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
+            return AUTH_RESPONSES.PASSWORD_CHANGED
             return AUTH_RESPONSES.PASSWORD_CHANGED
         } catch (e) {
             console.dir(e)
