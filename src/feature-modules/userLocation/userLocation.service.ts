@@ -1,8 +1,6 @@
 import { CitySchema, DistrictSchema, StateSchema } from "../location/location.schema";
-import { RoleSchema } from "../role/role.schema";
 import userLocationRepo from "./userLocation.repo";
 import { USER_LOCATION_RESPONSES } from "./userLocation.responses";
-import { DistrictUserSchema } from "./userLocation.schema";
 import { CityUser, DistrictUser, StateUser } from "./userLocation.type";
 
 class UserLocationServices {
