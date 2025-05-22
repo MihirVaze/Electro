@@ -5,11 +5,16 @@ import { ChangePassWord, Credentials } from "./auth.type";
 import roleServices from "../role/role.services";
 import { compareEncryption, hashPassword } from "../../utility/password.generator";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import employeeService from "../employee/employee.service";
 =======
 
 
 >>>>>>> feature/plan-module
+=======
+
+
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
 
 class AuthenticationServices {
 
@@ -18,10 +23,14 @@ class AuthenticationServices {
             const user = await userService.findOne({ email: credentials.email });
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
            
 >>>>>>> feature/plan-module
+=======
+           
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
             const isValidUser = await compareEncryption(user.password,credentials.password)
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
@@ -52,10 +61,13 @@ class AuthenticationServices {
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             const hashedPassword = await hashPassword(change.newPassword);
             const result = await userService.update({ id: change.id, password: hashedPassword });
             return AUTH_RESPONSES.PASSWORD_CHANGED
 =======
+=======
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS
 
 
@@ -63,7 +75,10 @@ class AuthenticationServices {
             const result = await userService.update({ id: change.id, password: hashedPassword });
             return AUTH_RESPONSES.PASSWORD_CHANGED
             return AUTH_RESPONSES.PASSWORD_CHANGED
+<<<<<<< HEAD
 >>>>>>> feature/plan-module
+=======
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
         } catch (e) {
             console.dir(e)
             throw e

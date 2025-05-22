@@ -28,6 +28,7 @@ class planServices {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     async getPlans(limit: number, page: number, plan: Partial<Plan>){
       try {
   
@@ -73,6 +74,8 @@ class planServices {
       }
   }
 =======
+=======
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
     async getPlans(limit: number, page: number, plan: Partial<Plan>) {
         try {
 
@@ -117,7 +120,10 @@ class planServices {
             throw e;
         }
     }
+<<<<<<< HEAD
 >>>>>>> feature/plan-module
+=======
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
 
     async createPlan(plan: Plan) {
         try {
@@ -130,10 +136,14 @@ class planServices {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     async updatePlan(plan: Partial<Plan>) {
 =======
     async updatePlan(id: string, plan: Partial<Plan>) {
 >>>>>>> feature/plan-module
+=======
+    async updatePlan(id: string, plan: Partial<Plan>) {
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
         try {
             if (!plan.id) throw "ID NOT FOUND"
             const result = await planRepo.update(plan, { where: { id: plan.id } });

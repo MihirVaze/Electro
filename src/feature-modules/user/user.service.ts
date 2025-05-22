@@ -3,10 +3,14 @@ import { RoleSchema } from "../role/role.schema";
 import userRepo from "./user.repo";
 import { USER_RESPONSES } from "./user.responses";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { User } from "./user.types";
 =======
 import { User, UserRole } from "./user.types";
 >>>>>>> feature/plan-module
+=======
+import { User, UserRole } from "./user.types";
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
 
 class UserServices {
 
@@ -56,10 +60,14 @@ class UserServices {
     async createUser(user: User) {
         try {
 <<<<<<< HEAD
+<<<<<<< HEAD
             const result = await userRepo.create(user);
 =======
             const result = await userRepo.createUser(user);
 >>>>>>> feature/plan-module
+=======
+            const result = await userRepo.createUser(user);
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
             return USER_RESPONSES.USER_CREATED
         } catch (e) {
             console.dir(e)
@@ -71,10 +79,14 @@ class UserServices {
         try {
             if (!user.id) throw "ID NOT FOUND"
 <<<<<<< HEAD
+<<<<<<< HEAD
             const result = await userRepo.update(user, { where: { id: user.id } });
 =======
             const result = await userRepo.updateUser(user, { where: { id: user.id } });
 >>>>>>> feature/plan-module
+=======
+            const result = await userRepo.updateUser(user, { where: { id: user.id } });
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
             if (!result[0]) throw USER_RESPONSES.USER_UPDATION_FAILED;
             return USER_RESPONSES.USER_UPDATED
         } catch (e) {
@@ -86,10 +98,14 @@ class UserServices {
     async deleteUser(id: string) {
         try {
 <<<<<<< HEAD
+<<<<<<< HEAD
             const result = await userRepo.delete({ where: { id } });
 =======
             const result = await userRepo.deleteUser({ where: { id } });
 >>>>>>> feature/plan-module
+=======
+            const result = await userRepo.deleteUser({ where: { id } });
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
             if (!result[0]) throw USER_RESPONSES.USER_DELETION_FAILED;
             return USER_RESPONSES.USER_DELETED
         } catch (e) {

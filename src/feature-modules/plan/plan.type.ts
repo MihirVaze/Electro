@@ -18,6 +18,7 @@ export const ZPlan = z.object({
 
 export type Plan = z.infer<typeof ZPlan>;
 
+<<<<<<< HEAD
 export const ZFindPlans = z.object({
     query: z.object({
     minCustomers: z.number().positive().optional(),
@@ -30,6 +31,8 @@ export const ZFindPlans = z.object({
 
 export type FindPlans = z.infer<typeof ZFindPlans>
 
+=======
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
 export const ZFindPlan = z.object({
     params: z.object({
         id: z.string().trim().uuid().nonempty()
