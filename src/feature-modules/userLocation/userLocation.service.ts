@@ -3,7 +3,7 @@ import userLocationRepo from "./userLocation.repo";
 import { USER_LOCATION_RESPONSES } from "./userLocation.responses";
 import { CityUser, DistrictUser, StateUser } from "./userLocation.type";
 
-class UserLocationServices {
+class UserLocationService {
     //STATE
     async getAllUserState(stateUser: Partial<StateUser>) {
         try {
@@ -248,4 +248,4 @@ class UserLocationServices {
 
 }
 
-export default new UserLocationServices();
+export default new UserLocationService();
