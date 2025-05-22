@@ -4,10 +4,6 @@ import { Role } from "./role.types";
 
 class RoleRepo {
 
-    public async create(Role: Role) {
-        return RoleSchema.create(Role);
-    }
-
     public async get(options: FindOptions<Role>) {
         return RoleSchema.findOne(options);
     }

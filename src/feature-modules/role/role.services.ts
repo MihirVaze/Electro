@@ -1,4 +1,3 @@
-import { MasterRoles } from "./role.data"
 import roleRepo from "./role.repo"
 import { ROLE_RESPONSES } from "./role.responses"
 import { Role } from "./role.types"
@@ -39,17 +38,6 @@ class RoleServices {
 				}
 			})
 			return result.rows.map(e => e.dataValues)
-		} catch (error) {
-			console.log(error)
-			throw error
-		}
-	}
-
-	async create() {
-		try {
-			for (const role of MasterRoles) {
-				await roleRepo.create({ role })
-			}
 		} catch (error) {
 			console.log(error)
 			throw error
