@@ -8,7 +8,7 @@ export const ZUser = z.object({
     email: z.string().trim().email({ message: 'Enter a valid e-mail' }),
     password: z.string().trim().min(5, { message: 'password must be 5 chars long' }),
     
-    isDeleted: z.boolean().default(false),
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),

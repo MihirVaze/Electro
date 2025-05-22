@@ -1,4 +1,4 @@
-export const USER_RESPONCES = {
+export const USER_RESPONSES = {
     USER_NOT_FOUND: {
         status: 404,
         message: 'USER NOT FOUND'
