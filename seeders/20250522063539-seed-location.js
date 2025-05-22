@@ -2,30 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('State', [
-      {
-        id: 'e2a62af6-aa9c-4c6a-9e67-69e4128939a6',
-        name: 'Maharashtra',
-        isDeleted: false,
-        deletedBy: null,
-        restoredBy: null,
-        createdBy: null,
-        updatedBy: null,
-        deletedAt: null,
-        restoredAt: null
-      },
-      {
-        id: '8e11968f-0c7d-46bd-beb2-beb6c0ac22d4',
-        name: 'Madhya Pradesh',
-        isDeleted: false,
-        deletedBy: null,
-        restoredBy: null,
-        createdBy: null,
-        updatedBy: null,
-        deletedAt: null,
-        restoredAt: null
-      },
-    ], {});
+    // await queryInterface.bulkInsert('State', [
+    //   {
+    //     id: 'e2a62af6-aa9c-4c6a-9e67-69e4128939a6',
+    //     name: 'Maharashtra',
+    //     isDeleted: false,
+    //     deletedBy: null,
+    //     restoredBy: null,
+    //     createdBy: null,
+    //     updatedBy: null,
+    //     deletedAt: null,
+    //     restoredAt: null
+    //   },
+    //   {
+    //     id: '8e11968f-0c7d-46bd-beb2-beb6c0ac22d4',
+    //     name: 'Madhya Pradesh',
+    //     isDeleted: false,
+    //     deletedBy: null,
+    //     restoredBy: null,
+    //     createdBy: null,
+    //     updatedBy: null,
+    //     deletedAt: null,
+    //     restoredAt: null
+    //   },
+    // ], {});
 
     await queryInterface.bulkInsert('District', [
       {
@@ -178,7 +178,7 @@ module.exports = {
     ], {});
   },
   
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('State', null, {});
     await queryInterface.bulkDelete('District', null, {});
     await queryInterface.bulkDelete('City', null, {});

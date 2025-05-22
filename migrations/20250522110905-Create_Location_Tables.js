@@ -1,10 +1,10 @@
 'use strict'
-const UUIDV4=require('sequelize');
+const UUIDV4 = require('sequelize');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     const { DataTypes } = Sequelize;
-    
+
     await queryInterface.createTable('State', {
       id: {
         type: DataTypes.UUID,
@@ -62,49 +62,49 @@ module.exports = {
       }
     });
 
-    await queryInterface.addConstraint("State", {
-      fields: ["deletedBy"],
-      type: "foreign key",
-      name: "State_deletedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("State", {
+    //   fields: ["deletedBy"],
+    //   type: "foreign key",
+    //   name: "State_deletedBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("State", {
-      fields: ["restoredBy"],
-      type: "foreign key",
-      name: "State_restoredBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("State", {
+    //   fields: ["restoredBy"],
+    //   type: "foreign key",
+    //   name: "State_restoredBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("State", {
-      fields: ["createdBy"],
-      type: "foreign key",
-      name: "State_createdBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("State", {
+    //   fields: ["createdBy"],
+    //   type: "foreign key",
+    //   name: "State_createdBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("State", {
-      fields: ["updatedBy"],
-      type: "foreign key",
-      name: "State_updatedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("State", {
+    //   fields: ["updatedBy"],
+    //   type: "foreign key",
+    //   name: "State_updatedBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
     //DISTRICT
     await queryInterface.createTable('District', {
@@ -173,60 +173,60 @@ module.exports = {
       }
     });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["stateId"],
-      type: "foreign key",
-      name: "District_stateId_userId_fkey",
-      references: {
-        table: "State",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("District", {
+    //   fields: ["stateId"],
+    //   type: "foreign key",
+    //   name: "District_stateId_userId_fkey",
+    //   references: {
+    //     table: "State",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["deletedBy"],
-      type: "foreign key",
-      name: "District_deletedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("District", {
+    //   fields: ["deletedBy"],
+    //   type: "foreign key",
+    //   name: "District_deletedBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["restoredBy"],
-      type: "foreign key",
-      name: "District_restoredBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("District", {
+    //   fields: ["restoredBy"],
+    //   type: "foreign key",
+    //   name: "District_restoredBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["createdBy"],
-      type: "foreign key",
-      name: "District_createdBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("District", {
+    //   fields: ["createdBy"],
+    //   type: "foreign key",
+    //   name: "District_createdBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["updatedBy"],
-      type: "foreign key",
-      name: "District_updatedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+    // await queryInterface.addConstraint("District", {
+    //   fields: ["updatedBy"],
+    //   type: "foreign key",
+    //   name: "District_updatedBy_userId_fkey",
+    //   references: {
+    //     table: "User",
+    //     field: "id",
+    //   },
+    //   unique: false,
+    // });
 
     //CITY
     await queryInterface.createTable('City', {
@@ -295,66 +295,60 @@ module.exports = {
       }
     });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["stateId"],
-      type: "foreign key",
-      name: "City_districtId_userId_fkey",
-      references: {
-        table: "District",
-        field: "id",
-      },
-      unique: false,
-    });
+  //   await queryInterface.addConstraint("District", {
+  //     fields: ["stateId"],
+  //     type: "foreign key",
+  //     name: "City_districtId_userId_fkey",
+  //     references: {
+  //       table: "District",
+  //       field: "id",
+  //     },
+  //     unique: false,
+  //   });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["deletedBy"],
-      type: "foreign key",
-      name: "District_deletedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+  //   await queryInterface.addConstraint("District", {
+  //     fields: ["deletedBy"],
+  //     type: "foreign key",
+  //     name: "District_deletedBy_userId_fkey",
+  //     references: {
+  //       table: "User",
+  //       field: "id",
+  //     },
+  //     unique: false,
+  //   });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["restoredBy"],
-      type: "foreign key",
-      name: "District_restoredBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+  //   await queryInterface.addConstraint("District", {
+  //     fields: ["restoredBy"],
+  //     type: "foreign key",
+  //     name: "District_restoredBy_userId_fkey",
+  //     references: {
+  //       table: "User",
+  //       field: "id",
+  //     },
+  //     unique: false,
+  //   });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["createdBy"],
-      type: "foreign key",
-      name: "District_createdBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
+  //   await queryInterface.addConstraint("District", {
+  //     fields: ["createdBy"],
+  //     type: "foreign key",
+  //     name: "District_createdBy_userId_fkey",
+  //     references: {
+  //       table: "User",
+  //       field: "id",
+  //     },
+  //     unique: false,
+  //   });
 
-    await queryInterface.addConstraint("District", {
-      fields: ["updatedBy"],
-      type: "foreign key",
-      name: "District_updatedBy_userId_fkey",
-      references: {
-        table: "User",
-        field: "id",
-      },
-      unique: false,
-    });
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+  //   await queryInterface.addConstraint("District", {
+  //     fields: ["updatedBy"],
+  //     type: "foreign key",
+  //     name: "District_updatedBy_userId_fkey",
+  //     references: {
+  //       table: "User",
+  //       field: "id",
+  //     },
+  //     unique: false,
+  //   });
   },
 
   async down(queryInterface, Sequelize) {
@@ -378,11 +372,5 @@ module.exports = {
     await queryInterface.removeConstraint("City", "createdBy");
     await queryInterface.removeConstraint("City", "updatedBy");
     await queryInterface.dropTable("City")
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 };
