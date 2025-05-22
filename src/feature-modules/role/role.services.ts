@@ -17,15 +17,7 @@ class RoleServices {
 				},
 			})
 			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
->>>>>>> feature/plan-module
-=======
-			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
->>>>>>> da9fa93040dcce2eb25957b486551613b447b643
-			return result.dataValues
+			return result.dataValues;
 		} catch (e) {
 			console.log(e)
 			throw e;

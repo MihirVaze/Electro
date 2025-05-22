@@ -10,15 +10,17 @@ class ClientServices {
     async addClient(client: Client) {
         try {
 
-            const { clientName, phoneNo, email, password } = client;
+            const { clientName, phoneNo, email, password, schemaName } = client;
             if (!phoneNo || !email || !password) throw CLIENT_RESPONSES.CLIENT_CREATION_FAILED;
 
             const createdUser = await userService.createUser({ name: clientName, phoneNo, email, password });
 
-            const { id } = createdUser.result;
+            const { id } = createdUser.result.dataValues;
             if (!id) throw CLIENT_RESPONSES.CLIENT_CREATION_FAILED;
 
-            await clientRepo.create({ clientName, userId: id });
+            await clientRepo.create({
+                clientName, userId: id, schemaName
+            });
 
             return CLIENT_RESPONSES.CLIENT_CREATED;
 
@@ -48,16 +50,16 @@ class ClientServices {
 
             let where: any = {};
 
-            let clientWhere:any={};
+            let clientWhere: any = {};
 
-            const { email,clientName, ...remainingClient } = client;
+            const { email, clientName, ...remainingClient } = client;
 
             if (email) {
                 where.email = { [Op.iLike]: `%${email}%` };
             }
 
-            if(clientName){
-                clientWhere.clientName={[Op.iLike]:`%${clientName}%`}
+            if (clientName) {
+                clientWhere.clientName = { [Op.iLike]: `%${clientName}%` }
             }
 
             const offset = (page - 1) * limit;

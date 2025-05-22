@@ -1,5 +1,4 @@
 import { FindOptions, UpdateOptions } from "sequelize";
-import { UserSchema } from "../user/user.schema";
 import { CitySchema, DistrictSchema, StateSchema } from "./location.schema";
 import { City, District, State } from "./location.type";
 

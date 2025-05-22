@@ -16,7 +16,11 @@ ClientSchema.init({
         allowNull: false,
     },
     userId: {
-        type:DataTypes.UUID,
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    schemaName: {
+        type:DataTypes.STRING,
         allowNull:false
     },
     isDeleted: {
@@ -56,8 +60,7 @@ ClientSchema.init({
     },
     restoredAt: {
         type: DataTypes.DATE,
-    },
-    
+    }
 }, {
     sequelize,
     modelName: 'Client',
