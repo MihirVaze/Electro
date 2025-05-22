@@ -68,4 +68,4 @@ class UserLocationRepo {
     }
 }
 
-export default new UserLocationRepo()
+export default new UserLocationRepo();
