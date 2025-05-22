@@ -1,4 +1,3 @@
-import { MasterRoles } from "./role.data"
 import roleRepo from "./role.repo"
 import { ROLE_RESPONSES } from "./role.responses"
 import { Role } from "./role.types"
@@ -18,7 +17,14 @@ class RoleServices {
 				},
 			})
 			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+>>>>>>> feature/plan-module
+=======
+			if (!result) throw ROLE_RESPONSES.ROLE_NOT_FOUND;
+>>>>>>> da9fa93040dcce2eb25957b486551613b447b643
 			return result.dataValues
 		} catch (e) {
 			console.log(e)
@@ -39,17 +45,6 @@ class RoleServices {
 				}
 			})
 			return result.rows.map(e => e.dataValues)
-		} catch (error) {
-			console.log(error)
-			throw error
-		}
-	}
-
-	async create() {
-		try {
-			for (const role of MasterRoles) {
-				await roleRepo.create({ role })
-			}
 		} catch (error) {
 			console.log(error)
 			throw error

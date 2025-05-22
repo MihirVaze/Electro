@@ -13,9 +13,10 @@ RoleSchema.init({
     },
     role: {
         type: DataTypes.ENUM('superadmin', 'client_manager', 'state_manager'
-            , 'district_manager', 'city_manager', 'worker'),
+            , 'district_manager', 'city_manager', 'worker', 'client_admin'),
         allowNull: false
-    }, isDeleted: {
+    },
+    isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },

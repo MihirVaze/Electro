@@ -47,14 +47,14 @@ StateSchema.init({
         }
     },
     deletedAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
         }
     },
     restoredAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
@@ -119,14 +119,14 @@ DistrictSchema.init({
         }
     },
     deletedAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
         }
     },
     restoredAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
@@ -191,14 +191,14 @@ CitySchema.init({
         }
     },
     deletedAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
         }
     },
     restoredAt: {
-        type: DataTypes.UUID,
+        type: DataTypes.DATE,
         references: {
             model: UserSchema,
             key: 'id'
@@ -208,4 +208,16 @@ CitySchema.init({
     sequelize,
     modelName: 'City',
     tableName: 'City',
+});
+
+StateSchema.hasMany(DistrictSchema, {
+    foreignKey:'stateId',
+    sourceKey:'id',
+    as: 'district'
+});
+
+DistrictSchema.hasMany(CitySchema, {
+    foreignKey:'districtId',
+    sourceKey:'id',
+    as: 'city'
 });

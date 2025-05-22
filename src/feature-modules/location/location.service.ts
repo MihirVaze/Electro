@@ -6,7 +6,7 @@ class LocationServices {
     // STATE
     async createState(state: State) {
         try {
-            const result = await locationRepo.createState(state);
+            const result = await locationRepo.createState({...state});
             if (result) return LOCATION_RESPONSES.STATE_CREATED;
         } catch (e) {
             console.dir(e)
