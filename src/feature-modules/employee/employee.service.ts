@@ -1,6 +1,6 @@
 import { RoleSchema } from "../role/role.schema";
 import employeeRepo from "./employee.repo";
-import { EmployeeResponses } from "./employee.responces";
+import { EMPLOYEE_RESPONSES } from "./employee.responses";
 import { Employee } from "./employee.type";
 
 class EmployeeServices {
@@ -52,7 +52,7 @@ class EmployeeServices {
     async create(Employee: Employee) {
         try {
             const result = await employeeRepo.create(Employee);
-            return EmployeeResponses.EMPLOYEE_CREATION_FAILED
+            return EMPLOYEE_RESPONSES.EMPLOYEE_CREATION_FAILED
 
         } catch (error) {
             console.log(error)

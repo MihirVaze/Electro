@@ -2,9 +2,11 @@ import z from 'zod';
 
 export const ZPlan = z.object({
     id: z.string().trim().uuid().optional(),
-    minCustomers: z.number(),
-    maxCustomers: z.number(),
-    basePrice: z.number(),
+    minCustomers: z.number().positive(),
+    maxCustomers: z.number().positive(),
+    minPrice: z.number().positive().optional(),
+    maxPrice: z.number().positive().optional(),
+    basePrice: z.number().positive(),
     isDeleted: z.boolean().default(false),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),

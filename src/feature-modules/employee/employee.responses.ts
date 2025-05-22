@@ -1,4 +1,4 @@
-export const EmployeeResponses = {
+export const EMPLOYEE_RESPONSES = {
   EMPLOYEE_NOT_FOUND: {
       status: 404,
       message: 'EMPLOYEE NOT FOUND'
