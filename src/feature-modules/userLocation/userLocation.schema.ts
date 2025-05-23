@@ -76,7 +76,7 @@ StateUserSchema.init({
 StateUserSchema.belongsTo(UserSchema, {
     foreignKey: 'userId',
     targetKey: 'id',
-    as: 'User'
+    as: 'user'
 });
 
 UserSchema.hasMany(StateUserSchema, {
@@ -157,7 +157,7 @@ DistrictUserSchema.init({
 DistrictUserSchema.belongsTo(UserSchema, {
     foreignKey: 'userId',
     targetKey: 'id',
-    as: 'User'
+    as: 'user'
 });
 
 UserSchema.hasMany(DistrictUserSchema, {
@@ -238,7 +238,7 @@ CityUserSchema.init({
 CityUserSchema.belongsTo(UserSchema, {
     foreignKey: 'userId',
     targetKey: 'id',
-    as: 'User'
+    as: 'user'
 });
 
 UserSchema.hasMany(CityUserSchema, {
