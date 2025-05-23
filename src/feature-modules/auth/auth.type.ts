@@ -41,5 +41,6 @@ export type ChangePassWord = z.infer<typeof ChangePassWord>;
 
 export type Payload = {
     id: string,
-    roleId: string[]
+    roleId: string[],
+    schema: string
 }

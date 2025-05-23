@@ -9,8 +9,11 @@ const router = new CustomRouter();
 
 router.post("/login", [validate(ZCredentials), async (req, res, next) => {
     try {
+        const schema = req.headers.schema
+        if (typeof schema !== 'string' || !schema) throw Error('Enter Valid Schema');
+
         const body = req.body as Credentials
-        const result = await authService.login(body);
+        const result = await authService.login(body, schema);
         res.send(new ResponseHandler(result));
     } catch (e) {
         next(e);
