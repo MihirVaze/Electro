@@ -1,8 +1,9 @@
 'use strict';
-const UUIDV4 = require('sequelize');
+// const UUIDV4 = require('sequelize');
+// const {Sequelize} = require('sequelize');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface,Sequelize) {
     const { DataTypes } = Sequelize;
     const transaction = await queryInterface.sequelize.transaction();
     try {
