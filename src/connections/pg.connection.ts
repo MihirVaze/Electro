@@ -7,7 +7,8 @@ export const sequelize: Sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSW
     logging: false
 });
 
-export const connectToPg = async () => {
+export class Connection {
+    public async connectToPg()  {
     try {
         await sequelize.authenticate();
         console.log('CONNECTED TO PG DATABASE');
@@ -16,3 +17,6 @@ export const connectToPg = async () => {
         throw e;
     }
 }
+}
+
+export default new Connection();
