@@ -179,8 +179,8 @@ module.exports = {
   },
   
   async down(queryInterface) {
-    await queryInterface.bulkDelete('State', null, {});
-    await queryInterface.bulkDelete('District', null, {});
     await queryInterface.bulkDelete('City', null, {});
+    await queryInterface.bulkDelete('District', null, {});
+    await queryInterface.bulkDelete('State', null, {});
   }
 };
