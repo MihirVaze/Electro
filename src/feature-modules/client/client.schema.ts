@@ -1,71 +1,74 @@
-import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../../connections/pg.connection";
-import { Client } from "./client.type";
-import { UserSchema } from "../user/user.schema";
+import { DataTypes, Model } from 'sequelize';
+import { sequelize } from '../../connections/pg.connection';
+import { Client } from './client.type';
+import { UserSchema } from '../user/user.schema';
 
-export class ClientSchema extends Model<Client, Client> { }
+export class ClientSchema extends Model<Client, Client> {}
 
-ClientSchema.init({
+ClientSchema.init(
+  {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
     clientName: {
-        type: DataTypes.UUID,
-        allowNull: false,
+      type: DataTypes.UUID,
+      allowNull: false,
     },
     userId: {
-        type: DataTypes.UUID,
-        allowNull: false
+      type: DataTypes.UUID,
+      allowNull: false,
     },
     schemaName: {
-        type:DataTypes.STRING,
-        allowNull:false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     isDeleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     deletedBy: {
-        type: DataTypes.UUID,
-        references: {
-            model: UserSchema,
-            key: 'id'
-        }
+      type: DataTypes.UUID,
+      references: {
+        model: UserSchema,
+        key: 'id',
+      },
     },
     restoredBy: {
-        type: DataTypes.UUID,
-        references: {
-            model: UserSchema,
-            key: 'id'
-        }
+      type: DataTypes.UUID,
+      references: {
+        model: UserSchema,
+        key: 'id',
+      },
     },
     createdBy: {
-        type: DataTypes.UUID,
-        references: {
-            model: UserSchema,
-            key: 'id'
-        }
+      type: DataTypes.UUID,
+      references: {
+        model: UserSchema,
+        key: 'id',
+      },
     },
     updatedBy: {
-        type: DataTypes.UUID,
-        references: {
-            model: UserSchema,
-            key: 'id'
-        }
+      type: DataTypes.UUID,
+      references: {
+        model: UserSchema,
+        key: 'id',
+      },
     },
     deletedAt: {
-        type: DataTypes.DATE,
+      type: DataTypes.DATE,
     },
     restoredAt: {
-        type: DataTypes.DATE,
-    }
-}, {
+      type: DataTypes.DATE,
+    },
+  },
+  {
     sequelize,
     modelName: 'Client',
     tableName: 'Client',
-});
+  },
+);
 
-ClientSchema.belongsTo(UserSchema,{foreignKey:'userId'});
-UserSchema.hasMany(ClientSchema,{foreignKey:'userId'});
+ClientSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(ClientSchema, { foreignKey: 'userId' });
