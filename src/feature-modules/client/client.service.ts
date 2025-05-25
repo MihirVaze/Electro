@@ -85,6 +85,38 @@ class ClientServices {
         }
     }
 
+    async updateClient(client: Partial<Client>, clientId: string) {
+        try {
+
+            if (client.clientName || client.email) {
+
+                const clientToBeUpdated = await clientRepo.get({ where: { id: clientId } });
+
+                const updateUser: any = {};
+                if (client.clientName) {
+                    updateUser.name = client.clientName;
+                }
+                if (client.email) {
+                    updateUser.email = client.email;
+                }
+
+                updateUser.id = clientToBeUpdated?.dataValues.id;
+
+                await userService.update(updateUser);
+
+            }
+
+            const result = await clientRepo.update(client, { where: { id: clientId } });
+            if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
+
+            return CLIENT_RESPONSES.CLIENT_UPDATED;
+
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
 
 }
 
