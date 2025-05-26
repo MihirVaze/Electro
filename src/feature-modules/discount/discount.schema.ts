@@ -1,25 +1,26 @@
 import { DataTypes, Model } from "sequelize";
-import { Plan } from "./plan.type";
-import { sequelize } from "../../connections/pg.connection";
+import { Discount } from "./discount.type";
 import { UserSchema } from "../user/user.schema";
+import { sequelize } from "../../connections/pg.connection";
+import { ClientSchema } from "../client/client.schema";
 
-export class PlanSchema extends Model<Plan, Plan> { };
+export class DiscountSchema extends Model<Discount, Discount> { };
 
-PlanSchema.init({
+DiscountSchema.init({
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
-  minCustomers: {
+  clientId: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  maxCustomers: {
-    type: DataTypes.INTEGER,
+  type: {
+    type: DataTypes.ENUM('increment', 'decrement', 'none'),
     allowNull: false
   },
-  basePrice: {
+  value: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -62,7 +63,19 @@ PlanSchema.init({
     type: DataTypes.DATE,
   }
 }, {
-  tableName: 'Plan',
-  modelName: 'Plan',
-  sequelize
+  sequelize,
+  tableName: 'Discount',
+  modelName: 'Discount'
+});
+
+DiscountSchema.belongsTo(ClientSchema, {
+  foreignKey: 'clientId',
+  targetKey: 'id',
+  as: 'client'
+});
+
+ClientSchema.hasOne(DiscountSchema, {
+  foreignKey: 'clientId',
+  sourceKey: 'id',
+  as: 'discount'
 });
