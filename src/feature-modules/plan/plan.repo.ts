@@ -1,9 +1,8 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import { Plan } from "./plan.type";
-import { PlanSchema } from "./plan.schema";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import { Plan } from './plan.type';
+import { PlanSchema } from './plan.schema';
 
 class PlanRepo {
-
     public async create(plan: Plan) {
         return PlanSchema.create(plan);
     }
@@ -25,4 +24,4 @@ class PlanRepo {
     }
 }
 
-export default new PlanRepo()
+export default new PlanRepo();

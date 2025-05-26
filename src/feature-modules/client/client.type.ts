@@ -15,17 +15,28 @@ export const ZClient = z.object({
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
 
-    phoneNo: z.string().trim().nonempty().length(10, "Enter a valid phone number").optional(),
-    email: z.string().trim().email({ message: 'Enter a valid e-mail' }).optional(),
-    password: z.string().trim().min(5, { message: 'password must be 5 chars long' }).optional(),
-
+    phoneNo: z
+        .string()
+        .trim()
+        .nonempty()
+        .length(10, 'Enter a valid phone number')
+        .optional(),
+    email: z
+        .string()
+        .trim()
+        .email({ message: 'Enter a valid e-mail' })
+        .optional(),
+    password: z
+        .string()
+        .trim()
+        .min(5, { message: 'password must be 5 chars long' })
+        .optional(),
 });
 
 export type Client = z.infer<typeof ZClient>;
 
-
 export const ZFindClient = z.object({
     query: ZClient.pick({
         clientName: true,
-    })
-})
+    }),
+});

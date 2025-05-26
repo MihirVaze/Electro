@@ -1,6 +1,10 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
-export const sendEmail = (sendTo: string, subject: string, textInHtml: string) => {
+export const sendEmail = (
+    sendTo: string,
+    subject: string,
+    textInHtml: string,
+) => {
     const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: Number(process.env.EMAIL_PORT),
@@ -19,4 +23,4 @@ export const sendEmail = (sendTo: string, subject: string, textInHtml: string) =
         });
         console.log(`Message sent to ${sendTo}`, info.messageId);
     })();
-}
+};

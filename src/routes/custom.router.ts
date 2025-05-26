@@ -1,43 +1,44 @@
-import { Router as ExpressRouter, RequestHandler } from 'express'
-import { authorizeR, authorizeT } from '../utility/authorize'
-import { Method, Middleware, RouteOptions } from './routes.types'
+import { Router as ExpressRouter, RequestHandler } from 'express';
+import { authorizeR, authorizeT } from '../utility/authorize';
+import { Method, Middleware, RouteOptions } from './routes.types';
 
 export class CustomRouter {
+    private router = ExpressRouter();
 
-	private router = ExpressRouter();
+    private addRoute = (method: Method) => {
+        return (
+            path: string,
+            handler: Middleware[],
+            options?: RouteOptions,
+        ) => {
+            const middleware: Middleware[] = [];
 
-	private addRoute = (method: Method) => {
+            if (!options)
+                options = {
+                    is_protected: true,
+                    has_Access: [],
+                };
 
-		return (path: string, handler: Middleware[], options?: RouteOptions) => {
+            if (options.is_protected && options.has_Access) {
+                // Token Validation
+                middleware.push(authorizeT);
+                // authorization Fuctionaity
+                middleware.push(authorizeR(options.has_Access));
+            }
 
-			const middleware: Middleware[] = [];
+            this.router[method](path, ...middleware, ...handler);
+        };
+    };
 
-			if (!options) options = {
-				is_protected: true,
-				has_Access: []
-			};
+    public get = this.addRoute('get');
 
-			if (options.is_protected && options.has_Access) {
-				// Token Validation 
-				middleware.push(authorizeT);
-				// authorization Fuctionaity
-				middleware.push(authorizeR(options.has_Access))
-			};
+    public post = this.addRoute('post');
 
-			this.router[method](path, ...middleware, ...handler);
-		}
-	}
+    public patch = this.addRoute('patch');
 
-	public get = this.addRoute('get');
+    public del = this.addRoute('delete');
 
-	public post = this.addRoute('post');
+    public put = this.addRoute('put');
 
-	public patch = this.addRoute('patch');
-
-	public del = this.addRoute('delete');
-
-	public put = this.addRoute('put');
-
-	public ExpressRouter = this.router;
-	
+    public ExpressRouter = this.router;
 }

@@ -1,28 +1,35 @@
-import { CustomRouter } from "../../routes/custom.router";
-import { Route } from "../../routes/routes.types";
-import { CanRegister } from "../../utility/createUsersPermition";
-import { ResponseHandler } from "../../utility/response-handler";
-import { validate } from "../../utility/validate";
-import userService from "./user.service";
-import { ZRegiterUser } from "./user.types";
+import { CustomRouter } from '../../routes/custom.router';
+import { Route } from '../../routes/routes.types';
+import { CanRegister } from '../../utility/createUsersPermition';
+import { ResponseHandler } from '../../utility/response-handler';
+import { validate } from '../../utility/validate';
+import userService from './user.service';
+import { ZRegiterUser } from './user.types';
 
 const router = new CustomRouter();
 
-// Register Employee For Electro 
+// Register Employee For Electro
 // along with multiple roles on multiplr locations
-router.post("/login", [validate(ZRegiterUser), async (req, res, next) => {
-    try {
-        const creatorRoleId = req.payload.roleId;
-        const { user, roles } = req.body
-        
-        const canRegister = CanRegister(creatorRoleId, roles)
-        if (!canRegister) throw { status: 403, message: 'FORBIDDEN' }
+router.post(
+    '/login',
+    [
+        validate(ZRegiterUser),
+        async (req, res, next) => {
+            try {
+                const creatorRoleId = req.payload.roleId;
+                const { user, roles } = req.body;
 
-        const result = userService.onBoardUser(user, roles);
-        res.send(new ResponseHandler(result))
-    } catch (e) {
-        next(e);
-    }
-}], { is_protected: false });
+                const canRegister = CanRegister(creatorRoleId, roles);
+                if (!canRegister) throw { status: 403, message: 'FORBIDDEN' };
 
-export default new Route("/user", router.ExpressRouter);
+                const result = userService.onBoardUser(user, roles);
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: false },
+);
+
+export default new Route('/user', router.ExpressRouter);

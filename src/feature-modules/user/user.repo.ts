@@ -1,9 +1,8 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import { UserRoleSchema, UserSchema } from "./user.schema";
-import { User, UserRole } from "./user.types";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import { UserRoleSchema, UserSchema } from './user.schema';
+import { User, UserRole } from './user.types';
 
 class UserRepo {
-
     public async createUser(user: User) {
         return UserSchema.create(user);
     }
@@ -36,7 +35,10 @@ class UserRepo {
         return UserRoleSchema.findAndCountAll(options);
     }
 
-    public async updateUserRole(UserRole: Partial<UserRole>, options: UpdateOptions<UserRole>) {
+    public async updateUserRole(
+        UserRole: Partial<UserRole>,
+        options: UpdateOptions<UserRole>,
+    ) {
         return UserRoleSchema.update(UserRole, options);
     }
 
@@ -45,4 +47,4 @@ class UserRepo {
     }
 }
 
-export default new UserRepo()
+export default new UserRepo();

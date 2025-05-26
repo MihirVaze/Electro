@@ -1,6 +1,10 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import {  CityUserSchema, DistrictUserSchema, StateUserSchema } from "./userLocation.schema";
-import { CityUser, DistrictUser, StateUser } from "./userLocation.type";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import {
+    CityUserSchema,
+    DistrictUserSchema,
+    StateUserSchema,
+} from './userLocation.schema';
+import { CityUser, DistrictUser, StateUser } from './userLocation.type';
 
 class UserLocationRepo {
     //STATE
@@ -16,7 +20,10 @@ class UserLocationRepo {
         return StateUserSchema.findAndCountAll(options);
     }
 
-    public async updateUserState(stateUser: Partial<StateUser>, options: UpdateOptions<StateUser>) {
+    public async updateUserState(
+        stateUser: Partial<StateUser>,
+        options: UpdateOptions<StateUser>,
+    ) {
         return StateUserSchema.update(stateUser, options);
     }
 
@@ -37,14 +44,16 @@ class UserLocationRepo {
         return DistrictUserSchema.findAndCountAll(options);
     }
 
-    public async updateUserDistrict(districtUser: Partial<DistrictUser>, options: UpdateOptions<DistrictUser>) {
+    public async updateUserDistrict(
+        districtUser: Partial<DistrictUser>,
+        options: UpdateOptions<DistrictUser>,
+    ) {
         return DistrictUserSchema.update(districtUser, options);
     }
 
     public async deleteUserDistrict(options: UpdateOptions<DistrictUser>) {
         return DistrictUserSchema.update({ isDeleted: true }, options);
     }
-
 
     //CITY
     public async createUserCity(cityUser: CityUser) {
@@ -59,7 +68,10 @@ class UserLocationRepo {
         return CityUserSchema.findAndCountAll(options);
     }
 
-    public async updateUserCity(cityUser: Partial<CityUser>, options: UpdateOptions<CityUser>) {
+    public async updateUserCity(
+        cityUser: Partial<CityUser>,
+        options: UpdateOptions<CityUser>,
+    ) {
         return CityUserSchema.update(cityUser, options);
     }
 

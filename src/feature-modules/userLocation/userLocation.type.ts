@@ -45,4 +45,4 @@ export const ZCityUser = z.object({
 
 export type CityUser = z.infer<typeof ZCityUser>;
 
-export type LocationType = 'city' | 'state' | 'district'
+export type LocationType = 'city' | 'state' | 'district';
