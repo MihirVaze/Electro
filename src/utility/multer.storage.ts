@@ -1,5 +1,5 @@
-import multer from 'multer'
-import { v4 } from 'uuid'
+import multer from 'multer';
+import { v4 } from 'uuid';
 
 export const FileUpload = (
   location: string,
@@ -7,13 +7,9 @@ export const FileUpload = (
     maxFileSize?: number;
     maxFiles?: number;
     allowedMimeTypes?: string[];
-  }
+  },
 ) => {
-  const {
-    maxFileSize = 5,
-    maxFiles = 5,
-    allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'],
-  } = options || {};
+  const { maxFileSize = 5, maxFiles = 5, allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'] } = options || {};
 
   const storage = multer.diskStorage({
     destination(req, file, callback) {

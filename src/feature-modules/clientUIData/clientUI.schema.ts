@@ -1,26 +1,42 @@
 import { DataTypes, Model } from 'sequelize';
+import { ClientUIData } from './clientUIData.type';
+import { ClientSchema } from '../client/client.schema';
 import { sequelize } from '../../connections/pg.connection';
-import { Client } from './client.type';
 import { UserSchema } from '../user/user.schema';
 
-export class ClientSchema extends Model<Client, Client> {}
+export class ClientUISchema extends Model<ClientUIData, ClientUIData> {}
 
-ClientSchema.init(
+ClientUISchema.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    clientName: {
+    clientId: {
       type: DataTypes.UUID,
+      references: {
+        model: ClientSchema,
+        key: 'id',
+      },
+    },
+    baseColor: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    userId: {
-      type: DataTypes.UUID,
+    accentColor: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    schemaName: {
+    fontColor: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    baseFont: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    accentFont: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -64,11 +80,18 @@ ClientSchema.init(
     },
   },
   {
+    modelName: 'ClientUI',
+    tableName: 'ClientUI',
     sequelize,
-    modelName: 'Client',
-    tableName: 'Client',
   },
 );
 
-ClientSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
-UserSchema.hasMany(ClientSchema, { foreignKey: 'userId' });
+ClientUISchema.belongsTo(ClientSchema, {
+  foreignKey: 'clientId',
+  as: 'clientId',
+});
+
+ClientUISchema.belongsTo(UserSchema, { foreignKey: 'createdBy', as: 'createdByUser' });
+ClientUISchema.belongsTo(UserSchema, { foreignKey: 'updatedBy', as: 'updatedByUser' });
+ClientUISchema.belongsTo(UserSchema, { foreignKey: 'deletedBy', as: 'deletedByUser' });
+ClientUISchema.belongsTo(UserSchema, { foreignKey: 'restoredBy', as: 'restoredByUser' });
