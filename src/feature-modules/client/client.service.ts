@@ -15,7 +15,7 @@ class ClientServices {
 
             const createdUser = await userService.createUser({ name: clientName, phoneNo, email, password });
 
-            const { id } = createdUser.result.dataValues;
+            const { id } = createdUser.result;
             if (!id) throw CLIENT_RESPONSES.CLIENT_CREATION_FAILED;
 
             await clientRepo.create({

@@ -30,5 +30,9 @@ export const USER_RESPONSES = {
     USER_ROLE_CREATION_FAILED: {
         status: 500,
         message: 'USER ROLE COULD NOT BE CREATED'
+    },
+    USER_ROLE_CREATED: {
+        status: 200,
+        message: 'USER ROLE CREATED FOR THE REQUIRED LOCATIONS'
     }
 }

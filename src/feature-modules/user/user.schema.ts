@@ -142,14 +142,26 @@ UserRoleSchema.init({
     tableName: 'UserRole'
 });
 
-UserRoleSchema.belongsTo(RoleSchema, {
-    foreignKey: 'roleId',
-    targetKey: 'id',
-    as: 'role'
-});
+// UserRoleSchema.belongsTo(UserSchema, {
+//     foreignKey: 'userId',
+//     targetKey: 'id',
+//     as: 'user'
+// });
 
-RoleSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'roleId',
-    sourceKey: 'id',
-    as: 'userRole'
-});
+// UserSchema.hasMany(UserRoleSchema, {
+//     foreignKey: 'userId',
+//     sourceKey: 'id',
+//     as: 'userRole'
+// });
+
+// UserRoleSchema.belongsTo(RoleSchema, {
+//     foreignKey: 'roleId',
+//     targetKey: 'id',
+//     as: 'role'
+// });
+
+// RoleSchema.hasMany(UserRoleSchema, {
+//     foreignKey: 'roleId',
+//     sourceKey: 'id',
+//     as: 'userRole'
+// });

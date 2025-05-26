@@ -1,8 +1,11 @@
 import { Credentials } from "../auth/auth.type";
+import locationService from "../location/location.service";
 import { RoleSchema } from "../role/role.schema";
+import roleServices from "../role/role.services";
+import userLocationService from "../userLocation/userLocation.service";
 import userRepo from "./user.repo";
 import { USER_RESPONSES } from "./user.responses";
-import { User, UserRole } from "./user.types";
+import { User, UserRole, UserRoleLocation } from "./user.types";
 
 
 class UserServices {
@@ -52,7 +55,7 @@ class UserServices {
 
     async createUser(user: User) {
         try {
-            const result = await userRepo.createUser(user);
+            const result = (await userRepo.createUser(user)).dataValues;
             const responses = USER_RESPONSES.USER_CREATED;
             return { result, responses };
         } catch (e) {
@@ -97,14 +100,13 @@ class UserServices {
                 },
                 include: [{
                     model: RoleSchema,
-                    as: 'role',
                     attributes: ['role'],
                     where: { isDeleted: false }
                 }]
             })
             return result.rows.map(e => e.dataValues)
         } catch (error) {
-            console.log(error)
+            console.dir(error)
             throw error
         }
     }
@@ -123,21 +125,109 @@ class UserServices {
             })
             return result.rows.map(e => e.dataValues)
         } catch (error) {
-            console.log(error)
+            console.dir(error)
             throw error
         }
     }
 
-    async create(UserRole: UserRole) {
+    async createUserRole(UserRole: UserRole) {
         try {
             const result = await userRepo.createUserRole(UserRole);
             return USER_RESPONSES.USER_ROLE_CREATION_FAILED
 
         } catch (error) {
-            console.log(error)
+            console.dir(error)
             throw error
         }
     }
+
+    async onBoardUser(user: User, UserRoles: UserRoleLocation[],) {
+        try {
+            const createUser = await this.createUser(user)
+            if (!createUser.result.id) throw "ID NOT FOUND";
+
+            const roles = await this.addRoles(createUser.result.id, UserRoles)
+
+            return USER_RESPONSES.USER_CREATED;
+        } catch (error) {
+            console.dir(error)
+            throw error
+        }
+    }
+
+    async addRoles(userId: string, UserRoles: UserRoleLocation[]) {
+        try {
+            for (const userRole of UserRoles) {
+                const userRoleEntry = await this.createUserRole({ userId, roleId: userRole.roleId });
+                const role = (await roleServices.getRole({ id: userRole.roleId })).role
+
+                switch (role) {
+                    case 'client_admin':
+                        throw "CLIENT CAN'T BE CREATED HERE";
+
+                    case 'worker':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';
+                        await userLocationService.createBulkUserLocations(
+                            'city',
+                            userId,
+                            userRole.locationIds
+                        );
+                        break;
+
+                    case 'city_manager':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST'
+                        await userLocationService.createBulkUserLocations(
+                            'city',
+                            userId,
+                            userRole.locationIds
+                        );
+                        break;
+
+                    case 'district_manager':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';
+                        await userLocationService.createBulkUserLocations(
+                            'district',
+                            userId,
+                            userRole.locationIds
+                        );
+                        break;
+
+                    case 'state_manager':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';
+                        await userLocationService.createBulkUserLocations(
+                            'state',
+                            userId,
+                            userRole.locationIds
+                        );
+                        break;
+
+                    case 'client_manager':
+                        await this.createUserRole({
+                            userId,
+                            roleId: userRole.roleId
+                        });
+                        break;
+
+                    case 'superadmin':
+                        await this.createUserRole({
+                            userId,
+                            roleId: userRole.roleId
+                        });
+                        break;
+
+                    default:
+                        throw 'ENTER A VALID ROLE';
+                }
+            }
+
+        return USER_RESPONSES.USER_ROLE_CREATED
+
+        } catch (error) {
+            console.dir(error)
+            throw error
+        }
+    }
+
 }
 
 export default new UserServices()
