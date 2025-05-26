@@ -1,44 +1,33 @@
-'use strict';
-
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-    async up(queryInterface, Sequelize) {
+    async up({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
+        const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
+
         try {
             await queryInterface.createTable(
-                'ClientUI',
+                { tableName: 'CityUser', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    clientId: {
+                    userId: {
                         type: DataTypes.UUID,
+                        allowNull: false,
                         references: {
-                            model: ClientSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
-                    baseColor: {
-                        type: DataTypes.STRING,
+                    cityId: {
+                        type: DataTypes.UUID,
                         allowNull: false,
-                    },
-                    accentColor: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                    },
-                    fontColor: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                    },
-                    baseFont: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                    },
-                    accentFont: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
@@ -47,59 +36,77 @@ module.exports = {
                     deletedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
+                    },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
                     },
                 },
                 { transaction },
             );
+
             await transaction.commit();
         } catch (error) {
             console.log(error);
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 
-    async down(queryInterface, Sequelize) {
+    async down({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
         const transaction = await queryInterface.sequelize.transaction();
+
         try {
-            await queryInterface.dropTable('ClientUI', { transaction });
+            await queryInterface.dropTable({ tableName: 'CityUser', schema });
+
             await transaction.commit();
         } catch (error) {
             console.log(error);
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 };

@@ -1,7 +1,7 @@
 module.exports = {
     async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
-
+        const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
@@ -10,57 +10,57 @@ module.exports = {
                 { tableName: 'State', schema },
                 {
                     id: {
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
                     name: {
-                        type: Sequelize.STRING,
+                        type: DataTypes.STRING,
                     },
                     isDeleted: {
-                        type: Sequelize.BOOLEAN,
+                        type: DataTypes.BOOLEAN,
                         defaultValue: false,
                     },
                     deletedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     deletedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     restoredAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     createdAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                     updatedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                 },
@@ -71,12 +71,12 @@ module.exports = {
                 { tableName: 'District', schema },
                 {
                     id: {
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
                     stateId: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         allowNull: false,
                         references: {
                             model: 'State',
@@ -84,53 +84,53 @@ module.exports = {
                         },
                     },
                     name: {
-                        type: Sequelize.STRING,
+                        type: DataTypes.STRING,
                         allowNull: false,
                     },
                     isDeleted: {
-                        type: Sequelize.BOOLEAN,
+                        type: DataTypes.BOOLEAN,
                         defaultValue: false,
                     },
                     deletedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     deletedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     restoredAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     createdAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                     updatedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                 },
@@ -141,12 +141,12 @@ module.exports = {
                 { tableName: 'City', schema },
                 {
                     id: {
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
                     districtId: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         allowNull: false,
                         references: {
                             model: 'District',
@@ -154,53 +154,53 @@ module.exports = {
                         },
                     },
                     name: {
-                        type: Sequelize.STRING,
+                        type: DataTypes.STRING,
                         allowNull: false,
                     },
                     isDeleted: {
-                        type: Sequelize.BOOLEAN,
+                        type: DataTypes.BOOLEAN,
                         defaultValue: false,
                     },
                     deletedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     deletedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     restoredAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                     },
                     createdAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                     updatedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
                     },
                 },
@@ -210,6 +210,7 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 
@@ -227,6 +228,7 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 };

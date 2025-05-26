@@ -1,54 +1,50 @@
 module.exports = {
     async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
-
+        const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
             await queryInterface.createTable(
-                { tableName: 'StateUser', schema },
+                { tableName: 'Role', schema },
                 {
                     id: {
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    userId: {
-                        type: Sequelize.UUID,
+                    role: {
+                        type: DataTypes.ENUM(
+                            'superadmin',
+                            'client_manager',
+                            'state_manager',
+                            'district_manager',
+                            'city_manager',
+                            'worker',
+                            'client_admin',
+                        ),
                         allowNull: false,
-                        references: {
-                            model: 'User',
-                            key: 'id',
-                        },
-                    },
-                    stateId: {
-                        type: Sequelize.UUID,
-                        allowNull: false,
-                        references: {
-                            model: 'State',
-                            key: 'id',
-                        },
                     },
                     isDeleted: {
-                        type: Sequelize.BOOLEAN,
+                        type: DataTypes.BOOLEAN,
                         defaultValue: false,
                     },
                     deletedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
@@ -62,20 +58,20 @@ module.exports = {
                         },
                     },
                     deletedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: null,
                     },
                     restoredAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: null,
                     },
                     createdAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         allowNull: false,
                         defaultValue: Date.now(),
                     },
                     updatedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         allowNull: false,
                         defaultValue: Date.now(),
                     },
@@ -89,6 +85,7 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 
@@ -97,7 +94,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'StateUser', schema });
+            await queryInterface.dropTable({ tableName: 'Role', schema });
 
             await transaction.commit();
         } catch (error) {
@@ -105,6 +102,7 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 };
