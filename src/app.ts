@@ -1,12 +1,12 @@
 import express from 'express';
-import { connectToPg, sequelize } from './connections/pg.connection';
+import connection from './connections/pg.connection';
 import { registerMiddlewares } from './routes/router';
 
 export const startServer = async () => {
     try {
         const app = express();
 
-        await connectToPg();
+        await connection.connectToPg();
         registerMiddlewares(app);
         //sequelize.sync();
 
