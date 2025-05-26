@@ -1,19 +1,19 @@
-'use strict';
-const UUIDV4 = require('sequelize');
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    const { DataTypes } = Sequelize;
+  async up({ context }) {
+
+    const { queryInterface, Sequelize, schema } = context;
+
     const transaction = await queryInterface.sequelize.transaction();
+
     try {
-      await queryInterface.createTable("CityUser", {
+      await queryInterface.createTable({ tableName: 'CityUser', schema }, {
         id: {
-          type: DataTypes.UUID,
-          defaultValue: UUIDV4,
+          type: Sequelize.UUID,
+          defaultValue:  Sequelize.UUIDV4,
           primaryKey: true
         },
         userId: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           allowNull: false,
           references: {
             model: 'User',
@@ -21,7 +21,7 @@ module.exports = {
           }
         },
         cityId: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           allowNull: false,
           references: {
             model: 'City',
@@ -29,52 +29,52 @@ module.exports = {
           }
         },
         isDeleted: {
-          type: DataTypes.BOOLEAN,
+          type: Sequelize.BOOLEAN,
           defaultValue: false
         },
         deletedBy: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           references: {
             model: 'User',
             key: 'id'
           }
         },
         restoredBy: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           references: {
             model: 'User',
             key: 'id'
           }
         },
         createdBy: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           references: {
             model: 'User',
             key: 'id'
           }
         },
         updatedBy: {
-          type: DataTypes.UUID,
+          type: Sequelize.UUID,
           references: {
             model: 'User',
             key: 'id'
           }
         },
         deletedAt: {
-          type: DataTypes.DATE,
+          type: Sequelize.DATE,
           defaultValue: null,
         },
         restoredAt: {
-          type: DataTypes.DATE,
+          type: Sequelize.DATE,
           defaultValue: null
         },
         createdAt: {
-          type: DataTypes.DATE,
+          type: Sequelize.DATE,
           allowNull: false,
           defaultValue: Date.now(),
         },
         updatedAt: {
-          type: DataTypes.DATE,
+          type: Sequelize.DATE,
           allowNull: false,
           defaultValue: Date.now(),
         }
@@ -88,15 +88,17 @@ module.exports = {
       await transaction.rollback();
       console.log('.........Transaction Rolled Back..........');
     }
+
   },
 
-  async down(queryInterface, Sequelize) {
+  async down({ context }) {
+    const { queryInterface, Sequelize, schema } = context;
     const transaction = await queryInterface.sequelize.transaction();
+
     try {
-      await queryInterface.dropTable("CityUser", { transaction });
+      await queryInterface.dropTable({ tableName: 'CityUser', schema })
 
-      await transaction.commit();
-
+      await transaction.commit()
     } catch (error) {
       console.log(error);
       console.log('..........Rolling Back Transaction..........');
@@ -104,4 +106,4 @@ module.exports = {
       console.log('.........Transaction Rolled Back..........');
     }
   }
-};
+}
