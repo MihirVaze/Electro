@@ -1,12 +1,12 @@
-'use strict';
-
 module.exports = {
-    async up(queryInterface, Sequelize) {
+    async up({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
         const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
+
         try {
             await queryInterface.createTable(
-                'UserRole',
+                { tableName: 'UserRole', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
@@ -89,13 +89,19 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 
-    async down(queryInterface, Sequelize) {
+    async down({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
         const transaction = await queryInterface.sequelize.transaction();
+
         try {
-            await queryInterface.dropTable('UserRole', { transaction });
+            await queryInterface.dropTable({
+                tableName: 'UserRole',
+                schema,
+            });
 
             await transaction.commit();
         } catch (error) {
@@ -103,6 +109,7 @@ module.exports = {
             console.log('..........Rolling Back Transaction..........');
             await transaction.rollback();
             console.log('.........Transaction Rolled Back..........');
+            throw error;
         }
     },
 };
