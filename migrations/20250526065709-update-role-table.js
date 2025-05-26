@@ -1,41 +1,45 @@
 module.exports = {
-  async up({ context }) {
+    async up({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
 
-    const { queryInterface, Sequelize, schema } = context;
+        const transaction = await queryInterface.sequelize.transaction();
 
-    const transaction = await queryInterface.sequelize.transaction();
+        try {
+            await queryInterface.addConstraint(
+                { tableName: 'Role', schema },
+                {
+                    fields: ['role'],
+                    type: 'unique',
+                    name: 'unique_role_constraint',
+                },
+                { transaction },
+            );
 
-    try {
-      await queryInterface.addConstraint({ tableName: 'Role', schema }, {
-        fields: ['role'],
-        type: 'unique',
-        name: 'unique_role_constraint'
-      },{transaction});
+            await transaction.commit();
+        } catch (error) {
+            console.log(error);
+            console.log('..........Rolling Back Transaction..........');
+            await transaction.rollback();
+            console.log('.........Transaction Rolled Back..........');
+        }
+    },
 
-      await transaction.commit();
+    async down({ context }) {
+        const { queryInterface, Sequelize, schema } = context;
+        const transaction = await queryInterface.sequelize.transaction();
 
-    } catch (error) {
-      console.log(error);
-      console.log('..........Rolling Back Transaction..........');
-      await transaction.rollback();
-      console.log('.........Transaction Rolled Back..........');
-    }
+        try {
+            await queryInterface.removeConstraint(
+                { tableName: 'Role', schema },
+                'unique_role_constraint',
+            );
 
-  },
-
-  async down({ context }) {
-    const { queryInterface, Sequelize, schema } = context;
-    const transaction = await queryInterface.sequelize.transaction();
-
-    try {
-      await queryInterface.removeConstraint({tableName:'Role',schema}, 'unique_role_constraint');
-
-      await transaction.commit()
-    } catch (error) {
-      console.log(error);
-      console.log('..........Rolling Back Transaction..........');
-      await transaction.rollback();
-      console.log('.........Transaction Rolled Back..........');
-    }
-  }
-}
+            await transaction.commit();
+        } catch (error) {
+            console.log(error);
+            console.log('..........Rolling Back Transaction..........');
+            await transaction.rollback();
+            console.log('.........Transaction Rolled Back..........');
+        }
+    },
+};

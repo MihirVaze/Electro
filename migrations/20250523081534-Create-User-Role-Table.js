@@ -1,82 +1,81 @@
+'use strict';
+
 module.exports = {
-    async up({ context }) {
-        const { queryInterface, Sequelize, schema } = context;
-
+    async up(queryInterface, Sequelize) {
+        const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
-
         try {
             await queryInterface.createTable(
-                { tableName: 'Client', schema },
+                'UserRole',
                 {
                     id: {
-                        type: Sequelize.UUID,
-                        defaultValue: Sequelize.UUIDV4,
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    clientName: {
-                        type: Sequelize.STRING,
-                        allowNull: false,
-                    },
-                    schemaName: {
-                        type: Sequelize.STRING,
-                        allowNull: false,
-                        unique: true,
-                    },
                     userId: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         allowNull: false,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
+                    roleId: {
+                        type: DataTypes.UUID,
+                        allowNull: false,
+                        references: {
+                            model: 'Role',
+                            key: 'id',
+                        },
+                    },
                     isDeleted: {
-                        type: Sequelize.BOOLEAN,
+                        type: DataTypes.BOOLEAN,
                         defaultValue: false,
                     },
                     deletedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
                     deletedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: null,
                     },
                     restoredAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         defaultValue: null,
                     },
                     createdAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         allowNull: false,
                         defaultValue: Date.now(),
                     },
                     updatedAt: {
-                        type: Sequelize.DATE,
+                        type: DataTypes.DATE,
                         allowNull: false,
                         defaultValue: Date.now(),
                     },
@@ -93,12 +92,10 @@ module.exports = {
         }
     },
 
-    async down({ context }) {
-        const { queryInterface, Sequelize, schema } = context;
+    async down(queryInterface, Sequelize) {
         const transaction = await queryInterface.sequelize.transaction();
-
         try {
-            await queryInterface.dropTable({ tableName: 'Client', schema });
+            await queryInterface.dropTable('UserRole', { transaction });
 
             await transaction.commit();
         } catch (error) {

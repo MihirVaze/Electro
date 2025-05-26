@@ -6,156 +6,168 @@ import { RoleSchema } from '../role/role.schema';
 export class UserSchema extends Model<User, User> {}
 
 UserSchema.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        phoneNo: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        deletedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        restoredBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        createdBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        updatedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        deletedAt: {
+            type: DataTypes.DATE,
+        },
+        restoredAt: {
+            type: DataTypes.DATE,
+        },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: false,
+    {
+        sequelize,
+        modelName: 'User',
+        tableName: 'User',
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    phoneNo: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    deletedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    restoredBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    createdBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    updatedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
-    },
-    restoredAt: {
-      type: DataTypes.DATE,
-    },
-  },
-  {
-    sequelize,
-    modelName: 'User',
-    tableName: 'User',
-  },
 );
 
 export class UserRoleSchema extends Model<UserRole, UserRole> {}
 
 UserRoleSchema.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        userId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        roleId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: RoleSchema,
+                key: 'id',
+            },
+        },
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        deletedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        restoredBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        createdBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        updatedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        deletedAt: {
+            type: DataTypes.DATE,
+        },
+        restoredAt: {
+            type: DataTypes.DATE,
+        },
     },
-    userId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
+    {
+        sequelize: sequelize,
+        modelName: 'UserRole',
+        tableName: 'UserRole',
     },
-    roleId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: RoleSchema,
-        key: 'id',
-      },
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    deletedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    restoredBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    createdBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    updatedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
-    },
-    restoredAt: {
-      type: DataTypes.DATE,
-    },
-  },
-  {
-    sequelize: sequelize,
-    modelName: 'UserRole',
-    tableName: 'UserRole',
-  },
 );
 
-UserRoleSchema.belongsTo(RoleSchema, {
-  foreignKey: 'roleId',
-  targetKey: 'id',
-  as: 'role',
-});
+// UserRoleSchema.belongsTo(UserSchema, {
+//     foreignKey: 'userId',
+//     targetKey: 'id',
+//     as: 'user'
+// });
 
-RoleSchema.hasMany(UserRoleSchema, {
-  foreignKey: 'roleId',
-  sourceKey: 'id',
-  as: 'userRole',
-});
+// UserSchema.hasMany(UserRoleSchema, {
+//     foreignKey: 'userId',
+//     sourceKey: 'id',
+//     as: 'userRole'
+// });
+
+// UserRoleSchema.belongsTo(RoleSchema, {
+//     foreignKey: 'roleId',
+//     targetKey: 'id',
+//     as: 'role'
+// });
+
+// RoleSchema.hasMany(UserRoleSchema, {
+//     foreignKey: 'roleId',
+//     sourceKey: 'id',
+//     as: 'userRole'
+// });

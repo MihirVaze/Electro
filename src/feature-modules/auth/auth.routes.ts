@@ -7,47 +7,45 @@ import { Route } from '../../routes/routes.types';
 
 const router = new CustomRouter();
 
-<<<<<<< HEAD
-router.post("/login", [validate(ZCredentials), async (req, res, next) => {
-    try {
-        const body = req.body as Credentials
-        const result = await authService.login(body);
-=======
 router.post(
-  '/login',
-  [
-    validate(ZCredentials),
-    async (req, res, next) => {
-      try {
-        const schema = req.headers.schema;
-        if (typeof schema !== 'string' || !schema) throw Error('Enter Valid Schema');
+    '/login',
+    [
+        validate(ZCredentials),
+        async (req, res, next) => {
+            try {
+                const schema = req.headers.schema;
+                if (typeof schema !== 'string' || !schema)
+                    throw Error('Enter Valid Schema');
 
-        const body = req.body as Credentials;
-        const result = await authService.login(body, schema);
->>>>>>> feature/clientUI
-        res.send(new ResponseHandler(result));
-      } catch (e) {
-        next(e);
-      }
-    },
-  ],
-  { is_protected: false },
+                const body = req.body as Credentials;
+                const result = await authService.login(body, schema);
+
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: false },
 );
 
 router.put(
-  '/',
-  [
-    validate(ZChangePassWord),
-    async (req, res, next) => {
-      try {
-        const result = await authService.update({ ...req.body, id: req.payload.id });
-        res.send(result);
-      } catch (e) {
-        next(e);
-      }
-    },
-  ],
-  { is_protected: true, has_Access: [] },
+    '/',
+    [
+        validate(ZChangePassWord),
+        async (req, res, next) => {
+            try {
+                const result = await authService.update({
+                    ...req.body,
+                    id: req.payload.id,
+                });
+                res.send(result);
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [] },
 );
 
 export default new Route('/auth', router.ExpressRouter);
