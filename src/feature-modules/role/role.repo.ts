@@ -1,9 +1,8 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import { RoleSchema } from "./role.schema";
-import { Role } from "./role.types";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import { RoleSchema } from './role.schema';
+import { Role } from './role.types';
 
 class RoleRepo {
-
     public async get(options: FindOptions<Role>) {
         return RoleSchema.findOne(options);
     }
@@ -21,4 +20,4 @@ class RoleRepo {
     }
 }
 
-export default new RoleRepo()
+export default new RoleRepo();

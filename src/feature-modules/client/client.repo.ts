@@ -1,9 +1,8 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import { Client } from "./client.type";
-import { ClientSchema } from "./client.schema";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import { Client } from './client.type';
+import { ClientSchema } from './client.schema';
 
 class ClientRepo {
-
     public async create(client: Client) {
         return ClientSchema.create(client);
     }
@@ -16,7 +15,10 @@ class ClientRepo {
         return ClientSchema.findAndCountAll(options);
     }
 
-    public async update(client: Partial<Client>, options: UpdateOptions<Client>) {
+    public async update(
+        client: Partial<Client>,
+        options: UpdateOptions<Client>,
+    ) {
         return ClientSchema.update(client, options);
     }
 
@@ -25,4 +27,4 @@ class ClientRepo {
     }
 }
 
-export default new ClientRepo()
+export default new ClientRepo();

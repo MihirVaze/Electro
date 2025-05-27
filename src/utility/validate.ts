@@ -1,6 +1,6 @@
-import { z, AnyZodObject } from "zod";
-import { RequestHandler } from "express";
-import { ZUser } from "../feature-modules/user/user.types";
+import { z, AnyZodObject } from 'zod';
+import { RequestHandler } from 'express';
+import { ZUser } from '../feature-modules/user/user.types';
 
 export const validate = (schema: AnyZodObject): RequestHandler => {
     return async (req, res, next) => {
@@ -23,9 +23,9 @@ export const dataSchema = z.object({
         name: true,
         email: true,
         password: true,
-        phoneNo: true
+        phoneNo: true,
     }),
     params: ZUser.pick({
-        id: true
-    })
+        id: true,
+    }),
 });

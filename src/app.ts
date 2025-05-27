@@ -10,15 +10,12 @@ export const startServer = async () => {
         registerMiddlewares(app);
         //sequelize.sync();
 
-        const { PORT } = process.env
-        app.listen(
-            PORT,
-            () => console.log(`SERVER STARTED ON PORT ${PORT}`)
-        )
+        const { PORT } = process.env;
+        app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
     } catch (e) {
         console.log(e);
         process.nextTick(() => {
             process.exit(1);
         });
     }
-} 
+};
