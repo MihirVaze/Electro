@@ -19,11 +19,13 @@ router.get(
         validate(ZFindPlans),
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const { limit, page, ...search } = req.query;
                 const result = planService.getPlans(
                     Number(limit),
                     Number(page),
                     search,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -40,8 +42,9 @@ router.get(
         validate(ZFindPlan),
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.findOnePlan({ id });
+                const result = planService.findOnePlan({ id }, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -57,7 +60,8 @@ router.post(
         validate(ZCreatePlan),
         async (req, res, next) => {
             try {
-                const result = planService.createPlan(req.body);
+                const schema = req.payload.schema;
+                const result = planService.createPlan(req.body, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -73,8 +77,9 @@ router.patch(
         validate(ZUpdatePlan),
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.updatePlan(id, req.body);
+                const result = planService.updatePlan(id, req.body, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -90,8 +95,9 @@ router.del(
         validate(ZDeletePlan),
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.deleteplan(id);
+                const result = planService.deleteplan(id, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

@@ -4,28 +4,30 @@ import { PLAN_RESPONSES } from './plan.responses';
 import { Plan } from './plan.type';
 
 class planServices {
-    async findOnePlan(plan: Partial<Plan>) {
+    async findOnePlan(plan: Partial<Plan>, schema: string) {
         try {
-            const planRecord = await planRepo.get({
-                where: { id: plan.id, isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
-                    ],
+            const planRecord = await planRepo.get(
+                {
+                    where: { id: plan.id, isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                 },
-            });
+                schema,
+            );
 
             if (!planRecord) throw PLAN_RESPONSES.PLAN_NOT_FOUND;
 
             return planRecord.dataValues;
         } catch (e) {
-            console.dir(e);
             console.dir(e);
             throw e;
         }
@@ -73,11 +75,14 @@ class planServices {
 
             const offset = (page - 1) * limit;
 
-            const result = await planRepo.getAll({
-                where: { isDeleted: false, ...where },
-                limit,
-                offset,
-            });
+            const result = await planRepo.getAll(
+                {
+                    where: { isDeleted: false, ...where },
+                    limit,
+                    offset,
+                },
+                schema,
+            );
 
             return result;
         } catch (e) {
@@ -88,26 +93,27 @@ class planServices {
 
     async createPlan(plan: Plan, schema: string) {
         try {
-            const result = await planRepo.create(plan);
+            const result = await planRepo.create(plan, schema);
             return PLAN_RESPONSES.PLAN_CREATED;
         } catch (e) {
-            console.dir(e);
             console.dir(e);
             throw e;
         }
     }
 
-    async updatePlan(id: string, plan: Partial<Plan>) {
+    async updatePlan(id: string, plan: Partial<Plan>, schema: string) {
         try {
             if (!plan.id) throw 'ID NOT FOUND';
-            const result = await planRepo.update(plan, {
-                where: { id: plan.id },
-            });
+            const result = await planRepo.update(
+                plan,
+                {
+                    where: { id: plan.id },
+                },
+                schema,
+            );
             if (!result[0]) throw PLAN_RESPONSES.PLAN_UPDATION_FAILED;
             return PLAN_RESPONSES.PLAN_UPDATED;
-            return PLAN_RESPONSES.PLAN_UPDATED;
         } catch (e) {
-            console.dir(e);
             console.dir(e);
             throw e;
         }
@@ -119,8 +125,6 @@ class planServices {
             if (!result[0]) throw PLAN_RESPONSES.PLAN_DELETION_FAILED;
             return PLAN_RESPONSES.PLAN_DELETED;
         } catch (e) {
-            console.dir(e);
-            throw e;
             console.dir(e);
             throw e;
         }
