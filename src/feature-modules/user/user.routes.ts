@@ -16,13 +16,14 @@ router.post(
         validate(ZRegiterUser),
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const creatorRoleId = req.payload.roleId;
                 const { user, roles } = req.body;
 
-                const canRegister = CanRegister(creatorRoleId, roles);
+                const canRegister = CanRegister(creatorRoleId, roles, schema);
                 if (!canRegister) throw { status: 403, message: 'FORBIDDEN' };
 
-                const result = userService.onBoardUser(user, roles);
+                const result = userService.onBoardUser(user, roles, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

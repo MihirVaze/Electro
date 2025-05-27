@@ -35,10 +35,14 @@ router.put(
         validate(ZChangePassWord),
         async (req, res, next) => {
             try {
-                const result = await authService.update({
-                    ...req.body,
-                    id: req.payload.id,
-                });
+                const schema = req.payload.schema;
+                const result = await authService.update(
+                    {
+                        ...req.body,
+                        id: req.payload.id,
+                    },
+                    schema,
+                );
                 res.send(result);
             } catch (e) {
                 next(e);

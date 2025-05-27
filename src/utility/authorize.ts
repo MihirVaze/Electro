@@ -21,13 +21,15 @@ export const authorizeR =
     (AuthorizedFor: Has_Access) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const { roleId, schema } = req.payload;
+
             const Accessedfor = await Promise.all(
                 AuthorizedFor.map(
-                    async (e) => (await roleServices.getRole({ role: e })).id,
+                    async (e) =>
+                        (await roleServices.getRole({ role: e }, schema)).id,
                 ),
             );
 
-            const { roleId } = req.payload;
             if (
                 roleId.length !== 0 &&
                 Accessedfor.some((e) => (e ? roleId.includes(e) : false))
