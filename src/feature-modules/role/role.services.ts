@@ -1,9 +1,9 @@
 import roleRepo from './role.repo';
 import { ROLE_RESPONSES } from './role.responses';
-import { Role } from './role.types';
+import { ElectroRole } from './role.types';
 
 class RoleServices {
-    async getRole(role: Partial<Role>, schema: string) {
+    async getRole(role: Partial<ElectroRole>, schema: string) {
         try {
             const result = await roleRepo.get(
                 {

@@ -1,5 +1,5 @@
 import { Credentials } from '../auth/auth.type';
-import { RoleSchema } from '../role/role.schema';
+import { ElectroRoleSchema } from '../role/role.schema';
 import roleServices from '../role/role.services';
 import userLocationService from '../userLocation/userLocation.service';
 import userRepo from './user.repo';
@@ -122,7 +122,7 @@ class UserServices {
                     },
                     include: [
                         {
-                            model: RoleSchema,
+                            model: ElectroRoleSchema,
                             attributes: ['role'],
                             where: { isDeleted: false },
                         },

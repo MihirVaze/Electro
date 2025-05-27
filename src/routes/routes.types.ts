@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express';
-import { RoleEnum } from '../feature-modules/role/role.types';
+import { ElectroRoleEnum } from '../feature-modules/role/role.types';
 
 export type Method = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-export type Has_Access = RoleEnum[];
+export type Has_Access = ElectroRoleEnum[];
 
 export type RouteOptions = {
     is_protected: boolean;
