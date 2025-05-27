@@ -1,12 +1,14 @@
 import express from 'express';
 import connection from './connections/pg.connection';
 import { registerMiddlewares } from './routes/router';
+import { runMigration } from './utility/umzug-migration';
 
 export const startServer = async () => {
     try {
         const app = express();
 
         await connection.connectToPg();
+
         registerMiddlewares(app);
         //sequelize.sync();
 
