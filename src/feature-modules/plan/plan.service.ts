@@ -26,11 +26,17 @@ class planServices {
             return planRecord.dataValues;
         } catch (e) {
             console.dir(e);
+            console.dir(e);
             throw e;
         }
     }
 
-    async getPlans(limit: number, page: number, plan: Partial<Plan>) {
+    async getPlans(
+        limit: number,
+        page: number,
+        plan: Partial<Plan>,
+        schema: string,
+    ) {
         try {
             let where: any = {};
 
@@ -80,11 +86,12 @@ class planServices {
         }
     }
 
-    async createPlan(plan: Plan) {
+    async createPlan(plan: Plan, schema: string) {
         try {
             const result = await planRepo.create(plan);
             return PLAN_RESPONSES.PLAN_CREATED;
         } catch (e) {
+            console.dir(e);
             console.dir(e);
             throw e;
         }
@@ -98,18 +105,22 @@ class planServices {
             });
             if (!result[0]) throw PLAN_RESPONSES.PLAN_UPDATION_FAILED;
             return PLAN_RESPONSES.PLAN_UPDATED;
+            return PLAN_RESPONSES.PLAN_UPDATED;
         } catch (e) {
+            console.dir(e);
             console.dir(e);
             throw e;
         }
     }
 
-    async deleteplan(id: string) {
+    async deleteplan(id: string, schema: string) {
         try {
-            const result = await planRepo.delete({ where: { id } });
+            const result = await planRepo.delete({ where: { id } }, schema);
             if (!result[0]) throw PLAN_RESPONSES.PLAN_DELETION_FAILED;
             return PLAN_RESPONSES.PLAN_DELETED;
         } catch (e) {
+            console.dir(e);
+            throw e;
             console.dir(e);
             throw e;
         }
