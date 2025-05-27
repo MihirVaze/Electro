@@ -14,30 +14,33 @@ import {
 
 class UserLocationService {
     //STATE
-    async getAllUserState(stateUser: Partial<StateUser>) {
+    async getAllUserState(stateUser: Partial<StateUser>, schema: string) {
         try {
-            const result = await userLocationRepo.getAllUserState({
-                where: { ...stateUser, isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
+            const result = await userLocationRepo.getAllUserState(
+                {
+                    where: { ...stateUser, isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                    include: [
+                        {
+                            model: StateSchema,
+                            as: 'state',
+                            attributes: ['name'],
+                            where: { isDeleted: false },
+                        },
                     ],
                 },
-                include: [
-                    {
-                        model: StateSchema,
-                        as: 'state',
-                        attributes: ['name'],
-                        where: { isDeleted: false },
-                    },
-                ],
-            });
+                schema,
+            );
             return result.rows.map((e) => e.dataValues);
         } catch (error) {
             console.log(error);
@@ -45,22 +48,25 @@ class UserLocationService {
         }
     }
 
-    async getUserState() {
+    async getUserState(schema: string) {
         try {
-            const result = await userLocationRepo.getUserState({
-                where: { isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
-                    ],
+            const result = await userLocationRepo.getUserState(
+                {
+                    where: { isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                 },
-            });
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_STATE_LOCATION_NOT_FOUND;
             return result;
@@ -70,9 +76,12 @@ class UserLocationService {
         }
     }
 
-    async createUserState(stateUser: StateUser) {
+    async createUserState(stateUser: StateUser, schema: string) {
         try {
-            const result = await userLocationRepo.createUserState(stateUser);
+            const result = await userLocationRepo.createUserState(
+                stateUser,
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_STATE_LOCATION_CREATION_FAILED;
             return USER_LOCATION_RESPONSES.USER_STATE_LOCATION_CREATED;
@@ -82,11 +91,19 @@ class UserLocationService {
         }
     }
 
-    async updateUserState(stateUser: Partial<StateUser>, userId: string) {
+    async updateUserState(
+        stateUser: Partial<StateUser>,
+        userId: string,
+        schema: string,
+    ) {
         try {
-            const result = await userLocationRepo.updateUserState(stateUser, {
-                where: { userId },
-            });
+            const result = await userLocationRepo.updateUserState(
+                stateUser,
+                {
+                    where: { userId },
+                },
+                schema,
+            );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_UPDATE_USER_STATE_LOCATION;
             return USER_LOCATION_RESPONSES.USER_STATE_LOCATION_UPDATED;
@@ -96,11 +113,14 @@ class UserLocationService {
         }
     }
 
-    async deleteUserState(userId: string) {
+    async deleteUserState(userId: string, schema: string) {
         try {
-            const result = await userLocationRepo.deleteUserState({
-                where: { userId },
-            });
+            const result = await userLocationRepo.deleteUserState(
+                {
+                    where: { userId },
+                },
+                schema,
+            );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_DELETE_USER_STATE_LOCATION;
             return USER_LOCATION_RESPONSES.DELETED_USER_STATE_LOCATION;
@@ -111,30 +131,36 @@ class UserLocationService {
     }
 
     //DISTRICT
-    async getAllUserDistrict(districtUser: Partial<DistrictUser>) {
+    async getAllUserDistrict(
+        districtUser: Partial<DistrictUser>,
+        schema: string,
+    ) {
         try {
-            const result = await userLocationRepo.getAllUserDistrict({
-                where: { ...districtUser, isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
+            const result = await userLocationRepo.getAllUserDistrict(
+                {
+                    where: { ...districtUser, isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                    include: [
+                        {
+                            model: DistrictSchema,
+                            as: 'district',
+                            attributes: ['name'],
+                            where: { isDeleted: false },
+                        },
                     ],
                 },
-                include: [
-                    {
-                        model: DistrictSchema,
-                        as: 'district',
-                        attributes: ['name'],
-                        where: { isDeleted: false },
-                    },
-                ],
-            });
+                schema,
+            );
             return result.rows.map((e) => e.dataValues);
         } catch (error) {
             console.log(error);
@@ -142,22 +168,25 @@ class UserLocationService {
         }
     }
 
-    async getUserDistrict() {
+    async getUserDistrict(schema: string) {
         try {
-            const result = await userLocationRepo.getUserDistrict({
-                where: { isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
-                    ],
+            const result = await userLocationRepo.getUserDistrict(
+                {
+                    where: { isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                 },
-            });
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_DISTRICT_LOCATION_NOT_FOUND;
             return result;
@@ -167,10 +196,12 @@ class UserLocationService {
         }
     }
 
-    async createUserDistrict(districtUser: DistrictUser) {
+    async createUserDistrict(districtUser: DistrictUser, schema: string) {
         try {
-            const result =
-                await userLocationRepo.createUserDistrict(districtUser);
+            const result = await userLocationRepo.createUserDistrict(
+                districtUser,
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_DISTRICT_LOCATION_CREATION_FAILED;
             return USER_LOCATION_RESPONSES.USER_DISTRICT_LOCATION_CREATED;
@@ -183,11 +214,13 @@ class UserLocationService {
     async updateUserDistrict(
         districtUser: Partial<DistrictUser>,
         userId: string,
+        schema: string,
     ) {
         try {
             const result = await userLocationRepo.updateUserDistrict(
                 districtUser,
                 { where: { userId } },
+                schema,
             );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_UPDATE_USER_DISTRICT_LOCATION;
@@ -198,11 +231,14 @@ class UserLocationService {
         }
     }
 
-    async deleteUserDistrict(userId: string) {
+    async deleteUserDistrict(userId: string, schema: string) {
         try {
-            const result = await userLocationRepo.deleteUserDistrict({
-                where: { userId },
-            });
+            const result = await userLocationRepo.deleteUserDistrict(
+                {
+                    where: { userId },
+                },
+                schema,
+            );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_DELETE_USER_DISTRICT_LOCATION;
             return USER_LOCATION_RESPONSES.DELETED_USER_DISTRICT_LOCATION;
@@ -213,30 +249,33 @@ class UserLocationService {
     }
 
     //CITY
-    async getAllUserCity(cityUser: Partial<CityUser>) {
+    async getAllUserCity(cityUser: Partial<CityUser>, schema: string) {
         try {
-            const result = await userLocationRepo.getAllUserCity({
-                where: { ...cityUser, isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
+            const result = await userLocationRepo.getAllUserCity(
+                {
+                    where: { ...cityUser, isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                    include: [
+                        {
+                            model: CitySchema,
+                            as: 'city',
+                            attributes: ['name'],
+                            where: { isDeleted: false },
+                        },
                     ],
                 },
-                include: [
-                    {
-                        model: CitySchema,
-                        as: 'city',
-                        attributes: ['name'],
-                        where: { isDeleted: false },
-                    },
-                ],
-            });
+                schema,
+            );
             return result.rows.map((e) => e.dataValues);
         } catch (error) {
             console.log(error);
@@ -244,22 +283,25 @@ class UserLocationService {
         }
     }
 
-    async getUserCity() {
+    async getUserCity(schema: string) {
         try {
-            const result = await userLocationRepo.getUserCity({
-                where: { isDeleted: false },
-                attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
-                    ],
+            const result = await userLocationRepo.getUserCity(
+                {
+                    where: { isDeleted: false },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                 },
-            });
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_CITY_LOCATION_NOT_FOUND;
             return result;
@@ -269,9 +311,12 @@ class UserLocationService {
         }
     }
 
-    async createUserCity(cityUser: CityUser) {
+    async createUserCity(cityUser: CityUser, schema: string) {
         try {
-            const result = await userLocationRepo.createUserCity(cityUser);
+            const result = await userLocationRepo.createUserCity(
+                cityUser,
+                schema,
+            );
             if (!result)
                 throw USER_LOCATION_RESPONSES.USER_CITY_LOCATION_CREATION_FAILED;
             return USER_LOCATION_RESPONSES.USER_CITY_LOCATION_CREATED;
@@ -285,34 +330,44 @@ class UserLocationService {
         type: LocationType,
         userId: string,
         locationIds: string[],
+        schema: string,
     ) {
         try {
             switch (type) {
                 case 'state':
                     for (const location of locationIds) {
-                        const result = await userLocationRepo.createUserState({
-                            userId,
-                            stateId: location,
-                        });
+                        const result = await userLocationRepo.createUserState(
+                            {
+                                userId,
+                                stateId: location,
+                            },
+                            schema,
+                        );
                     }
                     return USER_LOCATION_RESPONSES.USER_STATE_LOCATION_CREATED;
 
                 case 'district':
                     for (const location of locationIds) {
                         const result =
-                            await userLocationRepo.createUserDistrict({
-                                userId,
-                                districtId: location,
-                            });
+                            await userLocationRepo.createUserDistrict(
+                                {
+                                    userId,
+                                    districtId: location,
+                                },
+                                schema,
+                            );
                     }
                     return USER_LOCATION_RESPONSES.USER_DISTRICT_LOCATION_CREATED;
 
                 case 'city':
                     for (const location of locationIds) {
-                        const result = await userLocationRepo.createUserCity({
-                            userId,
-                            cityId: location,
-                        });
+                        const result = await userLocationRepo.createUserCity(
+                            {
+                                userId,
+                                cityId: location,
+                            },
+                            schema,
+                        );
                     }
                     return USER_LOCATION_RESPONSES.USER_CITY_LOCATION_CREATED;
             }
@@ -322,11 +377,19 @@ class UserLocationService {
         }
     }
 
-    async updateUserCity(cityUser: Partial<CityUser>, userId: string) {
+    async updateUserCity(
+        cityUser: Partial<CityUser>,
+        userId: string,
+        schema: string,
+    ) {
         try {
-            const result = await userLocationRepo.updateUserCity(cityUser, {
-                where: { userId },
-            });
+            const result = await userLocationRepo.updateUserCity(
+                cityUser,
+                {
+                    where: { userId },
+                },
+                schema,
+            );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_UPDATE_USER_CITY_LOCATION;
             return USER_LOCATION_RESPONSES.USER_CITY_LOCATION_UPDATED;
@@ -336,11 +399,14 @@ class UserLocationService {
         }
     }
 
-    async deleteUserCity(userId: string) {
+    async deleteUserCity(userId: string, schema: string) {
         try {
-            const result = await userLocationRepo.deleteUserCity({
-                where: { userId },
-            });
+            const result = await userLocationRepo.deleteUserCity(
+                {
+                    where: { userId },
+                },
+                schema,
+            );
             if (!result[0])
                 throw USER_LOCATION_RESPONSES.CANNOT_DELETE_USER_CITY_LOCATION;
             return USER_LOCATION_RESPONSES.DELETED_USER_CITY_LOCATION;
