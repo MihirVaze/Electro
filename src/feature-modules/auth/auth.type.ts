@@ -39,13 +39,7 @@ export const ZChangePassWord = z.object({
 export type ChangePassWord = z.infer<typeof ChangePassWord>;
 
 export type Payload = {
-<<<<<<< HEAD
+
     id: string,
     roleId: string[]
 }
-=======
-  id: string;
-  roleId: string[];
-  schema: string;
-};
->>>>>>> feature/clientUI

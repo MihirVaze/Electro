@@ -76,17 +76,11 @@ StateUserSchema.init(
 );
 
 StateUserSchema.belongsTo(UserSchema, {
-<<<<<<< HEAD
+
     foreignKey: 'userId',
     targetKey: 'id',
     as: 'User'
-=======
-  foreignKey: 'userId',
-  targetKey: 'id',
-  as: 'user',
->>>>>>> feature/clientUI
-});
-
+}),
 UserSchema.hasMany(StateUserSchema, {
   foreignKey: 'userId',
   sourceKey: 'id',
@@ -165,15 +159,11 @@ DistrictUserSchema.init(
 );
 
 DistrictUserSchema.belongsTo(UserSchema, {
-<<<<<<< HEAD
+
     foreignKey: 'userId',
     targetKey: 'id',
     as: 'User'
-=======
-  foreignKey: 'userId',
-  targetKey: 'id',
-  as: 'user',
->>>>>>> feature/clientUI
+
 });
 
 UserSchema.hasMany(DistrictUserSchema, {
@@ -254,15 +244,10 @@ CityUserSchema.init(
 );
 
 CityUserSchema.belongsTo(UserSchema, {
-<<<<<<< HEAD
     foreignKey: 'userId',
     targetKey: 'id',
     as: 'User'
-=======
-  foreignKey: 'userId',
-  targetKey: 'id',
-  as: 'user',
->>>>>>> feature/clientUI
+
 });
 
 UserSchema.hasMany(CityUserSchema, {
