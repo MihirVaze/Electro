@@ -1,5 +1,5 @@
 import roleServices from '../feature-modules/role/role.services';
-import { ElectroRoleEnum } from '../feature-modules/role/role.types';
+import { RoleEnum } from '../feature-modules/role/role.types';
 
 export const CanRegister = async (
     creatorRoleIds: string[],
@@ -18,10 +18,7 @@ export const CanRegister = async (
         ),
     );
 
-    const mapping: Record<
-        Exclude<ElectroRoleEnum, 'superadmin'>,
-        ElectroRoleEnum[]
-    > = {
+    const mapping: Record<Exclude<RoleEnum, 'superadmin'>, RoleEnum[]> = {
         client_manager: [
             'state_manager',
             'district_manager',

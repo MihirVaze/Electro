@@ -1,11 +1,11 @@
 import { DataTypes, Model } from 'sequelize';
-import { ElectroRole } from './role.types';
+import { Role } from './role.types';
 import { sequelize } from '../../connections/pg.connection';
 import { UserSchema } from '../user/user.schema';
 
-export class ElectroRoleSchema extends Model<ElectroRole, ElectroRole> {}
+export class RoleSchema extends Model<Role, Role> {}
 
-ElectroRoleSchema.init(
+RoleSchema.init(
     {
         id: {
             type: DataTypes.UUID,
@@ -21,72 +21,6 @@ ElectroRoleSchema.init(
                 'city_manager',
                 'worker',
                 'client_admin',
-            ),
-            allowNull: false,
-        },
-        isDeleted: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        deletedBy: {
-            type: DataTypes.UUID,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
-        },
-        restoredBy: {
-            type: DataTypes.UUID,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
-        },
-        createdBy: {
-            type: DataTypes.UUID,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
-        },
-        updatedBy: {
-            type: DataTypes.UUID,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
-        },
-        deletedAt: {
-            type: DataTypes.DATE,
-        },
-        restoredAt: {
-            type: DataTypes.DATE,
-        },
-    },
-    {
-        modelName: 'Role',
-        tableName: 'Role',
-        sequelize,
-    },
-);
-
-export class ClientRoleSchema extends Model<ElectroRole, ElectroRole> {}
-
-ClientRoleSchema.init(
-    {
-        id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
-        },
-        role: {
-            type: DataTypes.ENUM(
-                'admin',
-                'state_head',
-                'district_head',
-                'district_head',
-                'city_head',
-                'service_worker',
             ),
             allowNull: false,
         },

@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { User, UserRole } from './user.types';
 import { sequelize } from '../../connections/pg.connection';
-import { ElectroRoleSchema } from '../role/role.schema';
+import { RoleSchema } from '../role/role.schema';
 
 export class UserSchema extends Model<User, User> {}
 
@@ -98,7 +98,7 @@ UserRoleSchema.init(
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: ElectroRoleSchema,
+                model: RoleSchema,
                 key: 'id',
             },
         },
