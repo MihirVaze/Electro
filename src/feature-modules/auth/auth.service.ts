@@ -11,9 +11,12 @@ import {
 class AuthenticationServices {
     async login(credentials: Credentials, schema: string) {
         try {
-            const user = await userService.findOne({
-                email: credentials.email,
-            });
+            const user = await userService.findOne(
+                {
+                    email: credentials.email,
+                },
+                schema,
+            );
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const isValidUser = await compareEncryption(
                 user.password,
@@ -24,9 +27,12 @@ class AuthenticationServices {
             const { id } = user;
             if (!id) throw new Error('id not found');
 
-            const EmployeeRoles = await userService.getUserRoles({
-                userId: id,
-            });
+            const EmployeeRoles = await userService.getUserRoles(
+                {
+                    userId: id,
+                },
+                schema,
+            );
             const roleId = EmployeeRoles.map((e) => e.id).filter(
                 (e): e is string => !!e,
             );
@@ -37,7 +43,8 @@ class AuthenticationServices {
             // THIS GIVES THE ARRAY OF ALL THE VALID ROLES FOR THAT PERTICULAR USER
             const roles = await Promise.all(
                 roleId.map(
-                    async (e) => (await roleServices.getRole({ id: e })).role,
+                    async (e) =>
+                        (await roleServices.getRole({ id: e }, schema)).role,
                 ),
             );
 
@@ -47,21 +54,27 @@ class AuthenticationServices {
         }
     }
 
-    async update(change: ChangePassWord) {
+    async update(change: ChangePassWord, schema: string) {
         try {
             if (!change.id) throw 'ID NOT FOUND';
 
-            const oldPassword = await userService.getPassword(change.id);
+            const oldPassword = await userService.getPassword(
+                change.id,
+                schema,
+            );
             const comparePass = await compareEncryption(
                 oldPassword,
                 change.oldPassword,
             );
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const hashedPassword = await hashPassword(change.newPassword);
-            const result = await userService.update({
-                id: change.id,
-                password: hashedPassword,
-            });
+            const result = await userService.update(
+                {
+                    id: change.id,
+                    password: hashedPassword,
+                },
+                schema,
+            );
             return AUTH_RESPONSES.PASSWORD_CHANGED;
         } catch (e) {
             console.dir(e);

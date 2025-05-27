@@ -50,7 +50,6 @@ export const ZCreatePlan = z.object({
 });
 
 export type CreatePlan = z.infer<typeof ZCreatePlan>;
-export type CreatePlan = z.infer<typeof ZCreatePlan>;
 
 export const ZUpdatePlan = z.object({
     params: z.object({
@@ -63,7 +62,6 @@ export const ZUpdatePlan = z.object({
     }),
 });
 
-export type UpdatePlan = z.infer<typeof ZUpdatePlan>;
 export type UpdatePlan = z.infer<typeof ZUpdatePlan>;
 
 export const ZDeletePlan = z.object({

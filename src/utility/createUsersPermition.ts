@@ -4,16 +4,17 @@ import { RoleEnum } from '../feature-modules/role/role.types';
 export const CanRegister = async (
     creatorRoleIds: string[],
     rolesToCreate: string[],
+    schema: string,
 ) => {
     const creatorRoles = await Promise.all(
         creatorRoleIds.map(
-            async (e) => (await roleServices.getRole({ id: e })).role,
+            async (e) => (await roleServices.getRole({ id: e }, schema)).role,
         ),
     );
 
     const creatableRoles = await Promise.all(
         rolesToCreate.map(
-            async (e) => (await roleServices.getRole({ id: e })).role,
+            async (e) => (await roleServices.getRole({ id: e }, schema)).role,
         ),
     );
 
