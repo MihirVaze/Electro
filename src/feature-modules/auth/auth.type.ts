@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import z from 'zod';
 import { ZUser } from '../user/user.types';
 
@@ -47,5 +48,5 @@ export type ChangePassWord = z.infer<typeof ChangePassWord>;
 export type Payload = {
     id: string;
     roleId: string[];
-    schema: string;
+    schema: SchemaName;
 };

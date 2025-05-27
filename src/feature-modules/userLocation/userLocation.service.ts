@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import {
     CitySchema,
     DistrictSchema,
@@ -14,7 +15,7 @@ import {
 
 class UserLocationService {
     //STATE
-    async getAllUserState(stateUser: Partial<StateUser>, schema: string) {
+    async getAllUserState(stateUser: Partial<StateUser>, schema: SchemaName) {
         try {
             const result = await userLocationRepo.getAllUserState(
                 {
@@ -48,7 +49,7 @@ class UserLocationService {
         }
     }
 
-    async getUserState(schema: string) {
+    async getUserState(schema: SchemaName) {
         try {
             const result = await userLocationRepo.getUserState(
                 {
@@ -76,7 +77,7 @@ class UserLocationService {
         }
     }
 
-    async createUserState(stateUser: StateUser, schema: string) {
+    async createUserState(stateUser: StateUser, schema: SchemaName) {
         try {
             const result = await userLocationRepo.createUserState(
                 stateUser,
@@ -94,7 +95,7 @@ class UserLocationService {
     async updateUserState(
         stateUser: Partial<StateUser>,
         userId: string,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const result = await userLocationRepo.updateUserState(
@@ -113,7 +114,7 @@ class UserLocationService {
         }
     }
 
-    async deleteUserState(userId: string, schema: string) {
+    async deleteUserState(userId: string, schema: SchemaName) {
         try {
             const result = await userLocationRepo.deleteUserState(
                 {
@@ -133,7 +134,7 @@ class UserLocationService {
     //DISTRICT
     async getAllUserDistrict(
         districtUser: Partial<DistrictUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const result = await userLocationRepo.getAllUserDistrict(
@@ -168,7 +169,7 @@ class UserLocationService {
         }
     }
 
-    async getUserDistrict(schema: string) {
+    async getUserDistrict(schema: SchemaName) {
         try {
             const result = await userLocationRepo.getUserDistrict(
                 {
@@ -196,7 +197,7 @@ class UserLocationService {
         }
     }
 
-    async createUserDistrict(districtUser: DistrictUser, schema: string) {
+    async createUserDistrict(districtUser: DistrictUser, schema: SchemaName) {
         try {
             const result = await userLocationRepo.createUserDistrict(
                 districtUser,
@@ -214,7 +215,7 @@ class UserLocationService {
     async updateUserDistrict(
         districtUser: Partial<DistrictUser>,
         userId: string,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const result = await userLocationRepo.updateUserDistrict(
@@ -231,7 +232,7 @@ class UserLocationService {
         }
     }
 
-    async deleteUserDistrict(userId: string, schema: string) {
+    async deleteUserDistrict(userId: string, schema: SchemaName) {
         try {
             const result = await userLocationRepo.deleteUserDistrict(
                 {
@@ -249,7 +250,7 @@ class UserLocationService {
     }
 
     //CITY
-    async getAllUserCity(cityUser: Partial<CityUser>, schema: string) {
+    async getAllUserCity(cityUser: Partial<CityUser>, schema: SchemaName) {
         try {
             const result = await userLocationRepo.getAllUserCity(
                 {
@@ -283,7 +284,7 @@ class UserLocationService {
         }
     }
 
-    async getUserCity(schema: string) {
+    async getUserCity(schema: SchemaName) {
         try {
             const result = await userLocationRepo.getUserCity(
                 {
@@ -311,7 +312,7 @@ class UserLocationService {
         }
     }
 
-    async createUserCity(cityUser: CityUser, schema: string) {
+    async createUserCity(cityUser: CityUser, schema: SchemaName) {
         try {
             const result = await userLocationRepo.createUserCity(
                 cityUser,
@@ -330,7 +331,7 @@ class UserLocationService {
         type: LocationType,
         userId: string,
         locationIds: string[],
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             switch (type) {
@@ -380,7 +381,7 @@ class UserLocationService {
     async updateUserCity(
         cityUser: Partial<CityUser>,
         userId: string,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const result = await userLocationRepo.updateUserCity(
@@ -399,7 +400,7 @@ class UserLocationService {
         }
     }
 
-    async deleteUserCity(userId: string, schema: string) {
+    async deleteUserCity(userId: string, schema: SchemaName) {
         try {
             const result = await userLocationRepo.deleteUserCity(
                 {

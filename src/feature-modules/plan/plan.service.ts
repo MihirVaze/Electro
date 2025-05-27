@@ -1,10 +1,11 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { Op } from 'sequelize';
 import planRepo from './plan.repo';
 import { PLAN_RESPONSES } from './plan.responses';
 import { Plan } from './plan.type';
 
 class planServices {
-    async findOnePlan(plan: Partial<Plan>, schema: string) {
+    async findOnePlan(plan: Partial<Plan>, schema: SchemaName) {
         try {
             const planRecord = await planRepo.get(
                 {
@@ -37,7 +38,7 @@ class planServices {
         limit: number,
         page: number,
         plan: Partial<Plan>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             let where: any = {};
@@ -91,7 +92,7 @@ class planServices {
         }
     }
 
-    async createPlan(plan: Plan, schema: string) {
+    async createPlan(plan: Plan, schema: SchemaName) {
         try {
             const result = await planRepo.create(plan, schema);
             return PLAN_RESPONSES.PLAN_CREATED;
@@ -101,7 +102,7 @@ class planServices {
         }
     }
 
-    async updatePlan(id: string, plan: Partial<Plan>, schema: string) {
+    async updatePlan(id: string, plan: Partial<Plan>, schema: SchemaName) {
         try {
             if (!plan.id) throw 'ID NOT FOUND';
             const result = await planRepo.update(
@@ -119,7 +120,7 @@ class planServices {
         }
     }
 
-    async deleteplan(id: string, schema: string) {
+    async deleteplan(id: string, schema: SchemaName) {
         try {
             const result = await planRepo.delete({ where: { id } }, schema);
             if (!result[0]) throw PLAN_RESPONSES.PLAN_DELETION_FAILED;
