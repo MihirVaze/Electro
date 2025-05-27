@@ -3,7 +3,12 @@ import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
 import clientService from './client.service';
 import { validate } from '../../utility/validate';
-import { ZClient, ZFindClient, ZUpdateClient } from './client.type';
+import {
+    ZClient,
+    ZFindClient,
+    ZRegisterClient,
+    ZUpdateClient,
+} from './client.type';
 
 const router = new CustomRouter();
 
@@ -42,7 +47,7 @@ router.get(
 router.post(
     '/',
     [
-        validate(ZClient),
+        validate(ZRegisterClient),
         async (req, res, next) => {
             try {
                 const result = await clientService.addClient(
