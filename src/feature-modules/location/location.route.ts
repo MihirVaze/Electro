@@ -10,7 +10,8 @@ router.post(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.createState(req.body);
+                const schema = req.payload.schema;
+                const result = locationService.createState(req.body, schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -25,7 +26,8 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getState(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.getState(req.params.id, schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -40,7 +42,8 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getAllStates();
+                const schema = req.payload.schema;
+                const result = locationService.getAllStates(schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -55,9 +58,11 @@ router.patch(
     [
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const result = locationService.updateState(
                     req.params.id,
                     req.body,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (error) {
@@ -73,7 +78,11 @@ router.del(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.deleteState(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.deleteState(
+                    req.params.id,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -89,7 +98,8 @@ router.post(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.createDistrict(req.body);
+                const schema = req.payload.schema;
+                const result = locationService.createDistrict(req.body, schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -104,7 +114,11 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getDistrict(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.getDistrict(
+                    req.params.id,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -119,7 +133,8 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getAllDistricts();
+                const schema = req.payload.schema;
+                const result = locationService.getAllDistricts(schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -134,9 +149,11 @@ router.patch(
     [
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const result = locationService.updateDistrict(
                     req.params.id,
                     req.body,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (error) {
@@ -152,7 +169,11 @@ router.del(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.deleteDistrict(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.deleteDistrict(
+                    req.params.id,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -168,7 +189,8 @@ router.post(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.createCity(req.body);
+                const schema = req.payload.schema;
+                const result = locationService.createCity(req.body, schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -183,7 +205,8 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getCity(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.getCity(req.params.id, schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -198,7 +221,8 @@ router.get(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.getAllCitys();
+                const schema = req.payload.schema;
+                const result = locationService.getAllCitys(schema);
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
@@ -213,9 +237,11 @@ router.patch(
     [
         async (req, res, next) => {
             try {
+                const schema = req.payload.schema;
                 const result = locationService.updateCity(
                     req.params.id,
                     req.body,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (error) {
@@ -231,7 +257,11 @@ router.del(
     [
         async (req, res, next) => {
             try {
-                const result = locationService.deleteCity(req.params.id);
+                const schema = req.payload.schema;
+                const result = locationService.deleteCity(
+                    req.params.id,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (error) {
                 return next(error);
