@@ -41,6 +41,16 @@ export const ZFindClient = z.object({
     }),
 });
 
+export const ZRegisterClient = z.object({
+    body: ZClient.pick({
+        clientName: true,
+        schemaName: true,
+        phoneNo: true,
+        email: true,
+        password: true,
+    }),
+});
+
 export const ZUpdateClient = z.object({
     body: ZClient.pick({
         clientName: true,
