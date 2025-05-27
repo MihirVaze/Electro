@@ -6,68 +6,68 @@ import { UserSchema } from '../user/user.schema';
 export class ClientSchema extends Model<Client, Client> {}
 
 ClientSchema.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        clientName: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        userId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        schemaName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        deletedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        restoredBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        createdBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        updatedBy: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        deletedAt: {
+            type: DataTypes.DATE,
+        },
+        restoredAt: {
+            type: DataTypes.DATE,
+        },
     },
-    clientName: {
-      type: DataTypes.UUID,
-      allowNull: false,
+    {
+        sequelize,
+        modelName: 'Client',
+        tableName: 'Client',
     },
-    userId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    schemaName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    deletedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    restoredBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    createdBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    updatedBy: {
-      type: DataTypes.UUID,
-      references: {
-        model: UserSchema,
-        key: 'id',
-      },
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
-    },
-    restoredAt: {
-      type: DataTypes.DATE,
-    },
-  },
-  {
-    sequelize,
-    modelName: 'Client',
-    tableName: 'Client',
-  },
 );
 
 ClientSchema.belongsTo(UserSchema, { foreignKey: 'userId' });

@@ -1,20 +1,35 @@
 import { SequelizeStorage, Umzug } from 'umzug';
 import { sequelize } from '../connections/pg.connection';
-import { Sequelize } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 
 export const runMigration = async (schema: string, migrations: string) => {
-  sequelize.createSchema(schema, {});
+    sequelize.createSchema(schema, {});
 
-  const queryInterface = sequelize.getQueryInterface();
+    const queryInterface = sequelize.getQueryInterface();
 
-  const umzug = new Umzug({
-    migrations: { glob: migrations },
-    context: { queryInterface, Sequelize, schema },
-    storage: new SequelizeStorage({ sequelize, schema }),
-    logger: console,
-  });
+    const model = sequelize.define(
+        'SequelizeMeta',
+        {
+            name: {
+                type: DataTypes.STRING,
+                unique: true,
+                primaryKey: true,
+            },
+        },
+        {
+            schema,
+            modelName: 'SequelizeMeta',
+        },
+    );
 
-  await umzug.up();
+    const umzug = new Umzug({
+        migrations: { glob: migrations },
+        context: { queryInterface, Sequelize, schema },
+        storage: new SequelizeStorage({ model }),
+        logger: console,
+    });
+
+    await umzug.up();
 };
 
 // Call the runMigration method with the schema name and the migration folder in this way:-

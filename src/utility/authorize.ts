@@ -5,26 +5,38 @@ import { Payload } from '../feature-modules/auth/auth.type';
 import roleServices from '../feature-modules/role/role.services';
 
 export const authorizeT = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.headers.authorization;
-    if (!token) throw 'UNAUTHORISED';
+    try {
+        const token = req.headers.authorization;
+        if (!token) throw 'UNAUTHORISED';
 
-    const payload = verify(token, process.env.JWT_SECRET_KEY) as Payload;
-    req.payload = payload;
-    next();
-  } catch (e) {
-    next({ status: 401, message: 'UNAUTHORIZED' });
-  }
+        const payload = verify(token, process.env.JWT_SECRET_KEY) as Payload;
+        req.payload = payload;
+        next();
+    } catch (e) {
+        next({ status: 401, message: 'UNAUTHORIZED' });
+    }
 };
 
-export const authorizeR = (AuthorizedFor: Has_Access) => async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const Accessedfor = await Promise.all(AuthorizedFor.map(async (e) => (await roleServices.getRole({ role: e })).id));
+export const authorizeR =
+    (AuthorizedFor: Has_Access) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { roleId, schema } = req.payload;
 
-    const { roleId } = req.payload;
-    if (roleId.length !== 0 && Accessedfor.some((e) => (e ? roleId.includes(e) : false))) next();
-    else throw 'FORBIDDEN';
-  } catch (e) {
-    next({ status: 403, message: 'FORBIDDEN' });
-  }
-};
+            const Accessedfor = await Promise.all(
+                AuthorizedFor.map(
+                    async (e) =>
+                        (await roleServices.getRole({ role: e }, schema)).id,
+                ),
+            );
+
+            if (
+                roleId.length !== 0 &&
+                Accessedfor.some((e) => (e ? roleId.includes(e) : false))
+            )
+                next();
+            else throw 'FORBIDDEN';
+        } catch (e) {
+            next({ status: 403, message: 'FORBIDDEN' });
+        }
+    };
