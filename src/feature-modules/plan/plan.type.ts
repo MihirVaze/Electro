@@ -2,12 +2,15 @@ import z from 'zod';
 
 export const ZPlan = z.object({
     id: z.string().trim().uuid().optional(),
+
     minCustomers: z.number().positive(),
     maxCustomers: z.number().positive(),
+    basePrice: z.number().positive(),
+
     minPrice: z.number().positive().optional(),
     maxPrice: z.number().positive().optional(),
-    basePrice: z.number().positive(),
-    isDeleted: z.boolean().default(false),
+
+    isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
@@ -47,6 +50,7 @@ export const ZCreatePlan = z.object({
 });
 
 export type CreatePlan = z.infer<typeof ZCreatePlan>;
+export type CreatePlan = z.infer<typeof ZCreatePlan>;
 
 export const ZUpdatePlan = z.object({
     params: z.object({
@@ -59,6 +63,7 @@ export const ZUpdatePlan = z.object({
     }),
 });
 
+export type UpdatePlan = z.infer<typeof ZUpdatePlan>;
 export type UpdatePlan = z.infer<typeof ZUpdatePlan>;
 
 export const ZDeletePlan = z.object({
