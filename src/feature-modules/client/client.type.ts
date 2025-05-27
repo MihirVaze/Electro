@@ -5,7 +5,7 @@ export const ZClient = z.object({
     clientName: z.string().trim().nonempty(),
     schemaName: z.string().trim().nonempty(),
 
-    userId: z.string().uuid(),
+    userId: z.string().uuid().optional(),
 
     isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
@@ -38,5 +38,13 @@ export type Client = z.infer<typeof ZClient>;
 export const ZFindClient = z.object({
     query: ZClient.pick({
         clientName: true,
+    }),
+});
+
+export const ZUpdateClient = z.object({
+    body: ZClient.pick({
+        clientName: true,
+        email: true,
+        phoneNo: true,
     }),
 });
