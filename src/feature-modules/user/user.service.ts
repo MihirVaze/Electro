@@ -234,13 +234,13 @@ class UserServices {
     ) {
         try {
             for (const userRole of UserRoles) {
-                const userRoleEntry = await this.createUserRole(
-                    {
-                        userId,
-                        roleId: userRole.roleId,
-                    },
-                    schema,
-                );
+                // const userRoleEntry = await this.createUserRole(
+                //     {
+                //         userId,
+                //         roleId: userRole.roleId,
+                //     },
+                //     schema,
+                // );
                 const role = (
                     await roleServices.getRole({ id: userRole.roleId }, schema)
                 ).role;
