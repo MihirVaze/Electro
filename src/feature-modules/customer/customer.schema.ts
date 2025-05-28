@@ -27,6 +27,10 @@ CustomerSchema.init(
         userId: {
             type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
         },
         address: {
             type: DataTypes.STRING,

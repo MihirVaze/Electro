@@ -186,7 +186,8 @@ class UserServices {
         schema: SchemaName,
     ) {
         try {
-            const password = generatePassword();
+            // const password = generatePassword(); WILL BE HARDCODING THE PASSWORD FOR TESTING
+            const password = '12345';
             const hashedPassword = await hashPassword(password);
             user.password = hashedPassword;
 

@@ -32,15 +32,20 @@ export const ZCustomer = z.object({
     updatedBy: z.string().trim().uuid().optional(),
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
+
+    limit: z.coerce.number().default(10).optional(),
+    page: z.coerce.number().default(1).optional(),
 });
 
 export type Customer = z.infer<typeof ZCustomer>;
 
-export const ZFindCustomer = z.object({
+export const ZFindCustomers = z.object({
     query: ZCustomer.pick({
         name: true,
         email: true,
-    }),
+        limit: true,
+        page: true,
+    }).optional(),
 });
 
 export const ZRegisterCustomer = z.object({
