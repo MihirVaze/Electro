@@ -1,32 +1,49 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../connections/pg.connection';
-import { Client } from './client.type';
+import { Grievance } from './grievance.type';
 import { UserSchema } from '../user/user.schema';
+import { sequelize } from '../../connections/pg.connection';
+import { GrievanceTypeSchema } from '../grievanceType/grievanceType.schema';
 
-export class ClientSchema extends Model<Client, Client> {}
+export class GrievanceSchema extends Model<Grievance, Grievance> {}
 
-ClientSchema.init(
+GrievanceSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        clientName: {
-            type: DataTypes.UUID,
-            allowNull: false,
-        },
         userId: {
             type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
         },
-        schemaName: {
+        grievanceTypeId: {
+            type: DataTypes.UUID,
+        },
+        comments: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+        },
+        status: {
+            type: DataTypes.ENUM(
+                'pending',
+                'in-progress',
+                'escalated',
+                'resolved',
+                'rejected',
+            ),
+            defaultValue: 'pending',
+        },
+        assignedTo: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        escalatedTo: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -68,11 +85,16 @@ ClientSchema.init(
         },
     },
     {
+        modelName: 'Grievance',
+        tableName: 'Grievance',
         sequelize,
-        modelName: 'Client',
-        tableName: 'Client',
     },
 );
 
-ClientSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
-UserSchema.hasMany(ClientSchema, { foreignKey: 'userId' });
+GrievanceSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(GrievanceSchema, { foreignKey: 'userId' });
+
+GrievanceSchema.belongsTo(GrievanceTypeSchema, {
+    foreignKey: 'grievanceTypeId',
+});
+GrievanceTypeSchema.hasMany(GrievanceSchema, { foreignKey: 'grievanceTypeId' });

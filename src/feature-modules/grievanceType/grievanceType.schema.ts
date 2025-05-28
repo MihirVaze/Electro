@@ -1,28 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
-import { Plan } from './plan.type';
-import { sequelize } from '../../connections/pg.connection';
+import { GrievanceType } from './grievanceType.type';
 import { UserSchema } from '../user/user.schema';
+import { sequelize } from '../../connections/pg.connection';
 
-export class PlanSchema extends Model<Plan, Plan> {}
+export class GrievanceTypeSchema extends Model<GrievanceType, GrievanceType> {}
 
-PlanSchema.init(
+GrievanceTypeSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        minCustomers: {
-            type: DataTypes.INTEGER,
+        name: {
+            type: DataTypes.STRING,
             allowNull: false,
-        },
-        maxCustomers: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        basePrice: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+            unique: true,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -64,8 +57,8 @@ PlanSchema.init(
         },
     },
     {
-        tableName: 'Plan',
-        modelName: 'Plan',
+        tableName: 'GrievanceType',
+        modelName: 'GrievanceType',
         sequelize,
     },
 );

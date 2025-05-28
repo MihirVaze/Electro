@@ -1,27 +1,35 @@
 import { DataTypes, Model } from 'sequelize';
-import { Plan } from './plan.type';
 import { sequelize } from '../../connections/pg.connection';
 import { UserSchema } from '../user/user.schema';
+import { Customer } from './customer.type';
+import {
+    CitySchema,
+    DistrictSchema,
+    StateSchema,
+} from '../location/location.schema';
 
-export class PlanSchema extends Model<Plan, Plan> {}
+export class CustomerSchema extends Model<Customer, Customer> {}
 
-PlanSchema.init(
+CustomerSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        minCustomers: {
-            type: DataTypes.INTEGER,
+        cityId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CitySchema,
+                key: 'id',
+            },
+        },
+        userId: {
+            type: DataTypes.UUID,
             allowNull: false,
         },
-        maxCustomers: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        basePrice: {
-            type: DataTypes.INTEGER,
+        address: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         isDeleted: {
@@ -64,8 +72,14 @@ PlanSchema.init(
         },
     },
     {
-        tableName: 'Plan',
-        modelName: 'Plan',
         sequelize,
+        modelName: 'Customer',
+        tableName: 'Customer',
     },
 );
+
+CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
+
+CustomerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
+CitySchema.hasMany(CustomerSchema, { foreignKey: 'cityId' });
