@@ -1,6 +1,7 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { CitySchema } from '../location/location.schema';
 import { UserSchema } from '../user/user.schema';
+import userService from '../user/user.service';
 import workerRepo from './worker.repo';
 import { WORKER_RESPONSES } from './worker.responses';
 import { Worker } from './worker.type';
@@ -8,11 +9,33 @@ import { Worker } from './worker.type';
 class WorkerService {
     async addWorker(worker: Worker, schema: SchemaName) {
         try {
-            const { userId, cityId } = worker;
-            if (!userId || !cityId)
+            const { workerName, userId, cityId, phoneNo, email, password } =
+                worker;
+            if (!userId || !cityId || !phoneNo || !email || !password)
                 throw WORKER_RESPONSES.WORKER_CREATION_FAILED;
 
-            const result = await workerRepo.createWorker(worker, schema);
+            const newUser = await userService.createUser(
+                {
+                    name: workerName,
+                    phoneNo,
+                    email,
+                    password,
+                },
+                schema,
+            );
+
+            const { id } = newUser.result;
+            if (!id) throw WORKER_RESPONSES.WORKER_CREATION_FAILED;
+
+            const result = await workerRepo.createWorker(
+                {
+                    workerName,
+                    userId: id,
+                    cityId,
+                },
+                schema,
+            );
+
             if (!result) throw WORKER_RESPONSES.WORKER_CREATION_FAILED;
 
             return WORKER_RESPONSES.WORKER_CREATED;

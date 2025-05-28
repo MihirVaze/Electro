@@ -13,6 +13,10 @@ WorkerSchema.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        workerName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         userId: {
             type: DataTypes.UUID,
             references: {
