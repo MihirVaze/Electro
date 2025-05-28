@@ -7,6 +7,11 @@ import userLocationService from '../userLocation/userLocation.service';
 import userRepo from './user.repo';
 import { USER_RESPONSES } from './user.responses';
 import { User, UserRole, UserRoleLocation } from './user.types';
+import {
+    generatePassword,
+    hashPassword,
+} from '../../utility/password.generator';
+import { sendEmail } from '../../utility/sendmail';
 
 class UserServices {
     async findOne(user: Partial<Credentials>, schema: SchemaName) {
@@ -181,6 +186,10 @@ class UserServices {
         schema: SchemaName,
     ) {
         try {
+            const password = generatePassword();
+            const hashedPassword = await hashPassword(password);
+            user.password = hashedPassword;
+
             const createUser = await this.createUser(user, schema);
             if (!createUser.result.id) throw 'ID NOT FOUND';
 
@@ -188,6 +197,25 @@ class UserServices {
                 createUser.result.id,
                 UserRoles,
                 schema,
+            );
+
+            sendEmail(
+                user.email,
+                'YOUR LOGIN CREDENTIALS ARE',
+                `<!DOCTYPE html>
+                    <html>
+
+                    <head>
+                        <title>Login Credentials </title>
+                    </head>
+
+                    <body>
+                        <p>Your login credentials are: </p>
+                        <p> Email: ${user.email} </p>
+                        <p>Password: ${password} </p>
+                    </body>
+
+                    </html>`,
             );
 
             const responses = USER_RESPONSES.USER_CREATED;
