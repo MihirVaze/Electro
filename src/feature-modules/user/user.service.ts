@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { Credentials } from '../auth/auth.type';
 import { RoleSchema } from '../role/role.schema';
 import roleServices from '../role/role.services';
@@ -7,7 +8,7 @@ import { USER_RESPONSES } from './user.responses';
 import { User, UserRole, UserRoleLocation } from './user.types';
 
 class UserServices {
-    async findOne(user: Partial<Credentials>, schema: string) {
+    async findOne(user: Partial<Credentials>, schema: SchemaName) {
         try {
             const userRecord = await userRepo.getUser(
                 {
@@ -36,7 +37,7 @@ class UserServices {
         }
     }
 
-    async getPassword(id: string, schema: string) {
+    async getPassword(id: string, schema: SchemaName) {
         try {
             const userRecord = await userRepo.getUser(
                 {
@@ -64,7 +65,7 @@ class UserServices {
         }
     }
 
-    async createUser(user: User, schema: string) {
+    async createUser(user: User, schema: SchemaName) {
         try {
             const result = (await userRepo.createUser(user, schema)).dataValues;
             const responses = USER_RESPONSES.USER_CREATED;
@@ -75,7 +76,7 @@ class UserServices {
         }
     }
 
-    async update(user: Partial<User>, schema: string) {
+    async update(user: Partial<User>, schema: SchemaName) {
         try {
             if (!user.id) throw 'ID NOT FOUND';
             const result = await userRepo.updateUser(
@@ -93,7 +94,7 @@ class UserServices {
         }
     }
 
-    async deleteUser(id: string, schema: string) {
+    async deleteUser(id: string, schema: SchemaName) {
         try {
             const result = await userRepo.deleteUser({ where: { id } }, schema);
             if (!result[0]) throw USER_RESPONSES.USER_DELETION_FAILED;
@@ -104,7 +105,7 @@ class UserServices {
         }
     }
 
-    async getUserRoles(UserRole: Partial<UserRole>, schema: string) {
+    async getUserRoles(UserRole: Partial<UserRole>, schema: SchemaName) {
         try {
             const result = await userRepo.getAllUserRole(
                 {
@@ -137,7 +138,7 @@ class UserServices {
         }
     }
 
-    async getAllRoles(schema: string) {
+    async getAllRoles(schema: SchemaName) {
         try {
             const result = await userRepo.getAllUserRole(
                 {
@@ -163,7 +164,7 @@ class UserServices {
         }
     }
 
-    async createUserRole(UserRole: UserRole, schema: string) {
+    async createUserRole(UserRole: UserRole, schema: SchemaName) {
         try {
             const result = await userRepo.createUserRole(UserRole, schema);
             return USER_RESPONSES.USER_ROLE_CREATION_FAILED;
@@ -176,7 +177,7 @@ class UserServices {
     async onBoardUser(
         user: User,
         UserRoles: UserRoleLocation[],
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const createUser = await this.createUser(user, schema);
@@ -188,7 +189,8 @@ class UserServices {
                 schema,
             );
 
-            return USER_RESPONSES.USER_CREATED;
+            const responses = USER_RESPONSES.USER_CREATED;
+            return { result: createUser.result, responses };
         } catch (error) {
             console.dir(error);
             throw error;
@@ -198,7 +200,7 @@ class UserServices {
     async addRoles(
         userId: string,
         UserRoles: UserRoleLocation[],
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             for (const userRole of UserRoles) {

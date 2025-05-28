@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
 import {
     CityUserSchema,
@@ -8,17 +9,20 @@ import { CityUser, DistrictUser, StateUser } from './userLocation.type';
 
 class UserLocationRepo {
     //STATE
-    public async createUserState(stateUser: StateUser, schema: string) {
+    public async createUserState(stateUser: StateUser, schema: SchemaName) {
         return StateUserSchema.schema(schema).create(stateUser);
     }
 
-    public async getUserState(options: FindOptions<StateUser>, schema: string) {
+    public async getUserState(
+        options: FindOptions<StateUser>,
+        schema: SchemaName,
+    ) {
         return StateUserSchema.schema(schema).findOne(options);
     }
 
     public async getAllUserState(
         options: FindOptions<StateUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return StateUserSchema.schema(schema).findAndCountAll(options);
     }
@@ -26,14 +30,14 @@ class UserLocationRepo {
     public async updateUserState(
         stateUser: Partial<StateUser>,
         options: UpdateOptions<StateUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return StateUserSchema.schema(schema).update(stateUser, options);
     }
 
     public async deleteUserState(
         options: UpdateOptions<StateUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return StateUserSchema.schema(schema).update(
             { isDeleted: true },
@@ -44,21 +48,21 @@ class UserLocationRepo {
     //DISTRICT
     public async createUserDistrict(
         districtUser: DistrictUser,
-        schema: string,
+        schema: SchemaName,
     ) {
         return DistrictUserSchema.schema(schema).create(districtUser);
     }
 
     public async getUserDistrict(
         options: FindOptions<DistrictUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return DistrictUserSchema.schema(schema).findOne(options);
     }
 
     public async getAllUserDistrict(
         options: FindOptions<DistrictUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return DistrictUserSchema.schema(schema).findAndCountAll(options);
     }
@@ -66,14 +70,14 @@ class UserLocationRepo {
     public async updateUserDistrict(
         districtUser: Partial<DistrictUser>,
         options: UpdateOptions<DistrictUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return DistrictUserSchema.schema(schema).update(districtUser, options);
     }
 
     public async deleteUserDistrict(
         options: UpdateOptions<DistrictUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return DistrictUserSchema.schema(schema).update(
             { isDeleted: true },
@@ -82,17 +86,20 @@ class UserLocationRepo {
     }
 
     //CITY
-    public async createUserCity(cityUser: CityUser, schema: string) {
+    public async createUserCity(cityUser: CityUser, schema: SchemaName) {
         return CityUserSchema.schema(schema).create(cityUser);
     }
 
-    public async getUserCity(options: FindOptions<CityUser>, schema: string) {
+    public async getUserCity(
+        options: FindOptions<CityUser>,
+        schema: SchemaName,
+    ) {
         return CityUserSchema.schema(schema).findOne(options);
     }
 
     public async getAllUserCity(
         options: FindOptions<CityUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return CityUserSchema.schema(schema).findAndCountAll(options);
     }
@@ -100,14 +107,14 @@ class UserLocationRepo {
     public async updateUserCity(
         cityUser: Partial<CityUser>,
         options: UpdateOptions<CityUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return CityUserSchema.schema(schema).update(cityUser, options);
     }
 
     public async deleteUserCity(
         options: UpdateOptions<CityUser>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return CityUserSchema.schema(schema).update(
             { isDeleted: true },

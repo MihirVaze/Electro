@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import clientRepo from './client.repo';
 import { Client } from './client.type';
 import userService from '../user/user.service';
@@ -7,7 +8,7 @@ import { UserSchema } from '../user/user.schema';
 import { runMigration } from '../../utility/umzug-migration';
 
 class ClientServices {
-    async addClient(client: Client, schema: string) {
+    async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, password, schemaName } = client;
             if (!phoneNo || !email || !password)
@@ -46,7 +47,7 @@ class ClientServices {
         }
     }
 
-    async getClient(client: Partial<Client>, schema: string) {
+    async getClient(client: Partial<Client>, schema: SchemaName) {
         try {
             const result = await clientRepo.get({ where: client }, schema);
             if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
@@ -62,7 +63,7 @@ class ClientServices {
         client: Partial<Client>,
         limit: number,
         page: number,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             let where: any = {};
@@ -107,7 +108,7 @@ class ClientServices {
     async updateClient(
         client: Partial<Client>,
         clientId: string,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const { phoneNo, email, ...restOfClient } = client;

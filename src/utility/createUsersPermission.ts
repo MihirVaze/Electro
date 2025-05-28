@@ -1,15 +1,22 @@
+import { SchemaName } from './umzug-migration';
 import roleServices from '../feature-modules/role/role.services';
 import { RoleEnum } from '../feature-modules/role/role.types';
 
 export const CanRegister = async (
     creatorRoleIds: string[],
     rolesToCreate: string[],
-    schema: string,
+    schema: SchemaName,
 ) => {
-    const creatorRoles = await Promise.all(
-        creatorRoleIds.map(
-            async (e) => (await roleServices.getRole({ id: e }, schema)).role,
-        ),
+    const creatorRoles = (
+        await Promise.all(
+            creatorRoleIds.map(
+                async (e) => (await roleServices.getRole({ id: e }, schema)).role,
+            )
+        )
+    ).filter(
+        (role) =>
+            (schema === 'public' && role !== 'service_worker') ||
+            (schema !== 'public' && role !== 'worker')
     );
 
     const creatableRoles = await Promise.all(
@@ -25,12 +32,19 @@ export const CanRegister = async (
             'city_manager',
             'worker',
         ],
-        state_manager: ['district_manager', 'city_manager', 'worker'],
-        district_manager: ['city_manager', 'worker'],
-        city_manager: ['worker'],
+        client_admin: [
+            'state_manager',
+            'district_manager',
+            'city_manager',
+            'service_worker',
+        ],
+        state_manager: ['district_manager', 'city_manager', 'worker', 'service_worker'],
+        district_manager: ['city_manager', 'worker', 'service_worker'],
+        city_manager: ['worker', 'service_worker'],
         worker: [],
-        client_admin: [],
+        service_worker: [],
     };
+    
     for (const role of creatableRoles) {
         const isAllowed = creatorRoles.some((creator) => {
             if (creator === 'superadmin') return true;

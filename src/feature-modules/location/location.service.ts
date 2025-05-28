@@ -1,10 +1,11 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import locationRepo from './location.repo';
 import { LOCATION_RESPONSES } from './location.responses';
 import { City, District, State } from './location.type';
 
 class LocationServices {
     // STATE
-    async createState(state: State, schema: string) {
+    async createState(state: State, schema: SchemaName) {
         try {
             const result = await locationRepo.createState({ ...state }, schema);
             if (result) return LOCATION_RESPONSES.STATE_CREATED;
@@ -14,7 +15,7 @@ class LocationServices {
         }
     }
 
-    async getState(stateId: string, schema: string) {
+    async getState(stateId: string, schema: SchemaName) {
         try {
             const result = await locationRepo.getState(
                 {
@@ -33,7 +34,7 @@ class LocationServices {
         }
     }
 
-    async getAllStates(schema: string) {
+    async getAllStates(schema: SchemaName) {
         try {
             const result = await locationRepo.getAllStates(
                 {
@@ -51,7 +52,7 @@ class LocationServices {
     async updateState(
         stateId: string,
         stateField: Partial<State>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             if (!stateId) throw LOCATION_RESPONSES.STATE_ID_REQURED;
@@ -70,7 +71,7 @@ class LocationServices {
         }
     }
 
-    async deleteState(stateId: string, schema: string) {
+    async deleteState(stateId: string, schema: SchemaName) {
         try {
             if (!stateId) throw LOCATION_RESPONSES.STATE_ID_REQURED;
             const result = await locationRepo.deleteState(
@@ -88,7 +89,7 @@ class LocationServices {
     }
 
     // DISTRICT
-    async createDistrict(district: District, schema: string) {
+    async createDistrict(district: District, schema: SchemaName) {
         try {
             const result = await locationRepo.createDistrict(district, schema);
             if (result) return LOCATION_RESPONSES.DISTRICT_CREATED;
@@ -98,7 +99,7 @@ class LocationServices {
         }
     }
 
-    async getDistrict(districtId: string, schema: string) {
+    async getDistrict(districtId: string, schema: SchemaName) {
         try {
             const result = await locationRepo.getDistrict(
                 {
@@ -117,7 +118,7 @@ class LocationServices {
         }
     }
 
-    async getAllDistricts(schema: string) {
+    async getAllDistricts(schema: SchemaName) {
         try {
             const result = await locationRepo.getAllDistricts(
                 {
@@ -135,7 +136,7 @@ class LocationServices {
     async updateDistrict(
         districtId: string,
         districtField: Partial<District>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             if (!districtId) throw LOCATION_RESPONSES.DISTRICT_ID_REQURED;
@@ -154,7 +155,7 @@ class LocationServices {
         }
     }
 
-    async deleteDistrict(districtId: string, schema: string) {
+    async deleteDistrict(districtId: string, schema: SchemaName) {
         try {
             if (!districtId) throw LOCATION_RESPONSES.DISTRICT_ID_REQURED;
             const result = await locationRepo.deleteDistrict(
@@ -172,7 +173,7 @@ class LocationServices {
     }
 
     //CITY
-    async createCity(city: City, schema: string) {
+    async createCity(city: City, schema: SchemaName) {
         try {
             const result = await locationRepo.createCity(city, schema);
             if (result) return LOCATION_RESPONSES.CITY_CREATED;
@@ -182,7 +183,7 @@ class LocationServices {
         }
     }
 
-    async getCity(cityId: string, schema: string) {
+    async getCity(cityId: string, schema: SchemaName) {
         try {
             const result = await locationRepo.getCity(
                 {
@@ -201,7 +202,7 @@ class LocationServices {
         }
     }
 
-    async getAllCitys(schema: string) {
+    async getAllCitys(schema: SchemaName) {
         try {
             const result = await locationRepo.getAllCitys(
                 {
@@ -216,7 +217,11 @@ class LocationServices {
         }
     }
 
-    async updateCity(cityId: string, cityField: Partial<City>, schema: string) {
+    async updateCity(
+        cityId: string,
+        cityField: Partial<City>,
+        schema: SchemaName,
+    ) {
         try {
             if (!cityId) throw LOCATION_RESPONSES.CITY_ID_REQURED;
             const result = await locationRepo.updateCity(
@@ -234,7 +239,7 @@ class LocationServices {
         }
     }
 
-    async deleteCity(cityId: string, schema: string) {
+    async deleteCity(cityId: string, schema: SchemaName) {
         try {
             if (!cityId) throw LOCATION_RESPONSES.CITY_ID_REQURED;
             const result = await locationRepo.deleteCity(

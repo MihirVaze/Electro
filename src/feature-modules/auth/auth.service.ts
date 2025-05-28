@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { sign } from 'jsonwebtoken';
 import userService from '../user/user.service';
 import { AUTH_RESPONSES } from './auth.responses';
@@ -9,7 +10,7 @@ import {
 } from '../../utility/password.generator';
 
 class AuthenticationServices {
-    async login(credentials: Credentials, schema: string) {
+    async login(credentials: Credentials, schema: SchemaName) {
         try {
             const user = await userService.findOne(
                 {
@@ -54,7 +55,7 @@ class AuthenticationServices {
         }
     }
 
-    async update(change: ChangePassWord, schema: string) {
+    async update(change: ChangePassWord, schema: SchemaName) {
         try {
             if (!change.id) throw 'ID NOT FOUND';
 
