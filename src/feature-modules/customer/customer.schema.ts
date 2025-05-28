@@ -1,30 +1,34 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../connections/pg.connection';
-import { Client } from './client.type';
 import { UserSchema } from '../user/user.schema';
+import { Customer } from './customer.type';
+import {
+    CitySchema,
+    DistrictSchema,
+    StateSchema,
+} from '../location/location.schema';
 
-export class ClientSchema extends Model<Client, Client> {}
+export class CustomerSchema extends Model<Customer, Customer> {}
 
-ClientSchema.init(
+CustomerSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        clientName: {
+        cityId: {
             type: DataTypes.UUID,
-            allowNull: false,
+            references: {
+                model: CitySchema,
+                key: 'id',
+            },
         },
         userId: {
             type: DataTypes.UUID,
             allowNull: false,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
         },
-        schemaName: {
+        address: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -69,10 +73,13 @@ ClientSchema.init(
     },
     {
         sequelize,
-        modelName: 'Client',
-        tableName: 'Client',
+        modelName: 'Customer',
+        tableName: 'Customer',
     },
 );
 
-ClientSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
-UserSchema.hasMany(ClientSchema, { foreignKey: 'userId' });
+CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
+
+CustomerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
+CitySchema.hasMany(CustomerSchema, { foreignKey: 'cityId' });

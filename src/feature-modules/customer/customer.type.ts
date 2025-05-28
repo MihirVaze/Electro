@@ -1,12 +1,13 @@
 import z from 'zod';
 
-export const ZClient = z.object({
+export const ZCustomer = z.object({
     id: z.string().trim().uuid().optional(),
-    clientName: z.string().trim().nonempty(),
-    schemaName: z.string().trim().nonempty(),
+    cityId: z.string().trim().uuid().nonempty(),
+    address: z.string().trim().nonempty(),
 
     userId: z.string().uuid().optional(),
 
+    name: z.string().trim().nonempty().optional(),
     phoneNo: z
         .string()
         .trim()
@@ -33,27 +34,29 @@ export const ZClient = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type Client = z.infer<typeof ZClient>;
+export type Customer = z.infer<typeof ZCustomer>;
 
-export const ZFindClient = z.object({
-    query: ZClient.pick({
-        clientName: true,
+export const ZFindCustomer = z.object({
+    query: ZCustomer.pick({
+        name: true,
+        email: true,
     }),
 });
 
-export const ZRegisterClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
-        schemaName: true,
+export const ZRegisterCustomer = z.object({
+    body: ZCustomer.pick({
+        name: true,
+        cityId: true,
+        address: true,
         phoneNo: true,
         email: true,
         password: true,
     }),
 });
 
-export const ZUpdateClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
+export const ZUpdateCustomer = z.object({
+    body: ZCustomer.pick({
+        name: true,
         email: true,
         phoneNo: true,
     }).optional(),
