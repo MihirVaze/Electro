@@ -17,11 +17,11 @@ class DiscountRepo {
     }
 
     public async update(
-        user: Partial<Discount>,
+        discount: Partial<Discount>,
         options: UpdateOptions<Discount>,
         schema: SchemaName,
     ) {
-        return DiscountSchema.schema(schema).update(user, options);
+        return DiscountSchema.schema(schema).update(discount, options);
     }
 
     public async delete(options: UpdateOptions<Discount>, schema: SchemaName) {

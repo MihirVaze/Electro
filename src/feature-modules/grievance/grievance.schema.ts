@@ -1,28 +1,48 @@
 import { DataTypes, Model } from 'sequelize';
-import { Plan } from './plan.type';
-import { sequelize } from '../../connections/pg.connection';
+import { Grievance } from './grievance.type';
 import { UserSchema } from '../user/user.schema';
+import { sequelize } from '../../connections/pg.connection';
 
-export class PlanSchema extends Model<Plan, Plan> {}
+export class GrievanceSchema extends Model<Grievance, Grievance> {}
 
-PlanSchema.init(
+GrievanceSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        minCustomers: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+        customerId: {
+            type: DataTypes.UUID,
         },
-        maxCustomers: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+        grievanceTypeId: {
+            type: DataTypes.UUID,
         },
-        basePrice: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+        comments: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        status: {
+            type: DataTypes.ENUM(
+                'pending',
+                'in-progress',
+                'escalated',
+                'resolved',
+                'rejected',
+            ),
+            defaultValue: 'pending',
+        },
+        assignedTo: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        escalatedTo: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -64,8 +84,8 @@ PlanSchema.init(
         },
     },
     {
-        tableName: 'Plan',
-        modelName: 'Plan',
+        modelName: 'Grievance',
+        tableName: 'Grievance',
         sequelize,
     },
 );
