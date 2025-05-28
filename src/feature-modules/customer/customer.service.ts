@@ -49,7 +49,23 @@ class CustomerServices {
 
     async getCustomer(Customer: Partial<Customer>, schema: SchemaName) {
         try {
-            const result = await customerRepo.get({ where: Customer }, schema);
+            const result = await customerRepo.get(
+                {
+                    where: Customer,
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                },
+                schema,
+            );
             if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return result;
@@ -83,6 +99,17 @@ class CustomerServices {
             const result = await customerRepo.getAll(
                 {
                     where: { isDeleted: false, ...remainingCustomer },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                     include: [
                         {
                             model: UserSchema,
@@ -141,6 +168,20 @@ class CustomerServices {
             if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    async deleteCustomer(customerId: string, schema: SchemaName) {
+        try {
+            const result = await customerRepo.delete(
+                { where: { userId: customerId } },
+                schema,
+            );
+            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
+            return CUSTOMER_RESPONSES.CUSTOMER_DELETED;
         } catch (e) {
             console.log(e);
             throw e;
