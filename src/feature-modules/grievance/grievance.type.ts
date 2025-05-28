@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const Grievance = z.object({
     id: z.string().trim().uuid().optional(),
 
-    customerId: z.string().trim().uuid(),
+    userId: z.string().trim().uuid(),
     grievanceTypeId: z.string().trim().uuid(),
     comments: z.string().optional(),
 

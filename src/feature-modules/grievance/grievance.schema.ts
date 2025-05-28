@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { Grievance } from './grievance.type';
 import { UserSchema } from '../user/user.schema';
 import { sequelize } from '../../connections/pg.connection';
+import { GrievanceTypeSchema } from '../grievanceType/grievanceType.schema';
 
 export class GrievanceSchema extends Model<Grievance, Grievance> {}
 
@@ -12,7 +13,7 @@ GrievanceSchema.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        customerId: {
+        userId: {
             type: DataTypes.UUID,
         },
         grievanceTypeId: {
@@ -89,3 +90,11 @@ GrievanceSchema.init(
         sequelize,
     },
 );
+
+GrievanceSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(GrievanceSchema, { foreignKey: 'userId' });
+
+GrievanceSchema.belongsTo(GrievanceTypeSchema, {
+    foreignKey: 'grievanceTypeId',
+});
+GrievanceTypeSchema.hasMany(GrievanceSchema, { foreignKey: 'grievanceTypeId' });
