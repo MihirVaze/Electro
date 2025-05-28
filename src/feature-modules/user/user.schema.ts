@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { User, UserRole } from './user.types';
-import { sequelize } from '../../connections/pg.connection';
 import { RoleSchema } from '../role/role.schema';
+import { sequelize } from '../../connections/pg.connection';
 
 export class UserSchema extends Model<User, User> {}
 
@@ -147,27 +147,3 @@ UserRoleSchema.init(
         tableName: 'UserRole',
     },
 );
-
-// UserRoleSchema.belongsTo(UserSchema, {
-//     foreignKey: 'userId',
-//     targetKey: 'id',
-//     as: 'user'
-// });
-
-// UserSchema.hasMany(UserRoleSchema, {
-//     foreignKey: 'userId',
-//     sourceKey: 'id',
-//     as: 'userRole'
-// });
-
-// UserRoleSchema.belongsTo(RoleSchema, {
-//     foreignKey: 'roleId',
-//     targetKey: 'id',
-//     as: 'role'
-// });
-
-// RoleSchema.hasMany(UserRoleSchema, {
-//     foreignKey: 'roleId',
-//     sourceKey: 'id',
-//     as: 'userRole'
-// });
