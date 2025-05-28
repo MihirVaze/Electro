@@ -16,11 +16,11 @@ class PlanRepo {
     }
 
     public async update(
-        user: Partial<Plan>,
+        plan: Partial<Plan>,
         options: UpdateOptions<Plan>,
         schema: string,
     ) {
-        return PlanSchema.schema(schema).update(user, options);
+        return PlanSchema.schema(schema).update(plan, options);
     }
 
     public async delete(options: UpdateOptions<Plan>, schema: string) {

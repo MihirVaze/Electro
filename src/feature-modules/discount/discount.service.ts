@@ -92,10 +92,10 @@ class DiscountServices {
         schema: string,
     ) {
         try {
-            if (!discount.id) throw 'ID NOT FOUND';
+            if (!id) throw 'ID NOT FOUND';
             const result = await discountRepo.update(
                 discount,
-                { where: { id: discount.id } },
+                { where: { id } },
                 schema,
             );
             if (!result[0]) throw DISCOUNT_RESPONSES.DISCOUNT_DELETION_FAILED;
