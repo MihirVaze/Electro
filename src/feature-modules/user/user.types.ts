@@ -58,7 +58,6 @@ export const ZRegiterUser = z.object({
             name: true,
             phoneNo: true,
             email: true,
-            password: true,
         }),
         roles: z.array(
             ZUserRoleLocation.pick({

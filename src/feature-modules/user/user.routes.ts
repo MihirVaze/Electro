@@ -4,7 +4,7 @@ import { HasPermission } from '../../utility/usersPermissions';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import userService from './user.service';
-import { ZRegiterUser } from './user.types';
+import { User, UserRoleLocation, ZRegiterUser } from './user.types';
 
 const router = new CustomRouter();
 
@@ -18,14 +18,16 @@ router.post(
             try {
                 const schema = req.payload.schema;
                 const creatorRoleId = req.payload.roleId;
-                const { user, roles } = req.body;
+                const user = req.body.user as User;
+                const rolesLocations = req.body.roles as UserRoleLocation[];
+                const roles = rolesLocations.map((e) => e.roleId);
 
                 const canRegister = HasPermission(creatorRoleId, roles, schema);
                 if (!canRegister) throw { status: 403, message: 'FORBIDDEN' };
 
                 const result = await userService.onBoardUser(
                     user,
-                    roles,
+                    rolesLocations,
                     schema,
                 );
                 res.send(new ResponseHandler(result.responses));
