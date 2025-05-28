@@ -78,3 +78,6 @@ WorkerSchema.init(
         modelName: 'Worker',
     },
 );
+
+UserSchema.hasMany(WorkerSchema, { foreignKey: 'userId' });
+WorkerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
