@@ -4,6 +4,7 @@ import { Routes } from './routes.types';
 import planRoute from '../feature-modules/plan/plan.route';
 import userRoutes from '../feature-modules/user/user.routes';
 import clientRoutes from '../feature-modules/client/client.routes';
+import workerRoute from '../feature-modules/worker/worker.route';
 
 export const routes: Routes = [
     authRoutes,
@@ -11,4 +12,5 @@ export const routes: Routes = [
     planRoute,
     userRoutes,
     clientRoutes,
+    workerRoute,
 ];
