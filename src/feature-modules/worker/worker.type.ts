@@ -46,14 +46,15 @@ export const ZRegisterWorker = z.object({
         workerName: true,
         phoneNo: true,
         email: true,
-        password: true,
         cityId: true,
     }),
 });
 
 export const ZupdateWorker = z.object({
     body: ZWorker.pick({
-        userId: true,
+        workerName: true,
+        email: true,
+        phoneNo: true,
         cityId: true,
     }),
 });
