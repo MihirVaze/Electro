@@ -69,7 +69,7 @@ class AuthenticationServices {
             );
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const hashedPassword = await hashPassword(change.newPassword);
-            const result = await userService.update(
+            const result = await userService.updateUser(
                 {
                     id: change.id,
                     password: hashedPassword,

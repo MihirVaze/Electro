@@ -1,3 +1,4 @@
+import { HasPermission } from '../../utility/usersPermissions';
 import { SchemaName } from '../../utility/umzug-migration';
 import { Credentials } from '../auth/auth.type';
 import { RoleSchema } from '../role/role.schema';
@@ -76,7 +77,7 @@ class UserServices {
         }
     }
 
-    async update(user: Partial<User>, schema: SchemaName) {
+    async updateUser(user: Partial<User>, schema: SchemaName) {
         try {
             if (!user.id) throw 'ID NOT FOUND';
             const result = await userRepo.updateUser(
@@ -217,7 +218,14 @@ class UserServices {
 
                 switch (role) {
                     case 'client_admin':
-                        throw "CLIENT CAN'T BE CREATED HERE";
+                        await this.createUserRole(
+                            {
+                                userId,
+                                roleId: userRole.roleId,
+                            },
+                            schema,
+                        );
+                        break;
 
                     case 'worker':
                         if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';

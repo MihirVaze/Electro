@@ -130,7 +130,7 @@ class ClientServices {
 
                 updateUser.id = clientToBeUpdated?.dataValues.id;
 
-                await userService.update(updateUser, schema);
+                await userService.updateUser(updateUser, schema);
             }
 
             const result = await clientRepo.update(

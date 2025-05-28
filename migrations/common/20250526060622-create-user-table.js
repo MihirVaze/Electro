@@ -1,5 +1,5 @@
 module.exports = {
-    async up({ context }) {   
+    async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
         const { DataTypes } = Sequelize;
         const transaction = await queryInterface.sequelize.transaction();
@@ -40,29 +40,29 @@ module.exports = {
                         type: DataTypes.UUID,
                         references: {
                             model: 'User',
-                            key: 'id'
-                        }
+                            key: 'id',
+                        },
                     },
                     restoredBy: {
                         type: DataTypes.UUID,
                         references: {
                             model: 'User',
-                            key: 'id'
-                        }
+                            key: 'id',
+                        },
                     },
                     createdBy: {
                         type: DataTypes.UUID,
                         references: {
                             model: 'User',
-                            key: 'id'
-                        }
+                            key: 'id',
+                        },
                     },
                     updatedBy: {
                         type: DataTypes.UUID,
                         references: {
                             model: 'User',
-                            key: 'id'
-                        }
+                            key: 'id',
+                        },
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
