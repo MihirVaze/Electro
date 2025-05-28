@@ -128,7 +128,7 @@ class CustomerServices {
 
                 updateUser.id = CustomerToBeUpdated?.dataValues.id;
 
-                await userService.update(updateUser, schema);
+                await userService.updateUser(updateUser, schema);
             }
 
             const result = await customerRepo.update(
