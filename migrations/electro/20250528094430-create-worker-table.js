@@ -20,7 +20,7 @@ module.exports = {
                     userId: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                         allowNull: false,
@@ -28,7 +28,7 @@ module.exports = {
                     cityId: {
                         type: DataTypes.UUID,
                         references: {
-                            model: CitySchema,
+                            model: 'City',
                             key: 'id',
                         },
                         allowNull: false,
@@ -40,28 +40,28 @@ module.exports = {
                     deletedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
