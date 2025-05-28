@@ -4,7 +4,7 @@ import { HasPermission } from '../../utility/usersPermissions';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import userService from './user.service';
-import { User, UserRoleLocation, ZRegiterUser } from './user.types';
+import { User, UserRoleLocation, ZEditUser, ZRegiterUser } from './user.types';
 
 const router = new CustomRouter();
 
@@ -50,17 +50,17 @@ router.post(
 );
 
 router.patch(
-    '/user/:id?',
+    '/user',
     [
+        validate(ZEditUser),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
                 const editorRoleId = req.payload.roleId;
                 const user = req.body;
-                user.id = req.params.id || req.payload.id;
 
                 // if we are taking id from params that means someone else is editing the user so we need to know if they have permition
-                if (req.params.id) {
+                if (user.id) {
                     const userRoles = (
                         await userService.getUserRoles(
                             { userId: user.id },
@@ -75,7 +75,7 @@ router.patch(
                         schema,
                     );
                     if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
-                }
+                } else user.id = req.payload.id;
 
                 const result = await userService.updateUser(user, schema);
                 res.send(new ResponseHandler(result));
