@@ -6,13 +6,14 @@ import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import { runMigration } from '../../utility/umzug-migration';
+import roleServices from '../role/role.services';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, password, schemaName } = client;
             if (!phoneNo || !email || !password)
-                throw CLIENT_RESPONSES.CLIENT_CREATION_FAILED;
+                throw CLIENT_RESPONSES.CLIENT_CREATION_FIELDS_MISSING;
 
             const createdUser = await userService.createUser(
                 {
@@ -35,6 +36,12 @@ class ClientServices {
                 },
                 schema,
             );
+
+            const roleId = (
+                await roleServices.getRole({ role: 'client_admin' }, schema)
+            ).id!;
+
+            await userService.addRoles(id, [{ roleId }], schema);
 
             await runMigration(client.schemaName, 'migrations/common/*js');
 
@@ -82,9 +89,11 @@ class ClientServices {
 
             const offset = (page - 1) * limit;
 
+            clientWhere = { ...clientWhere, remainingClient };
+
             const result = await clientRepo.getAll(
                 {
-                    where: { isDeleted: false, ...clientWhere },
+                    where: { isDeleted: false, ...remainingClient },
                     include: [
                         {
                             model: UserSchema,
