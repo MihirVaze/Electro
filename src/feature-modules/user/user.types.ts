@@ -52,7 +52,7 @@ const ZUserRoleLocation = z.object({
 
 export type UserRoleLocation = z.infer<typeof ZUserRoleLocation>;
 
-export const ZRegiterUser = z.object({
+export const ZregisterUser = z.object({
     body: z.object({
         user: ZUser.pick({
             name: true,
@@ -68,7 +68,7 @@ export const ZRegiterUser = z.object({
     }),
 });
 
-export type RegiterUser = z.infer<typeof ZRegiterUser>;
+export type registerUser = z.infer<typeof ZregisterUser>;
 
 export const ZEditUser = z.object({
     body: z.object({

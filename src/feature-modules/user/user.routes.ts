@@ -4,16 +4,16 @@ import { HasPermission } from '../../utility/usersPermissions';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import userService from './user.service';
-import { User, UserRoleLocation, ZEditUser, ZRegiterUser } from './user.types';
+import { User, UserRoleLocation, ZEditUser, ZregisterUser } from './user.types';
 
 const router = new CustomRouter();
 
 // Register Employee For Electro and for different clients according to the schemas
 // along with multiple roles on multiplr locations
 router.post(
-    '/regiter',
+    '/register',
     [
-        validate(ZRegiterUser),
+        validate(ZregisterUser),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
