@@ -17,6 +17,7 @@ router.post('/:id', [
             if (!req.file) {
                 throw { status: 400, message: 'Bad Request Logo Required' };
             }
+            const schema=req.payload.schema;
             const details = {
                 ...req.body,
                 logo: req.file?.filename,
@@ -24,6 +25,7 @@ router.post('/:id', [
             const result = await clientUIService.createClientUI(
                 details,
                 req.params.id,
+                schema
             );
             res.send(new ResponseHandler(result));
         } catch (e) {
@@ -35,7 +37,8 @@ router.post('/:id', [
 router.get('/:id', [
     async (req, res, next) => {
         try {
-            const result = await clientUIService.getUIDetails(req.params.id);
+             const schema=req.payload.schema;
+            const result = await clientUIService.getUIDetails(req.params.id,schema);
             res.send(new ResponseHandler(result));
         } catch (e) {
             next(e);
@@ -46,9 +49,11 @@ router.get('/:id', [
 router.patch('/:id', [
     async (req, res, next) => {
         try {
+             const schema=req.payload.schema;
             const result = await clientUIService.updateUIDetails(
                 req.body,
                 req.params.id,
+                schema
             );
             res.send(new ResponseHandler(result));
         } catch (e) {
@@ -56,5 +61,21 @@ router.patch('/:id', [
         }
     },
 ]);
+
+router.del('/:id', [
+    async (req, res, next) => {
+        try {
+             const schema=req.payload.schema;
+            const result = await clientUIService.deleteUI(
+                req.params.id,
+                schema
+            );
+            res.send(new ResponseHandler(result));
+        } catch (e) {
+            next(e);
+        }
+    },
+]);
+
 
 export default new Route('/ui', router.ExpressRouter);

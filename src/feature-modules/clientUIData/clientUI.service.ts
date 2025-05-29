@@ -4,14 +4,14 @@ import clientUIRepo from './clientUI.repo';
 import { UI_RESPONSES } from './response';
 
 class ClientUIService {
-    async createClientUI(details: UIData, id: string) {
+    async createClientUI(details: UIData, id: string,schema:string) {
         try {
             const newDetails = {
                 id: v4(),
                 clientId: id,
                 ...details,
             };
-            const result = await clientUIRepo.createClientUI(newDetails);
+            const result = await clientUIRepo.createClientUI(newDetails,schema);
             if (!result) {
                 throw UI_RESPONSES.UI_CREATION_FAILS;
             }
@@ -22,11 +22,11 @@ class ClientUIService {
         }
     }
 
-    async getUIDetails(id: string) {
+    async getUIDetails(id: string,schema:string) {
         try {
             const result = await clientUIRepo.getAllUIDetails({
                 where: { clientId: id },
-            });
+            },schema);
             if (!result) {
                 throw { status: 500, message: 'Internal Server Error' };
             }
@@ -37,11 +37,11 @@ class ClientUIService {
         }
     }
 
-    async getOne(id: string) {
+    async getOne(id: string,schema:string) {
         try {
             const result = await clientUIRepo.getUIDetails({
                 where: { clientId: id },
-            });
+            },schema);
             if (!result) {
                 throw UI_RESPONSES.UI_NOT_FOUND;
             }
@@ -52,11 +52,11 @@ class ClientUIService {
         }
     }
 
-    async updateUIDetails(details: Partial<ClientUIData>, id: string) {
+    async updateUIDetails(details: Partial<ClientUIData>, id: string,schema:string) {
         try {
             const counts = await clientUIRepo.updateClientUI(details, {
                 where: { clientId: id },
-            });
+            },schema);
             if (counts[0] === 0) {
                 throw UI_RESPONSES.UI_NOT_FOUND;
             }
@@ -64,6 +64,20 @@ class ClientUIService {
         } catch (e) {
             console.dir(e);
             throw e;
+        }
+    }
+
+    async deleteUI(id:string,schema:string){
+        try{
+           const result=await clientUIRepo.updateClientUI({isDeleted:true},{where:{clientId:id}},schema);
+           if(result[0]===0){
+            throw {status:500,message:"Something Went Wrong"}
+           }
+           return UI_RESPONSES.UI_DELETED;
+        }
+        catch(e){
+           console.dir(e);
+           throw e
         }
     }
 }
