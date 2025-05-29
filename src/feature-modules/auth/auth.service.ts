@@ -64,7 +64,6 @@ class AuthenticationServices {
     async update(change: ChangePassWord, schema: SchemaName) {
         try {
             if (!change.id) throw 'ID NOT FOUND';
-
             const oldPassword = await userService.getPassword(
                 change.id,
                 schema,
