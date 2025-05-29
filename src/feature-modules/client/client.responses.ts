@@ -7,6 +7,10 @@ export const CLIENT_RESPONSES = {
         status: 500,
         message: 'CLIENT COULD NOT BE CREATED',
     },
+    CLIENT_CREATION_FIELDS_MISSING: {
+        status: 500,
+        message: 'PLEASE ENTER ALL THE FIELDS',
+    },
     CLIENT_CREATED: {
         status: 201,
         message: 'CLIENT CREATED SUCCESSFULLY',

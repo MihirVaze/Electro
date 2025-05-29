@@ -24,10 +24,14 @@ export const authorizeR =
             const { roleId, schema } = req.payload;
 
             const Accessedfor = await Promise.all(
-                AuthorizedFor.map(
-                    async (e) =>
-                        (await roleServices.getRole({ role: e }, schema)).id,
-                ),
+                AuthorizedFor.map(async (e) => {
+                    const schemaName = e === 'client_admin' ? 'public' : schema;
+                    const role = await roleServices.getRole(
+                        { role: e },
+                        schemaName,
+                    );
+                    return role.id;
+                }),
             );
 
             if (

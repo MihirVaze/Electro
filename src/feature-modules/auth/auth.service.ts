@@ -1,3 +1,4 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { sign } from 'jsonwebtoken';
 import userService from '../user/user.service';
 import { AUTH_RESPONSES } from './auth.responses';
@@ -7,9 +8,10 @@ import {
     compareEncryption,
     hashPassword,
 } from '../../utility/password.generator';
+import clientService from '../client/client.service';
 
 class AuthenticationServices {
-    async login(credentials: Credentials, schema: string) {
+    async login(credentials: Credentials, schema: SchemaName) {
         try {
             const user = await userService.findOne(
                 {
@@ -33,12 +35,9 @@ class AuthenticationServices {
                 },
                 schema,
             );
-            const roleId = EmployeeRoles.map((e) => e.id).filter(
+            const roleId = EmployeeRoles.map((e) => e.roleId).filter(
                 (e): e is string => !!e,
             );
-
-            const payload: Payload = { id, roleId, schema };
-            const token = sign(payload, process.env.JWT_SECRET_KEY);
 
             // THIS GIVES THE ARRAY OF ALL THE VALID ROLES FOR THAT PERTICULAR USER
             const roles = await Promise.all(
@@ -48,13 +47,21 @@ class AuthenticationServices {
                 ),
             );
 
+            const schemaName = roles.includes('client_admin')
+                ? (await clientService.getClient({ userId: id }, schema))
+                      .dataValues.schemaName
+                : schema;
+
+            const payload: Payload = { id, roleId, schema: schemaName };
+            const token = sign(payload, process.env.JWT_SECRET_KEY);
+
             return { token, roles };
         } catch (e) {
             throw e;
         }
     }
 
-    async update(change: ChangePassWord, schema: string) {
+    async update(change: ChangePassWord, schema: SchemaName) {
         try {
             if (!change.id) throw 'ID NOT FOUND';
             const oldPassword = await userService.getPassword(
@@ -67,7 +74,7 @@ class AuthenticationServices {
             );
             if (!comparePass) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const hashedPassword = await hashPassword(change.newPassword);
-            const result = await userService.update(
+            const result = await userService.updateUser(
                 {
                     id: change.id,
                     password: hashedPassword,

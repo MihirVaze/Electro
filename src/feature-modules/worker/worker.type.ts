@@ -1,11 +1,11 @@
-import z from 'zod';
+import { z } from 'zod';
 
-export const ZClient = z.object({
+export const ZWorker = z.object({
     id: z.string().trim().uuid().optional(),
-    clientName: z.string().trim().nonempty(),
-    schemaName: z.string().trim().nonempty(),
+    workerName: z.string().trim().nonempty(),
 
-    userId: z.string().uuid().optional(),
+    userId: z.string().trim().uuid().nonempty().optional(),
+    cityId: z.string().trim().uuid().nonempty(),
 
     phoneNo: z
         .string()
@@ -31,33 +31,36 @@ export const ZClient = z.object({
     updatedBy: z.string().trim().uuid().optional(),
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
-
-    limit: z.coerce.number().default(10).optional(),
-    page: z.coerce.number().default(1).optional(),
 });
 
-export type Client = z.infer<typeof ZClient>;
+export type Worker = z.infer<typeof ZWorker>;
 
-export const ZFindClients = z.object({
-    query: ZClient.pick({
-        limit: true,
-        page: true,
+export const ZFindWorker = z.object({
+    query: ZWorker.pick({
+        userId: true,
     }),
 });
 
-export const ZRegisterClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
-        schemaName: true,
+export const ZRegisterWorker = z.object({
+    body: ZWorker.pick({
+        workerName: true,
         phoneNo: true,
         email: true,
+        cityId: true,
     }),
 });
 
-export const ZUpdateClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
+export const ZupdateWorker = z.object({
+    body: ZWorker.pick({
+        workerName: true,
         email: true,
         phoneNo: true,
-    }).optional(),
+        cityId: true,
+    }),
+});
+
+export const ZDeleteWorker = z.object({
+    params: ZWorker.pick({
+        id: true,
+    }),
 });

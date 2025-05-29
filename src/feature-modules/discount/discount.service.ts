@@ -1,10 +1,11 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { Op } from 'sequelize';
 import { Discount } from './discount.type';
 import discountRepo from './discount.repo';
 import { DISCOUNT_RESPONSES } from './discount.responses';
 
 class DiscountServices {
-    async findOneDiscount(discount: Partial<Discount>, schema: string) {
+    async findOneDiscount(discount: Partial<Discount>, schema: SchemaName) {
         try {
             const discountRecord = await discountRepo.get(
                 {
@@ -37,7 +38,7 @@ class DiscountServices {
         limit: number,
         page: number,
         discount: Partial<Discount>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             let where: any = {};
@@ -76,7 +77,7 @@ class DiscountServices {
         }
     }
 
-    async createDiscount(discount: Discount, schema: string) {
+    async createDiscount(discount: Discount, schema: SchemaName) {
         try {
             const result = await discountRepo.create(discount, schema);
             return DISCOUNT_RESPONSES.DISCOUNT_CREATED;
@@ -89,13 +90,13 @@ class DiscountServices {
     async updateDiscount(
         id: string,
         discount: Partial<Discount>,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
-            if (!discount.id) throw 'ID NOT FOUND';
+            if (!id) throw 'ID NOT FOUND';
             const result = await discountRepo.update(
                 discount,
-                { where: { id: discount.id } },
+                { where: { id } },
                 schema,
             );
             if (!result[0]) throw DISCOUNT_RESPONSES.DISCOUNT_DELETION_FAILED;
@@ -106,7 +107,7 @@ class DiscountServices {
         }
     }
 
-    async deletediscount(id: string, schema: string) {
+    async deletediscount(id: string, schema: SchemaName) {
         try {
             const result = await discountRepo.delete({ where: { id } }, schema);
             if (!result[0]) throw DISCOUNT_RESPONSES.DISCOUNT_DELETION_FAILED;

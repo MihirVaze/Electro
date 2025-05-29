@@ -1,9 +1,10 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import roleRepo from './role.repo';
 import { ROLE_RESPONSES } from './role.responses';
 import { Role } from './role.types';
 
 class RoleServices {
-    async getRole(role: Partial<Role>, schema: string) {
+    async getRole(role: Partial<Role>, schema: SchemaName) {
         try {
             const result = await roleRepo.get(
                 {
@@ -30,7 +31,7 @@ class RoleServices {
         }
     }
 
-    async getAllRoles(schema: string) {
+    async getAllRoles(schema: SchemaName) {
         try {
             const result = await roleRepo.getAll(
                 {

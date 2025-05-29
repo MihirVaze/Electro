@@ -1,25 +1,26 @@
+import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
 import { RoleSchema } from './role.schema';
 import { Role } from './role.types';
 
 class RoleRepo {
-    public async get(options: FindOptions<Role>, schema: string) {
+    public async get(options: FindOptions<Role>, schema: SchemaName) {
         return RoleSchema.schema(schema).findOne(options);
     }
 
-    public async getAll(options: FindOptions<Role>, schema: string) {
+    public async getAll(options: FindOptions<Role>, schema: SchemaName) {
         return RoleSchema.schema(schema).findAndCountAll(options);
     }
 
     public async update(
         Role: Partial<Role>,
         options: UpdateOptions<Role>,
-        schema: string,
+        schema: SchemaName,
     ) {
         return RoleSchema.schema(schema).update(Role, options);
     }
 
-    public async delete(options: UpdateOptions<Role>, schema: string) {
+    public async delete(options: UpdateOptions<Role>, schema: SchemaName) {
         return RoleSchema.schema(schema).update({ isDeleted: true }, options);
     }
 }

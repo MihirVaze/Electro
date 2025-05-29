@@ -6,7 +6,7 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'User', schema },
+                { tableName: 'GrievanceType', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
@@ -16,21 +16,7 @@ module.exports = {
                     name: {
                         type: DataTypes.STRING,
                         allowNull: false,
-                        unique: false,
-                    },
-                    email: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
                         unique: true,
-                    },
-                    phoneNo: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                        unique: true,
-                    },
-                    password: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
@@ -101,7 +87,10 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'User', schema });
+            await queryInterface.dropTable({
+                tableName: 'GrievanceType',
+                schema,
+            });
 
             await transaction.commit();
         } catch (error) {

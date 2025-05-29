@@ -1,9 +1,13 @@
 import { ResponseHandler } from '../../utility/response-handler';
 import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
-import clientService from './client.service';
 import { validate } from '../../utility/validate';
-import { ZFindClients, ZRegisterClient, ZUpdateClient } from './client.type';
+import customerService from './customer.service';
+import {
+    ZFindCustomers,
+    ZRegisterCustomer,
+    ZUpdateCustomer,
+} from './customer.type';
 import userService from '../user/user.service';
 import { HasPermission } from '../../utility/usersPermissions';
 
@@ -12,15 +16,16 @@ const router = new CustomRouter();
 router.get(
     '/',
     [
-        validate(ZFindClients),
+        validate(ZFindCustomers),
         async (req, res, next) => {
             try {
                 const { limit, page, ...remainingQuery } = req.query;
-                const result = await clientService.getClients(
+                const schema = req.payload.schema;
+                const result = await customerService.getCustomers(
                     remainingQuery,
                     Number(limit),
                     Number(page),
-                    'public',
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -29,13 +34,14 @@ router.get(
         },
     ],
     {
-        is_protected: false,
+        is_protected: true,
         has_Access: [
             'superadmin',
-            'client_manager',
+            'client_admin',
             'state_manager',
             'district_manager',
             'city_manager',
+            'worker',
         ],
     },
 );
@@ -43,12 +49,13 @@ router.get(
 router.post(
     '/',
     [
-        validate(ZRegisterClient),
+        validate(ZRegisterCustomer),
         async (req, res, next) => {
             try {
-                const result = await clientService.addClient(
+                const schema = req.payload.schema;
+                const result = await customerService.addCustomer(
                     req.body,
-                    'public',
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -56,20 +63,29 @@ router.post(
             }
         },
     ],
-    { is_protected: false, has_Access: ['superadmin'] },
+    {
+        is_protected: true,
+        has_Access: [
+            'client_admin',
+            'state_manager',
+            'district_manager',
+            'city_manager',
+        ],
+    },
 );
 
 router.patch(
-    '/:clientId',
+    '/:customerId',
     [
-        validate(ZUpdateClient),
+        validate(ZUpdateCustomer),
         async (req, res, next) => {
             try {
-                const { clientId } = req.params;
-                const result = await clientService.updateClient(
+                const schema = req.payload.schema;
+                const { customerId } = req.params;
+                const result = await customerService.updateCustomer(
                     req.body,
-                    clientId,
-                    'public',
+                    customerId,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -101,7 +117,10 @@ router.del(
                 );
                 if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
 
-                const result = await clientService.deleteClient(userId, schema);
+                const result = await customerService.deleteCustomer(
+                    userId,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -110,8 +129,13 @@ router.del(
     ],
     {
         is_protected: true,
-        has_Access: ['superadmin'],
+        has_Access: [
+            'client_admin',
+            'state_manager',
+            'district_manager',
+            'city_manager',
+        ],
     },
 );
 
-export default new Route('/client', router.ExpressRouter);
+export default new Route('/customer', router.ExpressRouter);

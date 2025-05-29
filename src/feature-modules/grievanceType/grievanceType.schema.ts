@@ -1,28 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
-import { Role } from './role.types';
+import { GrievanceType } from './grievanceType.type';
+import { UserSchema } from '../user/user.schema';
 import { sequelize } from '../../connections/pg.connection';
-import { UserRoleSchema, UserSchema } from '../user/user.schema';
 
-export class RoleSchema extends Model<Role, Role> {}
+export class GrievanceTypeSchema extends Model<GrievanceType, GrievanceType> {}
 
-RoleSchema.init(
+GrievanceTypeSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        role: {
-            type: DataTypes.ENUM(
-                'superadmin',
-                'client_manager',
-                'state_manager',
-                'district_manager',
-                'city_manager',
-                'worker',
-                'client_admin',
-            ),
+        name: {
+            type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -64,24 +57,8 @@ RoleSchema.init(
         },
     },
     {
-        modelName: 'Role',
-        tableName: 'Role',
+        tableName: 'GrievanceType',
+        modelName: 'GrievanceType',
         sequelize,
     },
 );
-
-UserRoleSchema.belongsTo(UserSchema, {
-    foreignKey: 'userId',
-});
-
-UserSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'userId',
-});
-
-UserRoleSchema.belongsTo(RoleSchema, {
-    foreignKey: 'roleId',
-});
-
-RoleSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'roleId',
-});

@@ -6,30 +6,31 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'User', schema },
+                { tableName: 'Worker', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    name: {
+                    workerName: {
                         type: DataTypes.STRING,
                         allowNull: false,
-                        unique: false,
                     },
-                    email: {
-                        type: DataTypes.STRING,
+                    userId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
                         allowNull: false,
-                        unique: true,
                     },
-                    phoneNo: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                        unique: true,
-                    },
-                    password: {
-                        type: DataTypes.STRING,
+                    cityId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
                         allowNull: false,
                     },
                     isDeleted: {
@@ -66,21 +67,9 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
-                        defaultValue: null,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
-                        defaultValue: null,
-                    },
-                    createdAt: {
-                        type: DataTypes.DATE,
-                        allowNull: false,
-                        defaultValue: Date.now(),
-                    },
-                    updatedAt: {
-                        type: DataTypes.DATE,
-                        allowNull: false,
-                        defaultValue: Date.now(),
                     },
                 },
                 { transaction },
@@ -101,7 +90,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'User', schema });
+            await queryInterface.dropTable({ tableName: 'Worker', schema });
 
             await transaction.commit();
         } catch (error) {

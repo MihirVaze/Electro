@@ -58,7 +58,6 @@ export const ZRegiterUser = z.object({
             name: true,
             phoneNo: true,
             email: true,
-            password: true,
         }),
         roles: z.array(
             ZUserRoleLocation.pick({
@@ -70,3 +69,23 @@ export const ZRegiterUser = z.object({
 });
 
 export type RegiterUser = z.infer<typeof ZRegiterUser>;
+
+export const ZEditUser = z.object({
+    body: z.object({
+        user: z.object({
+            id: z.string().trim().uuid().optional(),
+            name: z.string().trim().uuid().optional(),
+            phoneNo: z
+                .string()
+                .trim()
+                .nonempty()
+                .length(10, 'Enter a valid phone number')
+                .optional(),
+            email: z
+                .string()
+                .trim()
+                .email({ message: 'Enter a valid e-mail' })
+                .optional(),
+        }),
+    }),
+});

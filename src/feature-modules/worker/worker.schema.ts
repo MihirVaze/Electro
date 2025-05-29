@@ -1,27 +1,36 @@
 import { DataTypes, Model } from 'sequelize';
-import { Role } from './role.types';
+import { Worker } from './worker.type';
+import { UserSchema } from '../user/user.schema';
+import { CitySchema } from '../location/location.schema';
 import { sequelize } from '../../connections/pg.connection';
-import { UserRoleSchema, UserSchema } from '../user/user.schema';
 
-export class RoleSchema extends Model<Role, Role> {}
+export class WorkerSchema extends Model<Worker, Worker> {}
 
-RoleSchema.init(
+WorkerSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        role: {
-            type: DataTypes.ENUM(
-                'superadmin',
-                'client_manager',
-                'state_manager',
-                'district_manager',
-                'city_manager',
-                'worker',
-                'client_admin',
-            ),
+        workerName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        userId: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+            allowNull: false,
+        },
+        cityId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CitySchema,
+                key: 'id',
+            },
             allowNull: false,
         },
         isDeleted: {
@@ -64,24 +73,11 @@ RoleSchema.init(
         },
     },
     {
-        modelName: 'Role',
-        tableName: 'Role',
         sequelize,
+        tableName: 'Worker',
+        modelName: 'Worker',
     },
 );
 
-UserRoleSchema.belongsTo(UserSchema, {
-    foreignKey: 'userId',
-});
-
-UserSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'userId',
-});
-
-UserRoleSchema.belongsTo(RoleSchema, {
-    foreignKey: 'roleId',
-});
-
-RoleSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'roleId',
-});
+UserSchema.hasMany(WorkerSchema, { foreignKey: 'userId' });
+WorkerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });

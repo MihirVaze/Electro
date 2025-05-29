@@ -1,27 +1,39 @@
 import { DataTypes, Model } from 'sequelize';
-import { Role } from './role.types';
 import { sequelize } from '../../connections/pg.connection';
-import { UserRoleSchema, UserSchema } from '../user/user.schema';
+import { UserSchema } from '../user/user.schema';
+import { Customer } from './customer.type';
+import {
+    CitySchema,
+    DistrictSchema,
+    StateSchema,
+} from '../location/location.schema';
 
-export class RoleSchema extends Model<Role, Role> {}
+export class CustomerSchema extends Model<Customer, Customer> {}
 
-RoleSchema.init(
+CustomerSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        role: {
-            type: DataTypes.ENUM(
-                'superadmin',
-                'client_manager',
-                'state_manager',
-                'district_manager',
-                'city_manager',
-                'worker',
-                'client_admin',
-            ),
+        cityId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CitySchema,
+                key: 'id',
+            },
+        },
+        userId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+        },
+        address: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         isDeleted: {
@@ -64,24 +76,14 @@ RoleSchema.init(
         },
     },
     {
-        modelName: 'Role',
-        tableName: 'Role',
         sequelize,
+        modelName: 'Customer',
+        tableName: 'Customer',
     },
 );
 
-UserRoleSchema.belongsTo(UserSchema, {
-    foreignKey: 'userId',
-});
+CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
 
-UserSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'userId',
-});
-
-UserRoleSchema.belongsTo(RoleSchema, {
-    foreignKey: 'roleId',
-});
-
-RoleSchema.hasMany(UserRoleSchema, {
-    foreignKey: 'roleId',
-});
+CustomerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
+CitySchema.hasMany(CustomerSchema, { foreignKey: 'cityId' });

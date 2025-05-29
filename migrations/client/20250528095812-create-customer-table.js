@@ -6,29 +6,29 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'User', schema },
+                { tableName: 'Customer', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    name: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                        unique: false,
+                    cityId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
                     },
-                    email: {
-                        type: DataTypes.STRING,
+                    userId: {
+                        type: DataTypes.UUID,
                         allowNull: false,
-                        unique: true,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
                     },
-                    phoneNo: {
-                        type: DataTypes.STRING,
-                        allowNull: false,
-                        unique: true,
-                    },
-                    password: {
+                    address: {
                         type: DataTypes.STRING,
                         allowNull: false,
                     },
@@ -101,7 +101,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'User', schema });
+            await queryInterface.dropTable({ tableName: 'Customer', schema });
 
             await transaction.commit();
         } catch (error) {
