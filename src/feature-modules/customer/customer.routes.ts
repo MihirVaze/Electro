@@ -64,7 +64,7 @@ router.post(
         },
     ],
     {
-        is_protected: false,
+        is_protected: true,
         has_Access: [
             'client_admin',
             'state_manager',
