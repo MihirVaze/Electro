@@ -17,6 +17,7 @@ module.exports = {
                     { id: UUIDV4(), role: 'city_manager' },
                     { id: UUIDV4(), role: 'worker' },
                     { id: UUIDV4(), role: 'client_admin' },
+                    { id: UUIDV4(), role: 'customer' },
                 ],
                 { transaction },
             );

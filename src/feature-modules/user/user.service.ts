@@ -234,26 +234,27 @@ class UserServices {
     ) {
         try {
             for (const userRole of UserRoles) {
-                // const userRoleEntry = await this.createUserRole(
-                //     {
-                //         userId,
-                //         roleId: userRole.roleId,
-                //     },
-                //     schema,
-                // );
+                const userRoleEntry = await this.createUserRole(
+                    {
+                        userId,
+                        roleId: userRole.roleId,
+                    },
+                    schema,
+                );
+
                 const role = (
                     await roleServices.getRole({ id: userRole.roleId }, schema)
                 ).role;
 
                 switch (role) {
                     case 'client_admin':
-                        await this.createUserRole(
-                            {
-                                userId,
-                                roleId: userRole.roleId,
-                            },
-                            schema,
-                        );
+                        // await this.createUserRole(
+                        //     {
+                        //         userId,
+                        //         roleId: userRole.roleId,
+                        //     },
+                        //     schema,
+                        // );
                         break;
 
                     case 'worker':
@@ -297,24 +298,23 @@ class UserServices {
                         break;
 
                     case 'client_manager':
-                        await this.createUserRole(
-                            {
-                                userId,
-                                roleId: userRole.roleId,
-                            },
-                            schema,
-                        );
-
+                        // await this.createUserRole(
+                        //     {
+                        //         userId,
+                        //         roleId: userRole.roleId,
+                        //     },
+                        //     schema,
+                        // );
                         break;
 
                     case 'superadmin':
-                        await this.createUserRole(
-                            {
-                                userId,
-                                roleId: userRole.roleId,
-                            },
-                            schema,
-                        );
+                        // await this.createUserRole(
+                        //     {
+                        //         userId,
+                        //         roleId: userRole.roleId,
+                        //     },
+                        //     schema,
+                        // );
                         break;
 
                     default:
