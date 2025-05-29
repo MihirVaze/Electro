@@ -21,6 +21,7 @@ RoleSchema.init(
                 'city_manager',
                 'worker',
                 'client_admin',
+                'customer',
             ),
             allowNull: false,
         },
