@@ -5,10 +5,13 @@ import { validate } from "../../utility/validate";
 import meterService from "./meter.service";
 import { ZFilterMeter, Zmeter, ZUpdateMeter } from "./meter.type";
 import { Route } from "../../routes/routes.types";
+import { FileUpload } from "../../utility/multer.storage";
 
 
 const router = new CustomRouter();
-const upload= multer();
+const upload = FileUpload('./uploads', {
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+});
 
 router.get(
     '/',
@@ -51,14 +54,14 @@ router.get(
 router.post(
     '/',
     [   
-          upload.single('avatar'),
+        upload.single('avatar'),
         validate(Zmeter),
         async (req, res, next) => {
             try {
                 if(!req.file){
                    throw {status:400,message:"Bad Request"}
                 }
-                const image=req.file.filename;
+                const image=req.file.path;
                 const schema = req.payload.schema;
                 const body={
                     ...req.body,

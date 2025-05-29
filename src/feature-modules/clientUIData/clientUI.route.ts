@@ -5,9 +5,12 @@ import { uiData } from './clientUIData.type';
 import clientUIService from './clientUI.service';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
+import { FileUpload } from '../../utility/multer.storage';
 
 const router = new CustomRouter();
-const upload = multer();
+const upload = FileUpload('./uploads', {
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+});
 
 router.post('/:id', [
     upload.single('avatar'),
@@ -20,7 +23,7 @@ router.post('/:id', [
             const schema=req.payload.schema;
             const details = {
                 ...req.body,
-                logo: req.file?.filename,
+                logo: req.file?.path,
             };
             const result = await clientUIService.createClientUI(
                 details,
