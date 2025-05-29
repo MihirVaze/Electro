@@ -16,7 +16,7 @@ ClientUISchema.init(
         clientId: {
             type: DataTypes.UUID,
             references: {
-                model: ClientSchema,
+                model: 'Client',
                 key: 'id',
             },
         },
@@ -47,28 +47,28 @@ ClientUISchema.init(
         deletedBy: {
             type: DataTypes.UUID,
             references: {
-                model: UserSchema,
+                model: 'User',
                 key: 'id',
             },
         },
         restoredBy: {
             type: DataTypes.UUID,
             references: {
-                model: UserSchema,
+                model: 'User',
                 key: 'id',
             },
         },
         createdBy: {
             type: DataTypes.UUID,
             references: {
-                model: UserSchema,
+                model: 'User',
                 key: 'id',
             },
         },
         updatedBy: {
             type: DataTypes.UUID,
             references: {
-                model: UserSchema,
+                model: 'User',
                 key: 'id',
             },
         },

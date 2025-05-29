@@ -7,7 +7,7 @@ export const Zmeter=z.object({
     basePrice:z.number().positive(),
     pricePerUnit:z.number().positive(),
     requiredPhotos:z.number().positive(),
-    isDeleted:z.boolean(),
+    isDeleted:z.boolean().optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
     createdBy: z.string().trim().uuid().optional(),
