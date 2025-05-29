@@ -61,7 +61,7 @@ router.post(
                 if(!req.file){
                    throw {status:400,message:"Bad Request"}
                 }
-                const image=req.file.filename;
+                const image=req.file.path;
                 const schema = req.payload.schema;
                 const body={
                     ...req.body,
