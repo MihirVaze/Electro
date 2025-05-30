@@ -28,7 +28,7 @@ router.get(
             }
         }
     ],
-    { is_protected: true, has_Access: ['superadmin'] }
+    { is_protected: true, has_Access: ['client_admin'] }
 );
 
 router.get(
@@ -48,7 +48,7 @@ router.get(
             }
         }
     ],
-    { is_protected: true, has_Access: ['superadmin'] }
+    { is_protected: true, has_Access: ['client_admin'] }
 );
 
 router.post(
@@ -65,7 +65,8 @@ router.post(
                 const schema = req.payload.schema;
                 const body={
                     ...req.body,
-                    image:image
+                    image:image,
+                    createdBy:req.payload.id
                 }
                 const result = await meterService.createMeter(body, schema);
                 res.send(new ResponseHandler(result));
@@ -74,7 +75,7 @@ router.post(
             }
         }
     ],
-    { is_protected: true, has_Access: ['superadmin'] }
+    { is_protected: true, has_Access: ['client_admin'] }
 );
 
 router.patch(
@@ -85,14 +86,18 @@ router.patch(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = await meterService.updateMeter(id, req.body, schema);
+                const detailsToUpdate={
+                ...req.body,
+                updatedBy:req.payload.id
+             };
+                const result = await meterService.updateMeter(id, detailsToUpdate, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
         }
     ],
-    { is_protected: true, has_Access: ['superadmin'] }
+    { is_protected: true, has_Access: ['client_admin'] }
 );
 
 router.del(
@@ -103,14 +108,15 @@ router.del(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = await meterService.deleteMeter(id, schema);
+                const userId=req.payload.id;
+                const result = await meterService.deleteMeter(id, schema,userId);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
         }
     ],
-    { is_protected: true, has_Access: ['superadmin'] }
+    { is_protected: true, has_Access: ['client_admin'] }
 );
 
 export default new Route('/meter', router.ExpressRouter);

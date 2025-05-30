@@ -22,10 +22,6 @@ class MeterRepo {
     ) {
         return MeterSchema.schema(schema).update(meter, options);
     }
-
-    public async delete(options: UpdateOptions<Meter>, schema: string) {
-        return MeterSchema.schema(schema).update({ isDeleted: true }, options);
-    }
 }
 
 export default new MeterRepo();

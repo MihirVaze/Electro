@@ -1,15 +1,16 @@
 import { v4 } from 'uuid';
 import { ClientUIData, UIData } from './clientUIData.type';
 import clientUIRepo from './clientUI.repo';
-import { UI_RESPONSES } from './response';
+import { UI_RESPONSES } from './clientUI.response';
 
 class ClientUIService {
-    async createClientUI(details: UIData, id: string,schema:string) {
+    async createClientUI(details:UIData, id: string,schema:string,userId:string) {
         try {
             const newDetails = {
                 id: v4(),
                 clientId: id,
                 ...details,
+                createdBy:userId
             };
             const result = await clientUIRepo.createClientUI(newDetails,schema);
             if (!result) {
@@ -67,9 +68,9 @@ class ClientUIService {
         }
     }
 
-    async deleteUI(id:string,schema:string){
+    async deleteUI(id:string,userId:string,schema:string){
         try{
-           const result=await clientUIRepo.updateClientUI({isDeleted:true},{where:{clientId:id}},schema);
+           const result=await clientUIRepo.updateClientUI({isDeleted:true,deletedBy:userId,deletedAt:new Date()},{where:{clientId:id}},schema);
            if(result[0]===0){
             throw {status:500,message:"Something Went Wrong"}
            }
