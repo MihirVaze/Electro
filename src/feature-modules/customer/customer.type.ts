@@ -66,3 +66,46 @@ export const ZUpdateCustomer = z.object({
         phoneNo: true,
     }).optional(),
 });
+
+export const ZCustomerMeter = z.object({
+    id: z.string().uuid().optional(),
+
+    userId: z.string().uuid().optional(),
+    meterId: z.string().uuid(),
+
+    name: z.string().trim().nonempty().optional(),
+    email: z
+        .string()
+        .trim()
+        .email({ message: 'Enter a valid e-mail' })
+        .optional(),
+    meterName: z.string().trim().nonempty().optional(),
+
+    isDeleted: z.boolean().default(false).optional(),
+    deletedBy: z.string().trim().uuid().optional(),
+    restoredBy: z.string().trim().uuid().optional(),
+    createdBy: z.string().trim().uuid().optional(),
+    updatedBy: z.string().trim().uuid().optional(),
+    deletedAt: z.date().optional(),
+    restoredAt: z.date().optional(),
+
+    limit: z.coerce.number().default(10).optional(),
+    page: z.coerce.number().default(1).optional(),
+});
+
+export type CustomerMeter = z.infer<typeof ZCustomerMeter>;
+
+export const ZRegisterCustomerMeter = z.object({
+    userId: z.string().uuid().optional(),
+    meterId: z.string().uuid(),
+});
+
+export const ZFindCustomerMeters = z.object({
+    query: ZCustomerMeter.pick({
+        name: true,
+        email: true,
+        meterName: true,
+        limit: true,
+        page: true,
+    }).optional(),
+});
