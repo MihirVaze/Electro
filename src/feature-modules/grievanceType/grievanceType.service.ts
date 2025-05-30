@@ -123,3 +123,40 @@ class GrievanceTypeService {
 }
 
 export default new GrievanceTypeService();
+
+// SELECT city.id
+// FROM user_locations AS ul
+// JOIN states AS s ON s.id = ul.state_id -- for state_manager
+// JOIN districts AS d ON d.state_id = s.id
+// JOIN cities AS city ON city.district_id = d.id
+// WHERE ul.user_id = :userId;
+
+// async function getAllUserCityByRole(userId: string, role: string, schema: SchemaName) {
+//     const db = getDB(schema);
+
+//     if (role === 'state_manager') {
+//     return db.City.findAll({
+//     include: [{model: db.District,
+//              include: [{model: db.State,
+//                        include: [{model: db.UserLocation, where: { userId },}],}],}],});
+//     } else if (role === 'district_manager') {
+//     return db.City.findAll({
+//     include: [{
+//     model: db.District,
+//     include: [{
+//     model: db.UserLocation,
+//     where: { userId },
+//     }],
+//     }],
+//     });
+//     } else if (role === 'city_manager' || role === 'service_worker') {
+//     return db.City.findAll({
+//     include: [{
+//     model: db.UserLocation,
+//     where: { userId },
+//     }],
+//     });
+//     }
+
+//     return [];
+//     }

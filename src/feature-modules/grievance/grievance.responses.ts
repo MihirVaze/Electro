@@ -31,4 +31,16 @@ export const GRIEVANCE_RESPONSES = {
         status: 200,
         message: 'GRIEVANCE UPDATED SUCCESSFULLY',
     },
+    GRIEVANCE_ASSIGNED: {
+        status: 200,
+        message: 'GRIEVANCE ASSIGNED SUCCESSFULLY',
+    },
+    GRIEVANCE_ESCALATED: {
+        status: 200,
+        message: 'GRIEVANCE ESCALATED SUCCESSFULLY',
+    },
+    GRIEVANCE_ESCALATION_NOT_ALLOWED: {
+        status: 200,
+        message: 'GRIEVANCE ESCALATION NOT ALLOWED',
+    },
 };

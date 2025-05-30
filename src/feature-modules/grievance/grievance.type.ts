@@ -8,7 +8,7 @@ export const Grievance = z.object({
     comments: z.string().optional(),
 
     status: z
-        .enum(['pending', 'in-progress', 'escalated', 'resolved', 'rejected'])
+        .enum(['pending', 'in-progress', 'resolved'])
         .default('pending')
         .optional(),
     assignedTo: z.string().trim().uuid().optional(),
