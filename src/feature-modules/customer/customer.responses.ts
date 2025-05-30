@@ -31,4 +31,12 @@ export const CUSTOMER_RESPONSES = {
         status: 200,
         message: 'CUSTOMER UPDATED SUCCESSFULLY',
     },
+    CUSTOMER_WORKER_NOT_FOUND: {
+        status: 404,
+        message: 'CUSTOMER WORKER NOT FOUND',
+    },
+    NO_WORKER_AVAILABLE_IN_THIS_AREA: {
+        status: 404,
+        message: 'NO WORKER AVAILABLE IN THIS AREA',
+    },
 };

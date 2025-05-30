@@ -3,19 +3,24 @@ import { SchemaName } from '../../utility/umzug-migration';
 import userService from '../user/user.service';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
-import { runMigration } from '../../utility/umzug-migration';
 import roleServices from '../role/role.services';
-import { Customer } from './customer.type';
+import { Customer, CustomerWorker } from './customer.type';
 import { CUSTOMER_RESPONSES } from './customer.responses';
 import customerRepo from './customer.repo';
+import workerService from '../worker/worker.service';
 
 class CustomerServices {
-    async addCustomer(Customer: Customer, schema: SchemaName) {
+    async addCustomer(customer: Customer, schema: SchemaName) {
         try {
             const { name, phoneNo, email, password, cityId, address } =
-                Customer;
+                customer;
             if (!name || !phoneNo || !email || !password || !cityId || !address)
                 throw CUSTOMER_RESPONSES.CUSTOMER_CREATION_FIELDS_MISSING;
+
+            const roleId = (
+                await roleServices.getRole({ role: 'customer' }, schema)
+            ).id!;
+            console.log(roleId);
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -24,7 +29,12 @@ class CustomerServices {
                     email,
                     password,
                 },
-                [{ roleId: '' }], //SKIPPED FOR NOW
+                [
+                    {
+                        roleId,
+                        locationIds: [cityId],
+                    },
+                ],
                 schema,
             );
 
@@ -40,6 +50,26 @@ class CustomerServices {
                 schema,
             );
 
+            const limit = 10;
+            const page = 1;
+
+            const workers = await workerService.getWorkers(
+                { cityId },
+                limit,
+                page,
+                'public',
+            );
+
+            if (workers.rows.length === 0)
+                throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
+
+            const randomNum = Math.random() * workers.count;
+            const workerToBeAssigned = workers.rows[randomNum];
+
+            const workerId = workerToBeAssigned.dataValues.userId!;
+
+            await this.addCustomerWorker({ workerId, customerId: id }, schema);
+
             return CUSTOMER_RESPONSES.CUSTOMER_CREATED;
         } catch (error) {
             console.dir(error);
@@ -47,11 +77,11 @@ class CustomerServices {
         }
     }
 
-    async getCustomer(Customer: Partial<Customer>, schema: SchemaName) {
+    async getCustomer(customer: Partial<Customer>, schema: SchemaName) {
         try {
             const result = await customerRepo.get(
                 {
-                    where: Customer,
+                    where: customer,
                     attributes: {
                         exclude: [
                             'isDeleted',
@@ -182,6 +212,83 @@ class CustomerServices {
             );
             if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
             return CUSTOMER_RESPONSES.CUSTOMER_DELETED;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    async getCustomerWorker(
+        customerWorker: Partial<CustomerWorker>,
+        schema: SchemaName,
+    ) {
+        try {
+            const result = await customerRepo.getCustomerWorker(
+                { where: customerWorker },
+                schema,
+            );
+            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_WORKER_NOT_FOUND;
+
+            return result;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    async getCustomerWorkers(
+        customerWorker: Partial<CustomerWorker>,
+        limit: number,
+        page: number,
+        schema: SchemaName,
+    ) {
+        try {
+            const offset = (page - 1) * limit;
+
+            const result = await customerRepo.getAll(
+                {
+                    where: { isDeleted: false, ...customerWorker },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                    include: [
+                        {
+                            model: UserSchema,
+                            attributes: ['name', 'email'],
+                        },
+                    ],
+                    limit,
+                    offset,
+                },
+                schema,
+            );
+            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_WORKER_NOT_FOUND;
+
+            return result;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    async addCustomerWorker(
+        customerWorker: CustomerWorker,
+        schema: SchemaName,
+    ) {
+        try {
+            const result = await customerRepo.createCustomerWorker(
+                customerWorker,
+                schema,
+            );
+            return result;
         } catch (e) {
             console.log(e);
             throw e;

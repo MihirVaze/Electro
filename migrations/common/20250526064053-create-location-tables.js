@@ -57,11 +57,11 @@ module.exports = {
                     },
                     createdAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                     updatedAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                 },
             );
@@ -127,11 +127,11 @@ module.exports = {
                     },
                     createdAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                     updatedAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                 },
             );
@@ -197,11 +197,11 @@ module.exports = {
                     },
                     createdAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                     updatedAt: {
                         type: DataTypes.DATE,
-                        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                        defaultValue: Date.now(),
                     },
                 },
             );
