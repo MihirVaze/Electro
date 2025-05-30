@@ -9,6 +9,7 @@ import {
     hashPassword,
 } from '../../utility/password.generator';
 import clientService from '../client/client.service';
+import { ROLE } from '../role/role.data';
 
 class AuthenticationServices {
     async login(credentials: Credentials, schema: SchemaName) {
@@ -47,7 +48,7 @@ class AuthenticationServices {
                 ),
             );
 
-            const schemaName = roles.includes('client_admin')
+            const schemaName = roleId.includes(ROLE.CLIENT_ADMIN)
                 ? (await clientService.getClient({ userId: id }, schema))
                       .dataValues.schemaName
                 : schema;
