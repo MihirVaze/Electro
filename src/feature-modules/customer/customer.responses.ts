@@ -39,4 +39,38 @@ export const CUSTOMER_RESPONSES = {
         status: 404,
         message: 'NO WORKER AVAILABLE IN THIS AREA',
     },
+
+    //CUSTOMER-METER
+    CUSTOMER_METER_NOT_FOUND: {
+        status: 404,
+        message: 'CUSTOMER METER NOT FOUND',
+    },
+    CUSTOMER_METER_CREATION_FAILED: {
+        status: 500,
+        message: 'CUSTOMER METER COULD NOT BE CREATED',
+    },
+    CUSTOMER_METER_CREATION_FIELDS_MISSING: {
+        status: 500,
+        message: 'PLEASE ENTER ALL THE FIELDS',
+    },
+    CUSTOMER_METER_CREATED: {
+        status: 201,
+        message: 'CUSTOMER METER CREATED SUCCESSFULLY',
+    },
+    CUSTOMER_METER_DELETION_FAILED: {
+        status: 500,
+        message: 'CUSTOMER METER COULD NOT BE DELETED',
+    },
+    CUSTOMER_METER_DELETED: {
+        status: 200,
+        message: 'CUSTOMER METER DELETED SUCCESSFULLY',
+    },
+    CUSTOMER_METER_UPDATION_FAILED: {
+        status: 500,
+        message: 'CUSTOMER METER COULD NOT BE UPDATED',
+    },
+    CUSTOMER_METER_UPDATED: {
+        status: 200,
+        message: 'CUSTOMER METER UPDATED SUCCESSFULLY',
+    },
 };

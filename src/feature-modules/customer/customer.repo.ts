@@ -1,7 +1,11 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Customer, CustomerWorker } from './customer.type';
-import { CustomerSchema, CustomerWorkerSchema } from './customer.schema';
+import { Customer, CustomerWorker, CustomerMeter } from './customer.type';
+import {
+    CustomerMeterSchema,
+    CustomerSchema,
+    CustomerWorkerSchema,
+} from './customer.schema';
 
 class CustomerRepo {
     public async create(customer: Customer, schema: SchemaName) {
@@ -70,6 +74,49 @@ class CustomerRepo {
         schema: SchemaName,
     ) {
         return CustomerWorkerSchema.schema(schema).update(
+            { isDeleted: true },
+            options,
+        );
+    }
+
+    //CustomerMeter
+    public async createCustomerMeter(
+        customerMeter: CustomerMeter,
+        schema: SchemaName,
+    ) {
+        return CustomerMeterSchema.schema(schema).create(customerMeter);
+    }
+
+    public async getCustomerMeter(
+        options: FindOptions<CustomerMeter>,
+        schema: SchemaName,
+    ) {
+        return CustomerMeterSchema.schema(schema).findOne(options);
+    }
+
+    public async getAllCustomerMeter(
+        options: FindOptions<CustomerMeter>,
+        schema: SchemaName,
+    ) {
+        return CustomerMeterSchema.schema(schema).findAndCountAll(options);
+    }
+
+    public async updateCustomerMeter(
+        customerMeter: Partial<CustomerMeter>,
+        options: UpdateOptions<CustomerMeter>,
+        schema: SchemaName,
+    ) {
+        return CustomerMeterSchema.schema(schema).update(
+            customerMeter,
+            options,
+        );
+    }
+
+    public async deleteCustomerMeter(
+        options: UpdateOptions<CustomerMeter>,
+        schema: SchemaName,
+    ) {
+        return CustomerMeterSchema.schema(schema).update(
             { isDeleted: true },
             options,
         );
