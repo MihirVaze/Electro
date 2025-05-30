@@ -35,7 +35,7 @@ class AuthenticationServices {
                 },
                 schema,
             );
-            const roleId = EmployeeRoles.map((e) => e.roleId).filter(
+            const roleId = EmployeeRoles.map((e) => e.dataValues.roleId).filter(
                 (e): e is string => !!e,
             );
 

@@ -50,16 +50,16 @@ router.post(
 );
 
 router.patch(
-    '/user',
+    '/',
     [
         validate(ZEditUser),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
                 const editorRoleId = req.payload.roleId;
-                const user = req.body;
+                const user: User = req.body;
 
-                // if we are taking id from params that means someone else is editing the user so we need to know if they have permition
+                // if we are taking id from body that means someone else is editing the user so we need to know if they have permition
                 if (user.id) {
                     const userRoles = (
                         await userService.getUserRoles(
@@ -67,7 +67,7 @@ router.patch(
                             schema,
                         )
                     )
-                        .map((e) => e.id)
+                        .map((e) => e.dataValues.id)
                         .filter((e): e is string => !!e);
                     const canUpdate = HasPermission(
                         editorRoleId,
@@ -110,7 +110,7 @@ router.del(
                 const userRoles = (
                     await userService.getUserRoles({ userId }, schema)
                 )
-                    .map((e) => e.id)
+                    .map((e) => e.dataValues.id)
                     .filter((e): e is string => !!e);
 
                 const canUpdate = HasPermission(

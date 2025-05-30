@@ -42,7 +42,7 @@ class UserLocationService {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.log(error);
             throw error;
@@ -162,7 +162,7 @@ class UserLocationService {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.log(error);
             throw error;
@@ -277,7 +277,7 @@ class UserLocationService {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.log(error);
             throw error;
