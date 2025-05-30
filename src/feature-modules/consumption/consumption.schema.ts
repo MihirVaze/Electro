@@ -1,6 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import { Consumption } from "./conumption.type";
 import { sequelize } from "../../connections/pg.connection";
+import { CustomerSchema } from "../customer/customer.schema";
+import { UserSchema } from "../user/user.schema";
+import { WorkerSchema } from "../worker/worker.schema";
 
 
 export class ConsumptionSchema extends Model<Consumption,Consumption>{}
@@ -78,4 +81,31 @@ ConsumptionSchema.init({
     modelName:'Consumption',
     tableName:'Consumption',
     sequelize:sequelize
+});
+
+ConsumptionSchema.belongsTo(CustomerSchema, {
+    foreignKey: 'customerId',
+    as: 'customerId',
+});
+
+ConsumptionSchema.belongsTo(WorkerSchema, {
+    foreignKey: 'workerId',
+    as: 'workerId',
+});
+
+ConsumptionSchema.belongsTo(UserSchema, {
+    foreignKey: 'createdBy',
+    as: 'createdByUser',
+});
+ConsumptionSchema.belongsTo(UserSchema, {
+    foreignKey: 'updatedBy',
+    as: 'updatedByUser',
+});
+ConsumptionSchema.belongsTo(UserSchema, {
+    foreignKey: 'deletedBy',
+    as: 'deletedByUser',
+});
+ConsumptionSchema.belongsTo(UserSchema, {
+    foreignKey: 'restoredBy',
+    as: 'restoredByUser',
 });
