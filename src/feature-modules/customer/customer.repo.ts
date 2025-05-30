@@ -1,11 +1,15 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Customer, CustomerMeter } from './customer.type';
-import { CustomerMeterSchema, CustomerSchema } from './customer.schema';
+import { Customer, CustomerWorker, CustomerMeter } from './customer.type';
+import {
+    CustomerMeterSchema,
+    CustomerSchema,
+    CustomerWorkerSchema,
+} from './customer.schema';
 
 class CustomerRepo {
-    public async create(Customer: Customer, schema: SchemaName) {
-        return CustomerSchema.schema(schema).create(Customer);
+    public async create(customer: Customer, schema: SchemaName) {
+        return CustomerSchema.schema(schema).create(customer);
     }
 
     public async get(options: FindOptions<Customer>, schema: SchemaName) {
@@ -17,15 +21,59 @@ class CustomerRepo {
     }
 
     public async update(
-        Customer: Partial<Customer>,
+        customer: Partial<Customer>,
         options: UpdateOptions<Customer>,
         schema: SchemaName,
     ) {
-        return CustomerSchema.schema(schema).update(Customer, options);
+        return CustomerSchema.schema(schema).update(customer, options);
     }
 
     public async delete(options: UpdateOptions<Customer>, schema: SchemaName) {
         return CustomerSchema.schema(schema).update(
+            { isDeleted: true },
+            options,
+        );
+    }
+
+    //Customer Worker
+
+    public async createCustomerWorker(
+        customerWorker: CustomerWorker,
+        schema: SchemaName,
+    ) {
+        return CustomerWorkerSchema.schema(schema).create(customerWorker);
+    }
+
+    public async getCustomerWorker(
+        options: FindOptions<CustomerWorker>,
+        schema: SchemaName,
+    ) {
+        return CustomerWorkerSchema.schema(schema).findOne(options);
+    }
+
+    public async getAllCustomerWorker(
+        options: FindOptions<CustomerWorker>,
+        schema: SchemaName,
+    ) {
+        return CustomerWorkerSchema.schema(schema).findAndCountAll(options);
+    }
+
+    public async updateCustomerWorker(
+        customerWorker: Partial<CustomerWorker>,
+        options: UpdateOptions<CustomerWorker>,
+        schema: SchemaName,
+    ) {
+        return CustomerWorkerSchema.schema(schema).update(
+            customerWorker,
+            options,
+        );
+    }
+
+    public async deleteCustomerWorker(
+        options: UpdateOptions<CustomerWorker>,
+        schema: SchemaName,
+    ) {
+        return CustomerWorkerSchema.schema(schema).update(
             { isDeleted: true },
             options,
         );

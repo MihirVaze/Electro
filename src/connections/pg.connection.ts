@@ -18,10 +18,19 @@ export class Connection {
         try {
             await sequelize.authenticate();
 
+            const schemas = await sequelize.showAllSchemas({});
+
             await runMigration('public', 'migrations/common/*js');
             await runMigration('public', 'migrations/electro/*js');
 
             await runMigration('public', 'seeders/*js');
+
+            schemas.map(async (schema) => {
+                await runMigration(String(schema), 'migrations/client/*js');
+                await runMigration(String(schema), 'migrations/common/*js');
+
+                await runMigration(String(schema), 'seeders/*js');
+            });
 
             console.log('CONNECTED TO PG DATABASE');
         } catch (e) {
