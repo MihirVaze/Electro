@@ -142,7 +142,7 @@ router.del(
 
 //CUSTOMER-METER
 router.get(
-    '/',
+    '/customer-meter',
     [
         validate(ZFindCustomerMeters),
         async (req, res, next) => {
@@ -175,12 +175,14 @@ router.get(
 );
 
 router.post(
-    '/',
+    '/customer-meter',
     [
         validate(ZRegisterCustomerMeter),
         async (req, res, next) => {
             try {
-                req.body.userId = req.payload.id;
+                if (!req.body.userId) {
+                    req.body.userId = req.payload.id;
+                }
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
                     req.body,
@@ -204,7 +206,7 @@ router.post(
 );
 
 router.del(
-    '/:id',
+    '/customer-meter/:id',
     [
         async (req, res, next) => {
             try {
