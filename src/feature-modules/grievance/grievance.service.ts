@@ -7,7 +7,8 @@ import { SchemaName } from '../../utility/umzug-migration';
 import userLocationRepo from '../userLocation/userLocation.repo';
 import roleServices from '../role/role.services';
 import locationRepo from '../location/location.repo';
-import { WhereOptions } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
+import { DistrictSchema } from '../location/location.schema';
 
 class GrievanceService {
     async raiseGrievance(
@@ -42,7 +43,7 @@ class GrievanceService {
 
     async getGrievance(
         userId: string,
-        roleId: string[],
+        roleIds: string[],
         limit: number,
         page: number,
         grievance: Partial<Grievance>,
@@ -50,7 +51,7 @@ class GrievanceService {
     ) {
         try {
             const roleNames = await Promise.all(
-                roleId.map(
+                roleIds.map(
                     async (id) =>
                         (await roleServices.getRole({ id }, schema)).role,
                 ),
@@ -62,10 +63,6 @@ class GrievanceService {
                 isDeleted: false,
                 ...grievance,
             };
-
-            if (grievance.status) {
-                where.status = grievance.status;
-            }
 
             if (roleNames.includes('client_manager')) {
                 return grievanceRepo.getAll({ where, limit, offset }, schema);
@@ -80,28 +77,29 @@ class GrievanceService {
                 );
                 const stateIds = userStates.rows.map(
                     (state) => state.dataValues.stateId,
-                ); //statemanager
-                for (const stateId of stateIds) {
-                    const districts = await locationRepo.getAllDistricts(
-                        { where: { stateId } },
-                        schema,
-                    );
-                    const districtIds = districts.rows.map(
-                        (district) => district.dataValues.id,
-                    );
-                    for (const districtId of districtIds) {
-                        const getCities = await locationRepo.getAllCities(
-                            { where: { districtId } },
-                            schema,
-                        );
-                        const cityIds = getCities.rows.map(
-                            (city) => city.dataValues.id,
-                        );
-                        for (const cityId of cityIds) {
-                            if (!cityId) throw 'undefined';
-                            cities.push(cityId);
-                        }
-                    }
+                );
+
+                const cityIds = await locationRepo.getAllCities(
+                    {
+                        include: [
+                            {
+                                model: DistrictSchema,
+                                attributes: [],
+                                where: {
+                                    stateId: {
+                                        [Op.in]: stateIds,
+                                    },
+                                },
+                            },
+                        ],
+                        attributes: ['id'],
+                    },
+                    schema,
+                );
+
+                for (const cityId of cityIds.rows) {
+                    if (!cityId.dataValues.id) throw 'id invalid';
+                    cities.push(cityId.dataValues.id);
                 }
             } else if (roleNames.includes('district_manager')) {
                 const userDistricts = await userLocationRepo.getAllUserDistrict(
@@ -111,41 +109,105 @@ class GrievanceService {
                 const districtIds = userDistricts.rows.map(
                     (district) => district.dataValues.districtId,
                 );
-                for (const districtId of districtIds) {
-                    const getCities = await locationRepo.getAllCities(
-                        { where: { districtId } },
-                        schema,
-                    );
-                    const cityIds = getCities.rows.map(
-                        (city) => city.dataValues.id,
-                    );
-                    for (const cityId of cityIds) {
-                        if (!cityId) throw 'undefined';
-                        cities.push(cityId);
-                    }
+
+                const cityIds = await locationRepo.getAllCities(
+                    {
+                        where: {
+                            districtId: {
+                                [Op.in]: districtIds,
+                            },
+                        },
+                        attributes: ['id'],
+                    },
+                    schema,
+                );
+
+                for (const cityId of cityIds.rows) {
+                    if (!cityId.dataValues.id) throw 'id invalid';
+                    cities.push(cityId.dataValues.id);
                 }
             } else if (
                 roleNames.includes('city_manager') ||
                 roleNames.includes('service_worker')
             ) {
-                const userCities = await userLocationRepo.getAllUserCity(
-                    { where: { userId } },
+                const cityIds = await userLocationRepo.getAllUserCity(
+                    {
+                        where: {
+                            userId,
+                        },
+                        attributes: ['id'],
+                    },
                     schema,
                 );
-                const cityIds = userCities.rows.map(
-                    (city) => city.dataValues.cityId,
-                );
-                for (const cityId of cityIds) {
-                    if (!cityId) throw 'undefined';
-                    cities.push(cityId);
+
+                for (const cityId of cityIds.rows) {
+                    if (!cityId.dataValues.id) throw 'id invalid';
+                    cities.push(cityId.dataValues.id);
                 }
             }
 
-            where.location = cities;
-            return grievanceRepo.getAll({ where, limit, offset }, schema);
+            //where.location = cities;
+            where.location = { [Op.in]: cities };
+            return await grievanceRepo.getAll({ where, limit, offset }, schema);
         } catch (e) {
             console.dir(e);
             throw e;
+        }
+    }
+
+    async assignOrEscalateGrievance(
+        userId: string,
+        roleId: string[],
+        grievanceId: string,
+        action: 'pick' | 'escalate',
+        schema: SchemaName,
+    ) {
+        const grievance = await grievanceRepo.get(
+            { where: { id: grievanceId } },
+            schema,
+        );
+        if (!grievance) throw GRIEVANCE_RESPONSES.GRIEVANCE_NOT_FOUND;
+
+        const roleNames = await Promise.all(
+            roleId.map(
+                async (id) => (await roleServices.getRole({ id }, schema)).role,
+            ),
+        );
+
+        if (action === 'pick') {
+            await grievanceRepo.update(
+                {
+                    assignedTo: userId,
+                    status: 'in-progress',
+                },
+                { where: { id: grievanceId } },
+                schema,
+            );
+
+            return GRIEVANCE_RESPONSES.GRIEVANCE_ASSIGNED;
+        }
+
+        if (action === 'escalate') {
+            let escalateTo = '';
+            if (roleNames.includes('service_worker'))
+                escalateTo = 'city_manager';
+            else if (roleNames.includes('city_manager'))
+                escalateTo = 'district_manager';
+            else if (roleNames.includes('district_manager'))
+                escalateTo = 'state_manager';
+            else if (roleNames.includes('state_manager'))
+                escalateTo = 'client_manager';
+            else throw GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATION_NOT_ALLOWED;
+
+            await grievanceRepo.update(
+                {
+                    escalatedTo: escalateTo,
+                    status: 'pending',
+                },
+                { where: { id: grievanceId } },
+                schema,
+            );
+            return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
         }
     }
 }

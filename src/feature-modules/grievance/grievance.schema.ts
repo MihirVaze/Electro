@@ -3,6 +3,7 @@ import { Grievance } from './grievance.type';
 import { UserSchema } from '../user/user.schema';
 import { sequelize } from '../../connections/pg.connection';
 import { GrievanceTypeSchema } from '../grievanceType/grievanceType.schema';
+import { RoleSchema } from '../role/role.schema';
 
 export class GrievanceSchema extends Model<Grievance, Grievance> {}
 
@@ -24,22 +25,24 @@ GrievanceSchema.init(
             allowNull: true,
         },
         status: {
-            type: DataTypes.ENUM(
-                'pending',
-                'in-progress',
-                'escalated',
-                'resolved',
-                'rejected',
-            ),
+            type: DataTypes.ENUM('pending', 'in-progress', 'resolved'),
             defaultValue: 'pending',
         },
         assignedTo: {
             type: DataTypes.UUID,
             allowNull: true,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
         },
         escalatedTo: {
             type: DataTypes.UUID,
             allowNull: true,
+            references: {
+                model: RoleSchema,
+                key: 'id',
+            },
         },
         location: {
             type: DataTypes.STRING,
