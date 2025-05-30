@@ -3,6 +3,7 @@ import { Op, WhereOptions } from 'sequelize';
 import meterRepo from './meter.repo';
 import { Meter } from './meter.type';
 import { METER_RESPONSES } from './meter.response';
+import { v4 } from 'uuid';
 
 class MeterService {
     async findOneMeter(meter: Partial<Meter>, schema: string) {
@@ -24,9 +25,7 @@ async getMeters(
   schema: string,
 ) {
   const offset = (page - 1) * limit;
-  const where: WhereOptions<Meter> = {
-    isDeleted: true, 
-  };
+  const where: WhereOptions<Meter> =  {};
 
 
   if (filter.name) {
@@ -54,7 +53,11 @@ async getMeters(
 
 
     async createMeter(meter: Meter, schema: string) {
-       const result= await meterRepo.create(meter, schema);
+        const meterDetails={
+            id:v4(),
+            ...meter
+        }
+       const result= await meterRepo.create(meterDetails, schema);
        if(!result) throw {status:500,message:"Something Went Wrong"};
         return METER_RESPONSES.METER_CREATED;
     }
@@ -65,8 +68,13 @@ async getMeters(
         return METER_RESPONSES.METER_UPDATED;
     }
 
-    async deleteMeter(id: string, schema: string) {
-        const result = await meterRepo.delete({ where: { id } }, schema);
+    async deleteMeter(id: string, schema: string,userId:string) {
+        const details={
+            isDeleted:true,
+            deletedAt:new Date(),
+            deletedBy:userId 
+        }
+        const result = await meterRepo.update(details,{where:{id}},schema);
         if (!result[0]) throw METER_RESPONSES.METER_DELETION_FAILED;
         return METER_RESPONSES.METER_DELETED;
     }

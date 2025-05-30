@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const Zmeter=z.object({
     id:z.string().uuid().optional(),
-    name:z.string().min(1,{message:"Name cannot be blank"}),
+    name:z.string().trim().min(1,{message:"Name cannot be blank"}),
     image:z.string().nonempty(),
     basePrice:z.number().positive(),
     pricePerUnit:z.number().positive(),

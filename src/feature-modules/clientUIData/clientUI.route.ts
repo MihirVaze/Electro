@@ -21,6 +21,7 @@ router.post('/:id', [
                 throw { status: 400, message: 'Bad Request Logo Required' };
             }
             const schema=req.payload.schema;
+            const userId=req.payload.id;
             const details = {
                 ...req.body,
                 logo: req.file?.path,
@@ -28,14 +29,15 @@ router.post('/:id', [
             const result = await clientUIService.createClientUI(
                 details,
                 req.params.id,
-                schema
+                schema,
+                userId
             );
             res.send(new ResponseHandler(result));
         } catch (e) {
             next(e);
         }
     },
-]);
+],{ is_protected: true, has_Access: ['superadmin']});
 
 router.get('/:id', [
     async (req, res, next) => {
@@ -47,14 +49,18 @@ router.get('/:id', [
             next(e);
         }
     },
-]);
+],{ is_protected: true, has_Access: ['superadmin']});
 
 router.patch('/:id', [
     async (req, res, next) => {
         try {
              const schema=req.payload.schema;
+             const detailsToUpdate={
+                ...req.body,
+                updatedBy:req.payload.id
+             };
             const result = await clientUIService.updateUIDetails(
-                req.body,
+                detailsToUpdate,
                 req.params.id,
                 schema
             );
@@ -63,14 +69,16 @@ router.patch('/:id', [
             next(e);
         }
     },
-]);
+],{ is_protected: true, has_Access: ['superadmin']});
 
 router.del('/:id', [
     async (req, res, next) => {
         try {
              const schema=req.payload.schema;
+             const userId=req.payload.id;
             const result = await clientUIService.deleteUI(
                 req.params.id,
+                userId,
                 schema
             );
             res.send(new ResponseHandler(result));
@@ -78,7 +86,7 @@ router.del('/:id', [
             next(e);
         }
     },
-]);
+],{ is_protected: true, has_Access: ['superadmin']});
 
 
 export default new Route('/ui', router.ExpressRouter);
