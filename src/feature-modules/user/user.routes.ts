@@ -4,16 +4,16 @@ import { HasPermission } from '../../utility/usersPermissions';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import userService from './user.service';
-import { User, UserRoleLocation, ZRegiterUser } from './user.types';
+import { User, UserRoleLocation, ZEditUser, ZregisterUser } from './user.types';
 
 const router = new CustomRouter();
 
 // Register Employee For Electro and for different clients according to the schemas
 // along with multiple roles on multiplr locations
 router.post(
-    '/regiter',
+    '/register',
     [
-        validate(ZRegiterUser),
+        validate(ZregisterUser),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -50,24 +50,24 @@ router.post(
 );
 
 router.patch(
-    '/user/:id?',
+    '/',
     [
+        validate(ZEditUser),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
                 const editorRoleId = req.payload.roleId;
-                const user = req.body;
-                user.id = req.params.id || req.payload.id;
+                const user: User = req.body;
 
-                // if we are taking id from params that means someone else is editing the user so we need to know if they have permition
-                if (req.params.id) {
+                // if we are taking id from body that means someone else is editing the user so we need to know if they have permition
+                if (user.id) {
                     const userRoles = (
                         await userService.getUserRoles(
                             { userId: user.id },
                             schema,
                         )
                     )
-                        .map((e) => e.id)
+                        .map((e) => e.dataValues.id)
                         .filter((e): e is string => !!e);
                     const canUpdate = HasPermission(
                         editorRoleId,
@@ -75,7 +75,7 @@ router.patch(
                         schema,
                     );
                     if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
-                }
+                } else user.id = req.payload.id;
 
                 const result = await userService.updateUser(user, schema);
                 res.send(new ResponseHandler(result));
@@ -110,7 +110,7 @@ router.del(
                 const userRoles = (
                     await userService.getUserRoles({ userId }, schema)
                 )
-                    .map((e) => e.id)
+                    .map((e) => e.dataValues.id)
                     .filter((e): e is string => !!e);
 
                 const canUpdate = HasPermission(

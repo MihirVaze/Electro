@@ -6,24 +6,30 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'Role', schema },
+                { tableName: 'Customer', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    role: {
-                        type: DataTypes.ENUM(
-                            'superadmin',
-                            'client_manager',
-                            'state_manager',
-                            'district_manager',
-                            'city_manager',
-                            'worker',
-                            'client_admin',
-                            'customer',
-                        ),
+                    cityId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
+                    },
+                    userId: {
+                        type: DataTypes.UUID,
+                        allowNull: false,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
+                    },
+                    address: {
+                        type: DataTypes.STRING,
                         allowNull: false,
                     },
                     isDeleted: {
@@ -52,7 +58,7 @@ module.exports = {
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
@@ -95,7 +101,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'Role', schema });
+            await queryInterface.dropTable({ tableName: 'Customer', schema });
 
             await transaction.commit();
         } catch (error) {

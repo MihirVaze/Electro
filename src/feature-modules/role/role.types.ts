@@ -9,6 +9,7 @@ export const ZRoleEnum = z.enum([
     'worker',
     'client_admin', // India Head For the Client
     'service_worker',
+    'customer',
 ]);
 export type RoleEnum = z.infer<typeof ZRoleEnum>;
 

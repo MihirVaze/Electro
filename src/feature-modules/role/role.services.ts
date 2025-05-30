@@ -50,7 +50,7 @@ class RoleServices {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.log(error);
             throw error;

@@ -8,6 +8,7 @@ import {
     compareEncryption,
     hashPassword,
 } from '../../utility/password.generator';
+import clientService from '../client/client.service';
 
 class AuthenticationServices {
     async login(credentials: Credentials, schema: SchemaName) {
@@ -34,12 +35,9 @@ class AuthenticationServices {
                 },
                 schema,
             );
-            const roleId = EmployeeRoles.map((e) => e.id).filter(
+            const roleId = EmployeeRoles.map((e) => e.dataValues.roleId).filter(
                 (e): e is string => !!e,
             );
-
-            const payload: Payload = { id, roleId, schema };
-            const token = sign(payload, process.env.JWT_SECRET_KEY);
 
             // THIS GIVES THE ARRAY OF ALL THE VALID ROLES FOR THAT PERTICULAR USER
             const roles = await Promise.all(
@@ -48,6 +46,14 @@ class AuthenticationServices {
                         (await roleServices.getRole({ id: e }, schema)).role,
                 ),
             );
+
+            const schemaName = roles.includes('client_admin')
+                ? (await clientService.getClient({ userId: id }, schema))
+                      .dataValues.schemaName
+                : schema;
+
+            const payload: Payload = { id, roleId, schema: schemaName };
+            const token = sign(payload, process.env.JWT_SECRET_KEY);
 
             return { token, roles };
         } catch (e) {
@@ -58,7 +64,6 @@ class AuthenticationServices {
     async update(change: ChangePassWord, schema: SchemaName) {
         try {
             if (!change.id) throw 'ID NOT FOUND';
-
             const oldPassword = await userService.getPassword(
                 change.id,
                 schema,

@@ -52,7 +52,7 @@ const ZUserRoleLocation = z.object({
 
 export type UserRoleLocation = z.infer<typeof ZUserRoleLocation>;
 
-export const ZRegiterUser = z.object({
+export const ZregisterUser = z.object({
     body: z.object({
         user: ZUser.pick({
             name: true,
@@ -68,4 +68,24 @@ export const ZRegiterUser = z.object({
     }),
 });
 
-export type RegiterUser = z.infer<typeof ZRegiterUser>;
+export type registerUser = z.infer<typeof ZregisterUser>;
+
+export const ZEditUser = z.object({
+    body: z.object({
+        user: z.object({
+            id: z.string().trim().uuid().optional(),
+            name: z.string().trim().uuid().optional(),
+            phoneNo: z
+                .string()
+                .trim()
+                .nonempty()
+                .length(10, 'Enter a valid phone number')
+                .optional(),
+            email: z
+                .string()
+                .trim()
+                .email({ message: 'Enter a valid e-mail' })
+                .optional(),
+        }),
+    }),
+});

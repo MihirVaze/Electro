@@ -6,24 +6,31 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'Role', schema },
+                { tableName: 'Worker', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    role: {
-                        type: DataTypes.ENUM(
-                            'superadmin',
-                            'client_manager',
-                            'state_manager',
-                            'district_manager',
-                            'city_manager',
-                            'worker',
-                            'client_admin',
-                            'customer',
-                        ),
+                    workerName: {
+                        type: DataTypes.STRING,
+                        allowNull: false,
+                    },
+                    userId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
+                        allowNull: false,
+                    },
+                    cityId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
                         allowNull: false,
                     },
                     isDeleted: {
@@ -52,7 +59,7 @@ module.exports = {
                         },
                     },
                     updatedBy: {
-                        type: Sequelize.UUID,
+                        type: DataTypes.UUID,
                         references: {
                             model: 'User',
                             key: 'id',
@@ -60,21 +67,9 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
-                        defaultValue: null,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
-                        defaultValue: null,
-                    },
-                    createdAt: {
-                        type: DataTypes.DATE,
-                        allowNull: false,
-                        defaultValue: Date.now(),
-                    },
-                    updatedAt: {
-                        type: DataTypes.DATE,
-                        allowNull: false,
-                        defaultValue: Date.now(),
                     },
                 },
                 { transaction },
@@ -95,7 +90,7 @@ module.exports = {
         const transaction = await queryInterface.sequelize.transaction();
 
         try {
-            await queryInterface.dropTable({ tableName: 'Role', schema });
+            await queryInterface.dropTable({ tableName: 'Worker', schema });
 
             await transaction.commit();
         } catch (error) {

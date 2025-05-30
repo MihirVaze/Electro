@@ -11,17 +11,22 @@ import roleServices from '../role/role.services';
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
-            const { clientName, phoneNo, email, password, schemaName } = client;
-            if (!phoneNo || !email || !password)
+            const { clientName, phoneNo, email, schemaName } = client;
+            if (!phoneNo || !email)
                 throw CLIENT_RESPONSES.CLIENT_CREATION_FIELDS_MISSING;
 
-            const createdUser = await userService.createUser(
+            const roleId = (
+                await roleServices.getRole({ role: 'client_admin' }, schema)
+            ).id!;
+
+            const createdUser = await userService.onBoardUser(
                 {
                     name: clientName,
                     phoneNo,
                     email,
-                    password,
+                    password: '',
                 },
+                [{ roleId }],
                 schema,
             );
 
@@ -37,13 +42,8 @@ class ClientServices {
                 schema,
             );
 
-            const roleId = (
-                await roleServices.getRole({ role: 'client_admin' }, schema)
-            ).id!;
-
-            await userService.addRoles(id, [{ roleId }], schema);
-
             await runMigration(client.schemaName, 'migrations/common/*js');
+            await runMigration(client.schemaName, 'migrations/client/*js');
 
             await runMigration(client.schemaName, 'seeders/*js');
 
@@ -56,7 +56,23 @@ class ClientServices {
 
     async getClient(client: Partial<Client>, schema: SchemaName) {
         try {
-            const result = await clientRepo.get({ where: client }, schema);
+            const result = await clientRepo.get(
+                {
+                    where: client,
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
+                },
+                schema,
+            );
             if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
 
             return result;
@@ -94,6 +110,17 @@ class ClientServices {
             const result = await clientRepo.getAll(
                 {
                     where: { isDeleted: false, ...remainingClient },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                     include: [
                         {
                             model: UserSchema,
@@ -152,6 +179,20 @@ class ClientServices {
             if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
 
             return CLIENT_RESPONSES.CLIENT_UPDATED;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
+    async deleteClient(clientId: string, schema: SchemaName) {
+        try {
+            const result = await clientRepo.delete(
+                { where: { userId: clientId } },
+                schema,
+            );
+            if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
+            return CLIENT_RESPONSES.CLIENT_DELETED;
         } catch (e) {
             console.log(e);
             throw e;

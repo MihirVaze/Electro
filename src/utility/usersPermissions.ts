@@ -51,6 +51,7 @@ export const HasPermission = async (
         city_manager: ['worker', 'service_worker'],
         worker: [],
         service_worker: [],
+        customer: [],
     };
 
     for (const role of creatableRoles) {

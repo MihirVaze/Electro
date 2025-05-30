@@ -1,21 +1,29 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../connections/pg.connection';
+import { Worker } from './worker.type';
 import { UserSchema } from '../user/user.schema';
-import { Customer } from './customer.type';
-import {
-    CitySchema,
-    DistrictSchema,
-    StateSchema,
-} from '../location/location.schema';
+import { CitySchema } from '../location/location.schema';
+import { sequelize } from '../../connections/pg.connection';
 
-export class CustomerSchema extends Model<Customer, Customer> {}
+export class WorkerSchema extends Model<Worker, Worker> {}
 
-CustomerSchema.init(
+WorkerSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
+        },
+        workerName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        userId: {
+            type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
+            allowNull: false,
         },
         cityId: {
             type: DataTypes.UUID,
@@ -23,17 +31,6 @@ CustomerSchema.init(
                 model: CitySchema,
                 key: 'id',
             },
-        },
-        userId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: UserSchema,
-                key: 'id',
-            },
-        },
-        address: {
-            type: DataTypes.STRING,
             allowNull: false,
         },
         isDeleted: {
@@ -77,13 +74,10 @@ CustomerSchema.init(
     },
     {
         sequelize,
-        modelName: 'Customer',
-        tableName: 'Customer',
+        tableName: 'Worker',
+        modelName: 'Worker',
     },
 );
 
-CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
-UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
-
-CustomerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
-CitySchema.hasMany(CustomerSchema, { foreignKey: 'cityId' });
+UserSchema.hasMany(WorkerSchema, { foreignKey: 'userId' });
+WorkerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });

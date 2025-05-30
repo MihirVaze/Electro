@@ -31,13 +31,17 @@ export const ZClient = z.object({
     updatedBy: z.string().trim().uuid().optional(),
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
+
+    limit: z.coerce.number().default(10).optional(),
+    page: z.coerce.number().default(1).optional(),
 });
 
 export type Client = z.infer<typeof ZClient>;
 
-export const ZFindClient = z.object({
+export const ZFindClients = z.object({
     query: ZClient.pick({
-        clientName: true,
+        limit: true,
+        page: true,
     }),
 });
 
@@ -47,7 +51,6 @@ export const ZRegisterClient = z.object({
         schemaName: true,
         phoneNo: true,
         email: true,
-        password: true,
     }),
 });
 

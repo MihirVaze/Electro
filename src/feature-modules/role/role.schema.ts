@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { Role } from './role.types';
 import { sequelize } from '../../connections/pg.connection';
-import { UserSchema } from '../user/user.schema';
+import { UserRoleSchema, UserSchema } from '../user/user.schema';
 
 export class RoleSchema extends Model<Role, Role> {}
 
@@ -21,6 +21,7 @@ RoleSchema.init(
                 'city_manager',
                 'worker',
                 'client_admin',
+                'customer',
             ),
             allowNull: false,
         },
@@ -69,3 +70,19 @@ RoleSchema.init(
         sequelize,
     },
 );
+
+UserRoleSchema.belongsTo(UserSchema, {
+    foreignKey: 'userId',
+});
+
+UserSchema.hasMany(UserRoleSchema, {
+    foreignKey: 'userId',
+});
+
+UserRoleSchema.belongsTo(RoleSchema, {
+    foreignKey: 'roleId',
+});
+
+RoleSchema.hasMany(UserRoleSchema, {
+    foreignKey: 'roleId',
+});
