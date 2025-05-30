@@ -19,12 +19,11 @@ router.get(
         async (req, res, next) => {
             try {
                 const { limit, page } = req.query;
-                const schema = req.payload.schema;
                 const result = await workerService.getWorkers(
                     req.query,
                     Number(limit),
                     Number(page),
-                    schema,
+                    'public',
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -40,6 +39,7 @@ router.get(
             'state_manager',
             'district_manager',
             'city_manager',
+            'service_worker',
         ],
     },
 );
@@ -50,38 +50,9 @@ router.post(
         validate(ZRegisterWorker),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
-                const result = await workerService.addWorker(req.body, schema);
-                res.send(new ResponseHandler(result));
-            } catch (e) {
-                next(e);
-            }
-        },
-    ],
-    {
-        is_protected: true,
-        has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-        ],
-    },
-);
-
-router.patch(
-    '/:workerId',
-    [
-        validate(ZupdateWorker),
-        async (req, res, next) => {
-            try {
-                const schema = req.payload.schema;
-                const { workerId } = req.params;
-                const result = await workerService.updateWorker(
+                const result = await workerService.addWorker(
                     req.body,
-                    workerId,
-                    schema,
+                    'public',
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -97,19 +68,23 @@ router.patch(
             'state_manager',
             'district_manager',
             'city_manager',
+            'service_worker',
         ],
     },
 );
 
-router.del(
-    '/:id',
+router.patch(
+    '/:workerId',
     [
-        validate(ZDeleteWorker),
+        validate(ZupdateWorker),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
-                const id = req.params.id;
-                const result = workerService.deleteWorker(id, schema);
+                const { workerId } = req.params;
+                const result = await workerService.updateWorker(
+                    req.body,
+                    workerId,
+                    'public',
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -124,6 +99,34 @@ router.del(
             'state_manager',
             'district_manager',
             'city_manager',
+            'service_worker',
+        ],
+    },
+);
+
+router.del(
+    '/:id',
+    [
+        validate(ZDeleteWorker),
+        async (req, res, next) => {
+            try {
+                const id = req.params.id;
+                const result = workerService.deleteWorker(id, 'public');
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    {
+        is_protected: true,
+        has_Access: [
+            'superadmin',
+            'client_manager',
+            'state_manager',
+            'district_manager',
+            'city_manager',
+            'service_worker',
         ],
     },
 );

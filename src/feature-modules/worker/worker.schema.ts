@@ -81,3 +81,6 @@ WorkerSchema.init(
 
 UserSchema.hasMany(WorkerSchema, { foreignKey: 'userId' });
 WorkerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+
+CitySchema.hasMany(WorkerSchema, { foreignKey: 'cityId' });
+WorkerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
