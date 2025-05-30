@@ -129,7 +129,7 @@ class UserServices {
                     },
                     include: [
                         {
-                            model: RoleSchema,
+                            model: RoleSchema.schema(schema),
                             attributes: ['role'],
                             where: { isDeleted: false },
                         },
@@ -137,7 +137,7 @@ class UserServices {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.dir(error);
             throw error;
@@ -163,7 +163,7 @@ class UserServices {
                 },
                 schema,
             );
-            return result.rows.map((e) => e.dataValues);
+            return result.rows;
         } catch (error) {
             console.dir(error);
             throw error;
@@ -247,14 +247,24 @@ class UserServices {
                 ).role;
 
                 switch (role) {
-                    case 'client_admin':
-                        // await this.createUserRole(
-                        //     {
-                        //         userId,
-                        //         roleId: userRole.roleId,
-                        //     },
-                        //     schema,
-                        // );
+                    case 'customer':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';
+                        await userLocationService.createBulkUserLocations(
+                            'city',
+                            userId,
+                            userRole.locationIds,
+                            schema,
+                        );
+                        break;
+
+                    case 'service_worker':
+                        if (!userRole.locationIds) throw 'LOCATIONS DONT EXIST';
+                        await userLocationService.createBulkUserLocations(
+                            'city',
+                            userId,
+                            userRole.locationIds,
+                            schema,
+                        );
                         break;
 
                     case 'worker':
@@ -298,25 +308,11 @@ class UserServices {
                         break;
 
                     case 'client_manager':
-                        // await this.createUserRole(
-                        //     {
-                        //         userId,
-                        //         roleId: userRole.roleId,
-                        //     },
-                        //     schema,
-                        // );
                         break;
-
+                    case 'client_admin':
+                        break;
                     case 'superadmin':
-                        // await this.createUserRole(
-                        //     {
-                        //         userId,
-                        //         roleId: userRole.roleId,
-                        //     },
-                        //     schema,
-                        // );
                         break;
-
                     default:
                         throw 'ENTER A VALID ROLE';
                 }

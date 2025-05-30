@@ -91,7 +91,7 @@ router.del(
                 const userRoles = (
                     await userService.getUserRoles({ userId }, schema)
                 )
-                    .map((e) => e.id)
+                    .map((e) => e.dataValues.id)
                     .filter((e): e is string => !!e);
 
                 const canUpdate = HasPermission(
