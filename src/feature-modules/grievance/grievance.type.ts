@@ -9,6 +9,7 @@ export const Grievance = z.object({
 
     status: z
         .enum(['pending', 'in-progress', 'escalated', 'resolved', 'rejected'])
+        .default('pending')
         .optional(),
     assignedTo: z.string().trim().uuid().optional(),
     escalatedTo: z.string().trim().uuid().optional(),

@@ -204,7 +204,7 @@ class LocationServices {
 
     async getAllCitys(schema: SchemaName) {
         try {
-            const result = await locationRepo.getAllCitys(
+            const result = await locationRepo.getAllCities(
                 {
                     where: { isDeleted: false },
                 },

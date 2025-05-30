@@ -78,7 +78,7 @@ class LocationRepo {
         return CitySchema.schema(schema).findOne(options);
     }
 
-    public async getAllCitys(options: FindOptions<City>, schema: SchemaName) {
+    public async getAllCities(options: FindOptions<City>, schema: SchemaName) {
         return CitySchema.schema(schema).findAndCountAll(options);
     }
 
