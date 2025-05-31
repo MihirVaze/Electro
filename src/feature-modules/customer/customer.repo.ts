@@ -1,6 +1,12 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Customer, CustomerWorker, CustomerMeter } from './customer.type';
+import {
+    Customer,
+    CustomerWorker,
+    CustomerMeter,
+    CreateCustomer,
+    UpdateCustomer,
+} from './customer.type';
 import {
     CustomerMeterSchema,
     CustomerSchema,
@@ -8,7 +14,7 @@ import {
 } from './customer.schema';
 
 class CustomerRepo {
-    public async create(customer: Customer, schema: SchemaName) {
+    public async create(customer: CreateCustomer, schema: SchemaName) {
         return CustomerSchema.schema(schema).create(customer);
     }
 
@@ -21,14 +27,17 @@ class CustomerRepo {
     }
 
     public async update(
-        customer: Partial<Customer>,
-        options: UpdateOptions<Customer>,
+        customer: Partial<UpdateCustomer>,
+        options: UpdateOptions<CreateCustomer>,
         schema: SchemaName,
     ) {
         return CustomerSchema.schema(schema).update(customer, options);
     }
 
-    public async delete(options: UpdateOptions<Customer>, schema: SchemaName) {
+    public async delete(
+        options: UpdateOptions<CreateCustomer>,
+        schema: SchemaName,
+    ) {
         return CustomerSchema.schema(schema).update(
             { isDeleted: true },
             options,

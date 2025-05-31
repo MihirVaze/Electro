@@ -56,7 +56,7 @@ class ClientServices {
             );
             await runMigrationAndSeeders(
                 client.schemaName,
-                'seeders/*js',
+                'seeders/common/*js',
                 'seeder',
             );
 

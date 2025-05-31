@@ -3,7 +3,7 @@ import { RoleEnum } from '../feature-modules/role/role.types';
 
 export type Method = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-export type Has_Access = RoleEnum[];
+export type Has_Access = string[];
 
 export type RouteOptions = {
     is_protected: boolean;
