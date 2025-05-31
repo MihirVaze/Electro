@@ -22,6 +22,7 @@ RoleSchema.init(
                 'worker',
                 'client_admin',
                 'customer',
+                'service_worker',
             ),
             allowNull: false,
         },

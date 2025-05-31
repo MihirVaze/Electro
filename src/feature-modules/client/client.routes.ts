@@ -6,6 +6,7 @@ import { validate } from '../../utility/validate';
 import { ZFindClients, ZRegisterClient, ZUpdateClient } from './client.type';
 import userService from '../user/user.service';
 import { HasPermission } from '../../utility/usersPermissions';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
@@ -56,7 +57,7 @@ router.post(
             }
         },
     ],
-    { is_protected: false, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -77,7 +78,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: false, has_Access: ['superadmin'] },
+    { is_protected: false, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -110,7 +111,7 @@ router.del(
     ],
     {
         is_protected: true,
-        has_Access: ['superadmin'],
+        has_Access: [ROLE.SUPER_ADMIN],
     },
 );
 

@@ -30,7 +30,16 @@ export class Connection {
                 'migrations/electro/*js',
                 'migration',
             );
-            await runMigrationAndSeeders('public', 'seeders/*js', 'seeder');
+            await runMigrationAndSeeders(
+                'public',
+                'seeders/common/*js',
+                'seeder',
+            );
+            await runMigrationAndSeeders(
+                'public',
+                'seeders/electro/*js',
+                'seeder',
+            );
 
             for (const schema of schemas) {
                 await runMigrationAndSeeders(
@@ -45,7 +54,7 @@ export class Connection {
                 );
                 await runMigrationAndSeeders(
                     String(schema),
-                    'seeders/*js',
+                    'seeders/common/*js',
                     'seeder',
                 );
             }
