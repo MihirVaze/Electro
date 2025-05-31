@@ -3,6 +3,7 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 import { Has_Access } from '../routes/routes.types';
 import { Payload } from '../feature-modules/auth/auth.type';
 import roleServices from '../feature-modules/role/role.services';
+import { ROLE } from '../feature-modules/role/role.data';
 
 export const authorizeT = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -25,9 +26,10 @@ export const authorizeR =
 
             const Accessedfor = await Promise.all(
                 AuthorizedFor.map(async (e) => {
-                    const schemaName = e === 'client_admin' ? 'public' : schema;
+                    const schemaName =
+                        e === ROLE.CLIENT_ADMIN ? 'public' : schema;
                     const role = await roleServices.getRole(
-                        { role: e },
+                        { id: e },
                         schemaName,
                     );
                     return role.id;

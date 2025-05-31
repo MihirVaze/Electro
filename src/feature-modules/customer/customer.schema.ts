@@ -1,11 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../connections/pg.connection';
 import { UserSchema } from '../user/user.schema';
-import { Customer, CustomerWorker, CustomerMeter } from './customer.type';
+import {
+    Customer,
+    CustomerWorker,
+    CustomerMeter,
+    CreateCustomer,
+} from './customer.type';
 import { CitySchema } from '../location/location.schema';
 import { MeterSchema } from '../meter/meter.schema';
 
-export class CustomerSchema extends Model<Customer, Customer> {}
+export class CustomerSchema extends Model<CreateCustomer, CreateCustomer> {}
 
 CustomerSchema.init(
     {
@@ -154,12 +159,6 @@ CustomerWorkerSchema.init(
     },
 );
 
-CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'customerId' });
-CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'workerId' });
-
-UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'customerId' });
-UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'workerId' });
-
 export class CustomerMeterSchema extends Model<CustomerMeter, CustomerMeter> {}
 
 CustomerMeterSchema.init(
@@ -233,3 +232,9 @@ CustomerMeterSchema.init(
 
 CustomerMeterSchema.hasMany(MeterSchema, { foreignKey: 'meterId' });
 MeterSchema.belongsTo(CustomerMeterSchema, { foreignKey: 'meterId' });
+
+CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'customerId' });
+CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'workerId' });
+
+UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'customerId' });
+UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'workerId' });

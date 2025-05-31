@@ -4,19 +4,22 @@ import userService from '../user/user.service';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import roleServices from '../role/role.services';
-import { Customer, CustomerWorker, CustomerMeter } from './customer.type';
+import {
+    Customer,
+    CustomerWorker,
+    CustomerMeter,
+    RegisterCustomer,
+} from './customer.type';
 import { CUSTOMER_RESPONSES } from './customer.responses';
 import customerRepo from './customer.repo';
 import workerService from '../worker/worker.service';
 import { MeterSchema } from '../meter/meter.schema';
 
 class CustomerServices {
-    async addCustomer(customer: Customer, schema: SchemaName) {
+    async addCustomer(customer: RegisterCustomer, schema: SchemaName) {
         try {
             const { name, phoneNo, email, password, cityId, address } =
                 customer;
-            if (!name || !phoneNo || !email || !password || !cityId || !address)
-                throw CUSTOMER_RESPONSES.CUSTOMER_CREATION_FIELDS_MISSING;
 
             const roleId = (
                 await roleServices.getRole({ role: 'customer' }, schema)
@@ -64,7 +67,7 @@ class CustomerServices {
             if (workers.rows.length === 0)
                 throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
 
-            const randomNum = Math.random() * workers.count;
+            const randomNum = Math.floor(Math.random() * workers.count);
             const workerToBeAssigned = workers.rows[randomNum];
 
             const workerId = workerToBeAssigned.dataValues.userId!;
@@ -169,7 +172,7 @@ class CustomerServices {
         try {
             const { name, phoneNo, email, ...restOfCustomer } = customer;
             if (name || phoneNo || email) {
-                const CustomerToBeUpdated = await customerRepo.get(
+                const customerToBeUpdated = await customerRepo.get(
                     {
                         where: { id: customerId },
                     },
@@ -184,7 +187,7 @@ class CustomerServices {
                     updateUser.email = email;
                 }
 
-                updateUser.id = CustomerToBeUpdated?.dataValues.id;
+                updateUser.id = customerToBeUpdated?.dataValues.id;
 
                 await userService.updateUser(updateUser, schema);
             }
