@@ -1,43 +1,33 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
+import { ZUser } from '../user/user.types';
 
-export const ZCustomer = z.object({
-    id: z.string().trim().uuid().optional(),
-    cityId: z.string().trim().uuid().nonempty(),
-    address: z.string().trim().nonempty(),
+export const ZCustomer = z
+    .object({
+        cityId: z.string().trim().uuid().nonempty(),
+        address: z.string().trim().nonempty(),
+        userId: z.string().uuid().optional(),
+        limit: z.coerce.number().default(10).optional(),
+        page: z.coerce.number().default(1).optional(),
+    })
+    .extend(ZUser.shape);
 
-    userId: z.string().uuid().optional(),
+export const ZCreateCustomer = ZCustomer.pick({
+    cityId: true,
+    userId: true,
+    address: true,
+}).merge(ZBaseSchema.partial());
 
-    name: z.string().trim().nonempty().optional(),
-    phoneNo: z
-        .string()
-        .trim()
-        .nonempty()
-        .length(10, 'Enter a valid phone number')
-        .optional(),
-    email: z
-        .string()
-        .trim()
-        .email({ message: 'Enter a valid e-mail' })
-        .optional(),
-    password: z
-        .string()
-        .trim()
-        .min(5, { message: 'password must be 5 chars long' })
-        .optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-
-    limit: z.coerce.number().default(10).optional(),
-    page: z.coerce.number().default(1).optional(),
+export const ZRegisterCustomer = ZCustomer.pick({
+    name: true,
+    email: true,
+    phoneNo: true,
+    cityId: true,
+    address: true,
 });
-
-export type Customer = z.infer<typeof ZCustomer>;
+export const ZValidateRegisterCustomer = z.object({
+    body: ZRegisterCustomer.extend({ client: z.string().trim().nonempty() }),
+});
 
 export const ZFindCustomers = z.object({
     query: ZCustomer.pick({
@@ -45,55 +35,40 @@ export const ZFindCustomers = z.object({
         email: true,
         limit: true,
         page: true,
-    }).optional(),
+    }).partial(),
 });
 
-export const ZRegisterCustomer = z.object({
-    body: ZCustomer.pick({
-        name: true,
-        cityId: true,
-        address: true,
-        phoneNo: true,
-        email: true,
-        password: true,
+export const ZFindCustomer = z.object({
+    params: ZCustomer.pick({
+        userId: true,
     }),
 });
 
-export const ZUpdateCustomer = z.object({
-    body: ZCustomer.pick({
-        name: true,
-        email: true,
-        phoneNo: true,
-    }).optional(),
+export const ZUpdateCustomer = ZCustomer.pick({
+    userId: true,
+    name: true,
+    email: true,
+    phoneNo: true,
+});
+export const ZValidateUpdateCustomer = z.object({
+    body: ZUpdateCustomer,
 });
 
-export const ZCustomerMeter = z.object({
-    id: z.string().uuid().optional(),
-
-    userId: z.string().uuid().optional(),
-    meterId: z.string().uuid(),
-
-    name: z.string().trim().nonempty().optional(),
-    email: z
-        .string()
-        .trim()
-        .email({ message: 'Enter a valid e-mail' })
-        .optional(),
-    meterName: z.string().trim().nonempty().optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-
-    limit: z.coerce.number().default(10).optional(),
-    page: z.coerce.number().default(1).optional(),
-});
-
-export type CustomerMeter = z.infer<typeof ZCustomerMeter>;
+export const ZCustomerMeter = z
+    .object({
+        userId: z.string().uuid().optional(),
+        meterId: z.string().uuid(),
+        name: z.string().trim().nonempty().optional(),
+        email: z
+            .string()
+            .trim()
+            .email({ message: 'Enter a valid e-mail' })
+            .optional(),
+        meterName: z.string().trim().nonempty().optional(),
+        limit: z.coerce.number().default(10).optional(),
+        page: z.coerce.number().default(1).optional(),
+    })
+    .merge(ZBaseSchema.partial());
 
 export const ZRegisterCustomerMeter = z.object({
     userId: z.string().uuid().optional(),
@@ -110,22 +85,27 @@ export const ZFindCustomerMeters = z.object({
     }).optional(),
 });
 
-export const ZCustomerWorker = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZCustomerWorker = z
+    .object({
+        customerId: z.string().trim().uuid(),
+        workerId: z.string().trim().uuid(),
+        limit: z.coerce.number().default(10).optional(),
+        page: z.coerce.number().default(1).optional(),
+    })
+    .merge(ZBaseSchema.partial());
 
-    customerId: z.string().trim().uuid(),
-    workerId: z.string().trim().uuid(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-
-    limit: z.coerce.number().default(10).optional(),
-    page: z.coerce.number().default(1).optional(),
+export const ZFindCustomerWorker = z.object({
+    query: ZCustomerWorker.pick({
+        customerId: true,
+        workerId: true,
+        limit: true,
+        page: true,
+    }).optional(),
 });
 
+export type Customer = z.infer<typeof ZCustomer>;
+export type CreateCustomer = z.infer<typeof ZCreateCustomer>;
+export type RegisterCustomer = z.infer<typeof ZRegisterCustomer>;
+export type UpdateCustomer = z.infer<typeof ZUpdateCustomer>;
+export type CustomerMeter = z.infer<typeof ZCustomerMeter>;
 export type CustomerWorker = z.infer<typeof ZCustomerWorker>;

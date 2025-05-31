@@ -23,6 +23,7 @@ module.exports = {
                             'worker',
                             'client_admin',
                             'customer',
+                            'service_worker',
                         ),
                         allowNull: false,
                     },

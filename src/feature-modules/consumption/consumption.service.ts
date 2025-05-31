@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Consumption, Filter, Update } from './conumption.type';
 import consumptionRepo from './consumption.repo';
 import { CONSUMPTION_RESPONSES } from './consumption.response';
-import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
+// import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
 import { Op, WhereOptions } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
 import { CustomerMeterSchema } from '../customer/customer.schema';
@@ -150,6 +150,7 @@ class ConsumptionService {
             schema,
         );
     }
+
 }
 
 export default new ConsumptionService();

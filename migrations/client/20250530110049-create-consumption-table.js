@@ -23,7 +23,7 @@ module.exports = {
                         workerId:{
                             type:DataTypes.UUID,
                             references:{
-                                model:'Worker',
+                                model:{tableName:'Worker',schema:'public'},
                                 key:'id'
                             }
                         },

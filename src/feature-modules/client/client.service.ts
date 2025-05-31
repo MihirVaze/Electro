@@ -1,23 +1,20 @@
-import { SchemaName } from '../../utility/umzug-migration';
+import {
+    runMigrationAndSeeders,
+    SchemaName,
+} from '../../utility/umzug-migration';
 import clientRepo from './client.repo';
 import { Client } from './client.type';
 import userService from '../user/user.service';
 import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
-import { runMigration } from '../../utility/umzug-migration';
 import roleServices from '../role/role.services';
+import { ROLE } from '../role/role.data';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, schemaName } = client;
-            if (!phoneNo || !email)
-                throw CLIENT_RESPONSES.CLIENT_CREATION_FIELDS_MISSING;
-
-            const roleId = (
-                await roleServices.getRole({ role: 'client_admin' }, schema)
-            ).id!;
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -26,7 +23,7 @@ class ClientServices {
                     email,
                     password: '',
                 },
-                [{ roleId }],
+                [{ roleId: ROLE.CLIENT_ADMIN }],
                 schema,
             );
 
@@ -42,10 +39,21 @@ class ClientServices {
                 schema,
             );
 
-            await runMigration(client.schemaName, 'migrations/common/*js');
-            await runMigration(client.schemaName, 'migrations/client/*js');
-
-            await runMigration(client.schemaName, 'seeders/*js');
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'migrations/common/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'migrations/client/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'seeders/common/*js',
+                'seeder',
+            );
 
             return CLIENT_RESPONSES.CLIENT_CREATED;
         } catch (error) {
@@ -93,7 +101,7 @@ class ClientServices {
 
             let clientWhere: any = {};
 
-            const { email, clientName, ...remainingClient } = client;
+            const { email, clientName } = client;
 
             if (email) {
                 where.email = { [Op.iLike]: `%${email}%` };
@@ -105,11 +113,9 @@ class ClientServices {
 
             const offset = (page - 1) * limit;
 
-            clientWhere = { ...clientWhere, remainingClient };
-
             const result = await clientRepo.getAll(
                 {
-                    where: { isDeleted: false, ...remainingClient },
+                    where: { isDeleted: false, ...clientWhere },
                     attributes: {
                         exclude: [
                             'isDeleted',

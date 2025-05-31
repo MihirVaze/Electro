@@ -25,7 +25,7 @@ module.exports = {
                         type: DataTypes.UUID,
                         allowNull: false,
                         references: {
-                            model: MeterSchema,
+                            model: 'Meter',
                             key: 'id',
                         },
                     },

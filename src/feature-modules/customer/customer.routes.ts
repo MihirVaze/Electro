@@ -6,12 +6,14 @@ import customerService from './customer.service';
 import {
     ZFindCustomerMeters,
     ZFindCustomers,
-    ZRegisterCustomer,
+    ZFindCustomerWorker,
     ZRegisterCustomerMeter,
-    ZUpdateCustomer,
+    ZValidateRegisterCustomer,
+    ZValidateUpdateCustomer,
 } from './customer.type';
 import userService from '../user/user.service';
 import { HasPermission } from '../../utility/usersPermissions';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
@@ -23,6 +25,7 @@ router.get(
             try {
                 const { limit, page, ...remainingQuery } = req.query;
                 const schema = req.payload.schema;
+
                 const result = await customerService.getCustomers(
                     remainingQuery,
                     Number(limit),
@@ -38,12 +41,12 @@ router.get(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.WORKER,
         ],
     },
 );
@@ -51,13 +54,13 @@ router.get(
 router.post(
     '/',
     [
-        validate(ZRegisterCustomer),
+        validate(ZValidateRegisterCustomer),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
+                const { client } = req.body;
                 const result = await customerService.addCustomer(
                     req.body,
-                    schema,
+                    client,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -66,20 +69,15 @@ router.post(
         },
     ],
     {
-        is_protected: true,
-        has_Access: [
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-        ],
+        is_protected: false,
+        has_Access: [],
     },
 );
 
 router.patch(
     '/:customerId',
     [
-        validate(ZUpdateCustomer),
+        validate(ZValidateUpdateCustomer),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -95,7 +93,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: false, has_Access: ['superadmin'] },
+    { is_protected: false, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -132,10 +130,10 @@ router.del(
     {
         is_protected: true,
         has_Access: [
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
         ],
     },
 );
@@ -164,12 +162,12 @@ router.get(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.WORKER,
         ],
     },
 );
@@ -197,10 +195,10 @@ router.post(
     {
         is_protected: true,
         has_Access: [
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
         ],
     },
 );
@@ -239,10 +237,43 @@ router.del(
     {
         is_protected: true,
         has_Access: [
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+        ],
+    },
+);
+
+router.get(
+    '/customer-worker',
+    [
+        validate(ZFindCustomerWorker),
+        async (req, res, next) => {
+            try {
+                const { limit, page, ...remainingQuery } = req.query;
+                const schema = req.payload.schema;
+                const result = await customerService.getCustomerWorkers(
+                    remainingQuery,
+                    Number(limit),
+                    Number(page),
+                    schema,
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    {
+        is_protected: true,
+        has_Access: [
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.WORKER,
         ],
     },
 );
