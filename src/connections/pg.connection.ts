@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { runMigration } from '../utility/umzug-migration';
+import { runMigrationAndSeeders } from '../utility/umzug-migration';
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_DIALECT } = process.env;
 
@@ -18,10 +18,37 @@ export class Connection {
         try {
             await sequelize.authenticate();
 
-            await runMigration('public', 'migrations/common/*js');
-            await runMigration('public', 'migrations/electro/*js');
+            const schemas = await sequelize.showAllSchemas({});
 
-            await runMigration('public', 'seeders/*js');
+            await runMigrationAndSeeders(
+                'public',
+                'migrations/common/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders(
+                'public',
+                'migrations/electro/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders('public', 'seeders/*js', 'seeder');
+
+            for (const schema of schemas) {
+                await runMigrationAndSeeders(
+                    String(schema),
+                    'migrations/common/*js',
+                    'migration',
+                );
+                await runMigrationAndSeeders(
+                    String(schema),
+                    'migrations/client/*js',
+                    'migration',
+                );
+                await runMigrationAndSeeders(
+                    String(schema),
+                    'seeders/*js',
+                    'seeder',
+                );
+            }
 
             console.log('CONNECTED TO PG DATABASE');
         } catch (e) {

@@ -14,13 +14,14 @@ export const sendEmail = (
             pass: process.env.EMAIL_AUTH_PASS,
         },
     });
-    (async () => {
-        const info = await transporter.sendMail({
+
+    transporter.sendMail(
+        {
             from: process.env.EMAIL_SENDMAIL_FROM,
             to: sendTo,
             subject: subject,
             html: textInHtml,
-        });
-        console.log(`Message sent to ${sendTo}`, info.messageId);
-    })();
+        },
+        (msg) => console.log(msg),
+    );
 };

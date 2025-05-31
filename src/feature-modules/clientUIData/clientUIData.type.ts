@@ -11,7 +11,7 @@ export const ZClientUIData = z.object({
         .string()
         .trim()
         .length(7, 'enter a valid hexadecimal colorcode'),
-    fontColor: z.string().trim(),
+    fontColor: z.string().trim().nonempty(),
     baseFont: z.string().trim().url('enter a valid font URL'),
     accentFont: z.string().trim().url('enter a valid font URL'),
     logo: z.string().trim().optional(),

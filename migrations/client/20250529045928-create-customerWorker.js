@@ -1,6 +1,3 @@
-'use strict';
-
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
@@ -9,37 +6,35 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'Meter', schema },
+                { tableName: 'CustomerWorker', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    name: {
-                        type: DataTypes.STRING,
-                        allowNull: true,
+                    customerId: {
+                        type: DataTypes.UUID,
+                        allowNull: false,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
                     },
-                    image: {
-                        type: DataTypes.STRING,
-                        allowNull: true,
-                    },
-                    basePrice: {
-                        type: DataTypes.DECIMAL,
-                        allowNull: true,
-                    },
-                    pricePerUnit: {
-                        type: DataTypes.DECIMAL,
-                        allowNull: true,
-                    },
-                    requiredPhotos: {
-                        type: DataTypes.DECIMAL,
-                        allowNull: true,
+                    workerId: {
+                        type: DataTypes.UUID,
+                        allowNull: false,
+                        references: {
+                            model: {
+                                tableName: 'User',
+                                schema: 'public',
+                            },
+                            key: 'id',
+                        },
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
                         defaultValue: false,
-                        allowNull: true,
                     },
                     deletedBy: {
                         type: DataTypes.UUID,
@@ -71,16 +66,20 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
                     },
                     createdAt: {
                         type: DataTypes.DATE,
+                        allowNull: false,
                         defaultValue: Date.now(),
                     },
                     updatedAt: {
                         type: DataTypes.DATE,
+                        allowNull: false,
                         defaultValue: Date.now(),
                     },
                 },
@@ -103,7 +102,7 @@ module.exports = {
 
         try {
             await queryInterface.dropTable({
-                tableName: 'Meter',
+                tableName: 'CustomerWorker',
                 schema,
             });
 
