@@ -11,8 +11,8 @@ export const ZGrievance = z.object({
         .enum(['pending', 'in-progress', 'resolved'])
         .default('pending')
         .optional(),
-    assignedTo: z.string().trim().uuid().optional(),
-    escalatedTo: z.string().trim().uuid().optional(),
+    assignedTo: z.string().trim().uuid().nullable().optional(),
+    escalatedTo: z.string().trim().uuid().nullable().optional(),
     location: z.string().optional(),
 
     isDeleted: z.boolean().default(false).optional(),
@@ -25,6 +25,15 @@ export const ZGrievance = z.object({
 });
 
 export type Grievance = z.infer<typeof ZGrievance>;
+
+export const ZRaiseGrievance = z.object({
+    body: z.object({
+        grievanceTypeId: z.string().trim().uuid(),
+        comments: z.string().optional(),
+    }),
+});
+
+export type RaiseGrievance = z.infer<typeof ZRaiseGrievance>;
 
 export const ZFindGrievance = z.object({
     query: z.object({

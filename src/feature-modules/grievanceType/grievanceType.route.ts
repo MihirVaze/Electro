@@ -13,24 +13,30 @@ import {
 
 const router = new CustomRouter();
 
-router.get('/', [
-    validate(ZFindGrievanceTypes),
-    async (req, res, next) => {
-        try {
-            const schema = req.payload.schema;
-            const { limit, page, ...search } = req.query;
-            const result = await grievanceTypeService.getAllGrievanceType(
-                Number(limit),
-                Number(page),
-                search,
-                schema,
-            );
-            res.send(new ResponseHandler(result));
-        } catch (e) {
-            next(e);
-        }
-    },
-]);
+router.get(
+    '/',
+    [
+        validate(ZFindGrievanceTypes),
+        async (req, res, next) => {
+            try {
+                const schema = req.headers.schema;
+                if (typeof schema !== 'string' || !schema)
+                    throw Error('Enter Valid Schema');
+                const { limit, page, ...search } = req.query;
+                const result = await grievanceTypeService.getAllGrievanceType(
+                    Number(limit),
+                    Number(page),
+                    search,
+                    schema,
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: false },
+);
 
 router.get('/grievanceType/:id', [
     validate(ZFindGrievanceType),

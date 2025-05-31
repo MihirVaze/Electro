@@ -25,13 +25,13 @@ class GrievanceService {
         if (!grievanceTypeId)
             throw GRIEVANCE_RESPONSES.GRIEVANCE_CREATION_FIELDS_MISSING;
 
-        let { location, comments } = grievance;
+        let { comments } = grievance;
         if (!comments) comments = 'none';
 
         const user = await customerRepo.get({ where: { userId } }, schema);
         if (!user) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
-        location = user.dataValues.cityId;
+        const location = user.dataValues.cityId;
 
         await grievanceRepo.create(
             {

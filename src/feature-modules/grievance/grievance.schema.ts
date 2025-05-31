@@ -16,9 +16,17 @@ GrievanceSchema.init(
         },
         userId: {
             type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
         },
         grievanceTypeId: {
             type: DataTypes.UUID,
+            references: {
+                model: GrievanceTypeSchema,
+                key: 'id',
+            },
         },
         comments: {
             type: DataTypes.STRING,

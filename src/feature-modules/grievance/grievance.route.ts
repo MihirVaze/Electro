@@ -2,16 +2,17 @@ import { ResponseError } from '@sendgrid/mail';
 import { CustomRouter } from '../../routes/custom.router';
 import { validate } from '../../utility/validate';
 import grievanceService from './grievance.service';
-import { ZFindGrievance } from './grievance.type';
+import { ZFindGrievance, ZRaiseGrievance } from './grievance.type';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
 router.post(
     '/',
     [
-        validate(ZFindGrievance),
+        //validate(ZRaiseGrievance),
         async (req, res, next) => {
             try {
                 const userId = req.payload.id;
@@ -27,7 +28,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['customer'] },
+    { is_protected: true, has_Access: [ROLE.CUSTOMER] },
 );
 
 export default new Route('/grievance', router.ExpressRouter);

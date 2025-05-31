@@ -23,7 +23,7 @@ export class CustomRouter {
                 // Token Validation
                 middleware.push(authorizeT);
                 // authorization Fuctionaity
-                middleware.push(authorizeR(options.has_Access));
+                //middleware.push(authorizeR(options.has_Access));
             }
 
             this.router[method](path, ...middleware, ...handler);
