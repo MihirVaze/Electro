@@ -35,7 +35,7 @@ module.exports = {
                         type: DataTypes.UUID,
                         allowNull: true,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
@@ -43,7 +43,7 @@ module.exports = {
                         type: DataTypes.UUID,
                         allowNull: true,
                         references: {
-                            model: RoleSchema,
+                            model: 'Role',
                             key: 'id',
                         },
                     },
@@ -58,28 +58,28 @@ module.exports = {
                     deletedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     restoredBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     createdBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },
                     updatedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: UserSchema,
+                            model: 'User',
                             key: 'id',
                         },
                     },

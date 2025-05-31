@@ -19,7 +19,7 @@ router.get('/', [
         try {
             const schema = req.payload.schema;
             const { limit, page, ...search } = req.query;
-            const result = grievanceTypeService.getAllGrievanceType(
+            const result = await grievanceTypeService.getAllGrievanceType(
                 Number(limit),
                 Number(page),
                 search,
@@ -38,7 +38,7 @@ router.get('/grievanceType/:id', [
         try {
             const schema = req.payload.schema;
             const id = req.params.id;
-            const result = grievanceTypeService.findOneGrievanceType(
+            const result = await grievanceTypeService.findOneGrievanceType(
                 { id },
                 schema,
             );
@@ -54,7 +54,7 @@ router.post('/', [
     async (req, res, next) => {
         try {
             const schema = req.payload.schema;
-            const result = grievanceTypeService.createGrievanceType(
+            const result = await grievanceTypeService.createGrievanceType(
                 req.body,
                 schema,
             );
@@ -71,7 +71,7 @@ router.patch('/:id', [
         try {
             const schema = req.payload.schema;
             const id = req.params.id;
-            const result = grievanceTypeService.updateGrievanceType(
+            const result = await grievanceTypeService.updateGrievanceType(
                 id,
                 req.body,
                 schema,
@@ -89,7 +89,10 @@ router.del('/:id', [
         try {
             const schema = req.payload.schema;
             const id = req.params.id;
-            const result = grievanceTypeService.deleteGrievanceType(id, schema);
+            const result = await grievanceTypeService.deleteGrievanceType(
+                id,
+                schema,
+            );
             res.send(new ResponseHandler(result));
         } catch (e) {
             next(e);
