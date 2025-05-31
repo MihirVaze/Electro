@@ -1,63 +1,60 @@
 import z from 'zod';
+import { ZUser } from '../user/user.types';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZClient = z.object({
-    id: z.string().trim().uuid().optional(),
-    clientName: z.string().trim().nonempty(),
-    schemaName: z.string().trim().nonempty(),
+export const ZClient = z
+    .object({
+        clientName: z.string().trim().nonempty(),
+        schemaName: z.string().trim().nonempty(),
+        userId: z.string().uuid().optional(),
+        limit: z.coerce.number().default(10),
+        page: z.coerce.number().default(1),
+    })
+    .extend(ZUser.shape);
 
-    userId: z.string().uuid().optional(),
+export const ZCreateClient = ZClient.pick({
+    clientName: true,
+    schemaName: true,
+    userId: true,
+}).merge(ZBaseSchema.partial());
 
-    phoneNo: z
-        .string()
-        .trim()
-        .nonempty()
-        .length(10, 'Enter a valid phone number')
-        .optional(),
-    email: z
-        .string()
-        .trim()
-        .email({ message: 'Enter a valid e-mail' })
-        .optional(),
-    password: z
-        .string()
-        .trim()
-        .min(5, { message: 'password must be 5 chars long' })
-        .optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-
-    limit: z.coerce.number().default(10).optional(),
-    page: z.coerce.number().default(1).optional(),
+export const ZRegisterClient = ZClient.pick({
+    clientName: true,
+    email: true,
+    phoneNo: true,
+    schemaName: true,
 });
 
-export type Client = z.infer<typeof ZClient>;
+export const ZValidateRegisterClient = z.object({
+    body: ZRegisterClient,
+});
+
+export const ZFindClient = z.object({
+    params: ZClient.pick({
+        userId: true,
+    }),
+});
 
 export const ZFindClients = z.object({
     query: ZClient.pick({
+        clientName: true,
+        email: true,
         limit: true,
         page: true,
-    }),
+    }).partial(),
 });
 
-export const ZRegisterClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
-        schemaName: true,
-        phoneNo: true,
-        email: true,
-    }),
+export const ZUpdateClient = ZClient.pick({
+    clientName: true,
+    email: true,
+    phoneNo: true,
+}).partial();
+
+export const ZValidateUpdateClient = z.object({
+    body: ZUpdateClient,
 });
 
-export const ZUpdateClient = z.object({
-    body: ZClient.pick({
-        clientName: true,
-        email: true,
-        phoneNo: true,
-    }).optional(),
-});
+export type Client = z.infer<typeof ZClient>;
+export type CreateClient = z.infer<typeof ZCreateClient>;
+export type RegisterClient = z.infer<typeof ZRegisterClient>;
+export type UpdateClient = z.infer<typeof ZUpdateClient>;

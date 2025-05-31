@@ -25,6 +25,7 @@ router.get(
             try {
                 const { limit, page, ...remainingQuery } = req.query;
                 const schema = req.payload.schema;
+
                 const result = await customerService.getCustomers(
                     remainingQuery,
                     Number(limit),
@@ -56,10 +57,10 @@ router.post(
         validate(ZValidateRegisterCustomer),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
+                const { client } = req.body;
                 const result = await customerService.addCustomer(
                     req.body,
-                    schema,
+                    client,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -252,7 +253,7 @@ router.get(
             try {
                 const { limit, page, ...remainingQuery } = req.query;
                 const schema = req.payload.schema;
-                const result = await customerService.getCustomerMeters(
+                const result = await customerService.getCustomerWorkers(
                     remainingQuery,
                     Number(limit),
                     Number(page),

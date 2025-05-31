@@ -233,8 +233,23 @@ CustomerMeterSchema.init(
 CustomerMeterSchema.hasMany(MeterSchema, { foreignKey: 'meterId' });
 MeterSchema.belongsTo(CustomerMeterSchema, { foreignKey: 'meterId' });
 
-CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'customerId' });
-CustomerWorkerSchema.belongsTo(UserSchema, { foreignKey: 'workerId' });
+CustomerWorkerSchema.belongsTo(UserSchema, {
+    foreignKey: 'customerId',
+    as: 'customer',
+});
+CustomerWorkerSchema.belongsTo(UserSchema, {
+    foreignKey: 'workerId',
+    as: 'worker',
+});
 
-UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'customerId' });
-UserSchema.hasMany(CustomerWorkerSchema, { foreignKey: 'workerId' });
+UserSchema.hasMany(CustomerWorkerSchema, {
+    foreignKey: 'customerId',
+    as: 'customer',
+});
+UserSchema.hasMany(CustomerWorkerSchema, {
+    foreignKey: 'workerId',
+    as: 'worker',
+});
+
+UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
+CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
