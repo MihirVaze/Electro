@@ -2,13 +2,20 @@ import { SequelizeStorage, Umzug } from 'umzug';
 import { sequelize } from '../connections/pg.connection';
 import { DataTypes, Sequelize } from 'sequelize';
 
-export const runMigration = async (schema: SchemaName, migrations: string) => {
+export const runMigrationAndSeeders = async (
+    schema: SchemaName,
+    migrations: string,
+    type: 'migration' | 'seeder',
+) => {
     sequelize.createSchema(schema, {});
+
+    const modelName =
+        type === 'migration' ? 'SequelizeMigrationMeta' : 'SequelizeSeederMeta';
 
     const queryInterface = sequelize.getQueryInterface();
 
     const model = sequelize.define(
-        'SequelizeMeta',
+        modelName,
         {
             name: {
                 type: DataTypes.STRING,
@@ -18,7 +25,7 @@ export const runMigration = async (schema: SchemaName, migrations: string) => {
         },
         {
             schema,
-            modelName: 'SequelizeMeta',
+            modelName,
         },
     );
 
@@ -35,5 +42,5 @@ export const runMigration = async (schema: SchemaName, migrations: string) => {
 export type SchemaName = 'public' | (string & {});
 
 // Call the runMigration method with the schema name and the migration folder in this way:-
-// runMigration('tata','migrations/public/*.js');
-// runMigration('tata','migrations/client/*.js');
+// runMigration('tata','migrations/public/*.js','migration');
+// runMigration('tata','migrations/client/*.js','migration');

@@ -1,11 +1,13 @@
-import { SchemaName } from '../../utility/umzug-migration';
+import {
+    runMigrationAndSeeders,
+    SchemaName,
+} from '../../utility/umzug-migration';
 import clientRepo from './client.repo';
 import { Client } from './client.type';
 import userService from '../user/user.service';
 import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
-import { runMigration } from '../../utility/umzug-migration';
 import roleServices from '../role/role.services';
 
 class ClientServices {
@@ -42,10 +44,21 @@ class ClientServices {
                 schema,
             );
 
-            await runMigration(client.schemaName, 'migrations/common/*js');
-            await runMigration(client.schemaName, 'migrations/client/*js');
-
-            await runMigration(client.schemaName, 'seeders/*js');
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'migrations/common/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'migrations/client/*js',
+                'migration',
+            );
+            await runMigrationAndSeeders(
+                client.schemaName,
+                'seeders/*js',
+                'seeder',
+            );
 
             return CLIENT_RESPONSES.CLIENT_CREATED;
         } catch (error) {
