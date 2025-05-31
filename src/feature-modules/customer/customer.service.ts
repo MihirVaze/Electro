@@ -1,7 +1,7 @@
 import { SchemaName } from '../../utility/umzug-migration';
 
 import userService from '../user/user.service';
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import {
     Customer,
@@ -51,21 +51,6 @@ class CustomerServices {
                 schema,
             );
 
-            // THIS NEEDS TO BE DONE IN CUSTOMER METER AND LOGIC WE CAN IMPROVE INSTEAD OF ASSIGNING RANDOM
-            // const limit = 10;
-            // const page = 1;
-            // const workers = await workerService.getWorkers(
-            //     { cityId },
-            //     limit,
-            //     page,
-            //     'public',
-            // );
-            // if (workers.rows.length === 0)
-            //     throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
-            // const randomNum = Math.floor(Math.random() * workers.count);
-            // const workerToBeAssigned = workers.rows[randomNum];
-            // const workerId = workerToBeAssigned.dataValues.userId!;
-            // await this.addCustomerWorker({ workerId, customerId: id }, schema);
             transaction.commit();
             return CUSTOMER_RESPONSES.CUSTOMER_CREATED;
         } catch (error) {
@@ -236,8 +221,42 @@ class CustomerServices {
                 { transaction },
                 schema,
             );
-            if (!result)
-                throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FAILED;
+
+            const customer = await this.getCustomer(
+                { userId: customerMeter.userId },
+                schema,
+            );
+            const { cityId, userId: customerId } = customer.dataValues;
+
+            const limit = 1;
+            const workers = await workerService.getAllWorkers(
+                { cityId },
+                limit,
+                'public',
+            );
+
+            if (!workers.count)
+                throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
+            const workerToBeAssigned = workers.rows[0];
+
+            const { customerCount, userId: workerId } =
+                workerToBeAssigned.dataValues;
+            if (!customerCount || !workerId)
+                throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
+
+            await this.addCustomerWorker(
+                { customerId, workerId },
+                schema,
+                transaction,
+            );
+
+            const updatedCount = customerCount + 1;
+            await workerService.updateWorker(
+                { customerCount: updatedCount },
+                workerId,
+                schema,
+            );
+
             transaction.commit();
             return CUSTOMER_RESPONSES.CUSTOMER_METER_CREATED;
         } catch (e) {
@@ -448,8 +467,8 @@ class CustomerServices {
     async addCustomerWorker(
         customerWorker: CustomerWorker,
         schema: SchemaName,
+        transaction: Transaction,
     ) {
-        const transaction = await sequelize.transaction();
         try {
             await customerRepo.createCustomerWorker(
                 customerWorker,

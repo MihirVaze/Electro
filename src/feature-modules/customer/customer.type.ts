@@ -6,7 +6,7 @@ export const ZCustomer = z
     .object({
         cityId: z.string().trim().uuid().nonempty(),
         address: z.string().trim().nonempty(),
-        userId: z.string().uuid().optional(),
+        userId: z.string().uuid(),
         limit: z.coerce.number().default(10).optional(),
         page: z.coerce.number().default(1).optional(),
     })
