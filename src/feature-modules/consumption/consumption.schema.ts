@@ -1,42 +1,42 @@
-import { DataTypes, Model } from "sequelize";
-import { Consumption } from "./conumption.type";
-import { sequelize } from "../../connections/pg.connection";
-import { CustomerSchema } from "../customer/customer.schema";
-import { UserSchema } from "../user/user.schema";
-import { WorkerSchema } from "../worker/worker.schema";
+import { DataTypes, Model } from 'sequelize';
+import { Consumption } from './conumption.type';
+import { sequelize } from '../../connections/pg.connection';
+import { CustomerMeterSchema } from '../customer/customer.schema';
+import { UserSchema } from '../user/user.schema';
+import { WorkerSchema } from '../worker/worker.schema';
 
+export class ConsumptionSchema extends Model<Consumption, Consumption> {}
 
-export class ConsumptionSchema extends Model<Consumption,Consumption>{}
-
-ConsumptionSchema.init({
-    id:{
-        type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4,
-        primaryKey:true
-    },
-    customerId:{
-        type:DataTypes.UUID,
-        references:{
-            model:'Customer',
-            key:'id'
-        }
-    },
-    workerId:{
-        type:DataTypes.UUID,
-        references:{
-            model:'Worker',
-            key:'id'
-        }
-    },
-    unitsUsed:{
-        type:DataTypes.INTEGER,
-        allowNull:false
-    },
-    description:{
-        type:DataTypes.STRING,
-        allowNull:true
-    },
-    isDeleted: {
+ConsumptionSchema.init(
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        customerMeterId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CustomerMeterSchema,
+                key: 'id',
+            },
+        },
+        workerId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Worker',
+                key: 'id',
+            },
+        },
+        unitsUsed: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        isDeleted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
@@ -77,15 +77,21 @@ ConsumptionSchema.init({
         updatedAt: {
             type: DataTypes.DATE,
         },
-},{
-    modelName:'Consumption',
-    tableName:'Consumption',
-    sequelize:sequelize
-});
+    },
+    {
+        modelName: 'Consumption',
+        tableName: 'Consumption',
+        sequelize: sequelize,
+    },
+);
 
-ConsumptionSchema.belongsTo(CustomerSchema, {
-    foreignKey: 'customerId',
-    as: 'customerId',
+CustomerMeterSchema.hasMany(ConsumptionSchema, {
+    foreignKey: 'customerMeterId',
+    as: 'consumptions',
+});
+ConsumptionSchema.belongsTo(CustomerMeterSchema, {
+    foreignKey: 'customerMeterId',
+    as: 'customerMeter',
 });
 
 ConsumptionSchema.belongsTo(WorkerSchema, {

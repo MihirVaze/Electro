@@ -231,5 +231,11 @@ CustomerMeterSchema.init(
     },
 );
 
-CustomerMeterSchema.hasMany(MeterSchema, { foreignKey: 'meterId' });
-MeterSchema.belongsTo(CustomerMeterSchema, { foreignKey: 'meterId' });
+CustomerMeterSchema.hasMany(MeterSchema, {
+    foreignKey: 'meterId',
+    as: 'meter',
+});
+MeterSchema.belongsTo(CustomerMeterSchema, {
+    foreignKey: 'meterId',
+    as: 'meter',
+});
