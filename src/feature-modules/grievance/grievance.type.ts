@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const Grievance = z.object({
+export const ZGrievance = z.object({
     id: z.string().trim().uuid().optional(),
 
     userId: z.string().trim().uuid(),
@@ -24,4 +24,18 @@ export const Grievance = z.object({
     restoredAt: z.date().optional(),
 });
 
-export type Grievance = z.infer<typeof Grievance>;
+export type Grievance = z.infer<typeof ZGrievance>;
+
+export const ZFindGrievance = z.object({
+    query: z.object({
+        status: z
+            .enum(['pending', 'in-progress', 'resolved'])
+            .default('pending')
+            .optional(),
+        assignedTo: z.string().trim().uuid().optional(),
+        escalatedTo: z.string().trim().uuid().optional(),
+        location: z.string().optional(),
+    }),
+});
+
+export type FindGrievance = z.infer<typeof ZFindGrievance>;

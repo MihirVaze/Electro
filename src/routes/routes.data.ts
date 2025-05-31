@@ -8,6 +8,7 @@ import grievanceTypeRoutes from '../feature-modules/grievanceType/grievanceType.
 import clientRoutes from '../feature-modules/client/client.routes';
 import workerRoute from '../feature-modules/worker/worker.route';
 import customerRoutes from '../feature-modules/customer/customer.routes';
+import grievanceRoutes from '../feature-modules/grievance/grievance.route';
 
 export const routes: Routes = [
     authRoutes,
@@ -20,4 +21,5 @@ export const routes: Routes = [
     workerRoute,
     customerRoutes,
     userRoutes,
+    grievanceRoutes,
 ];
