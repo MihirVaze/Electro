@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../connections/pg.connection';
-import { Client } from './client.type';
+import { Client, CreateClient } from './client.type';
 import { UserSchema } from '../user/user.schema';
 
-export class ClientSchema extends Model<Client, Client> {}
+export class ClientSchema extends Model<CreateClient, CreateClient> {}
 
 ClientSchema.init(
     {

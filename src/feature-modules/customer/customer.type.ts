@@ -11,27 +11,23 @@ export const ZCustomer = z
         page: z.coerce.number().default(1).optional(),
     })
     .extend(ZUser.shape);
-export type Customer = z.infer<typeof ZCustomer>;
 
 export const ZCreateCustomer = ZCustomer.pick({
     cityId: true,
     userId: true,
     address: true,
 }).merge(ZBaseSchema.partial());
-export type CreateCustomer = z.infer<typeof ZCreateCustomer>;
 
 export const ZRegisterCustomer = ZCustomer.pick({
     name: true,
     email: true,
     phoneNo: true,
-    password: true,
     cityId: true,
     address: true,
 });
 export const ZValidateRegisterCustomer = z.object({
-    body: ZRegisterCustomer,
+    body: ZRegisterCustomer.extend({ client: z.string().trim().nonempty() }),
 });
-export type RegisterCustomer = z.infer<typeof ZRegisterCustomer>;
 
 export const ZFindCustomers = z.object({
     query: ZCustomer.pick({
@@ -39,7 +35,7 @@ export const ZFindCustomers = z.object({
         email: true,
         limit: true,
         page: true,
-    }).optional(),
+    }).partial(),
 });
 
 export const ZFindCustomer = z.object({
@@ -57,7 +53,6 @@ export const ZUpdateCustomer = ZCustomer.pick({
 export const ZValidateUpdateCustomer = z.object({
     body: ZUpdateCustomer,
 });
-export type UpdateCustomer = z.infer<typeof ZUpdateCustomer>;
 
 export const ZCustomerMeter = z
     .object({
@@ -74,8 +69,6 @@ export const ZCustomerMeter = z
         page: z.coerce.number().default(1).optional(),
     })
     .merge(ZBaseSchema.partial());
-
-export type CustomerMeter = z.infer<typeof ZCustomerMeter>;
 
 export const ZRegisterCustomerMeter = z.object({
     userId: z.string().uuid().optional(),
@@ -110,4 +103,9 @@ export const ZFindCustomerWorker = z.object({
     }).optional(),
 });
 
+export type Customer = z.infer<typeof ZCustomer>;
+export type CreateCustomer = z.infer<typeof ZCreateCustomer>;
+export type RegisterCustomer = z.infer<typeof ZRegisterCustomer>;
+export type UpdateCustomer = z.infer<typeof ZUpdateCustomer>;
+export type CustomerMeter = z.infer<typeof ZCustomerMeter>;
 export type CustomerWorker = z.infer<typeof ZCustomerWorker>;
