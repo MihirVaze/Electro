@@ -119,6 +119,23 @@ class WorkerService {
         }
     }
 
+    async getAllWorkers(
+        worker: Partial<Worker>,
+        limit: number,
+        schema: SchemaName,
+    ) {
+        try {
+            const result = await workerRepo.getAll(
+                { where: worker, order: [['customerCount', 'ASC']], limit },
+                schema,
+            );
+            return result;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
     async updateWorker(
         worker: Partial<Worker>,
         workerId: string,

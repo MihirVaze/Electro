@@ -9,6 +9,7 @@ import {
 import workerService from './worker.service';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
@@ -34,12 +35,12 @@ router.get(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'service_worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.SERVICE_WORKER,
         ],
     },
 );
@@ -63,12 +64,12 @@ router.post(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'service_worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.SERVICE_WORKER,
         ],
     },
 );
@@ -94,12 +95,12 @@ router.patch(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'service_worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.SERVICE_WORKER,
         ],
     },
 );
@@ -121,12 +122,12 @@ router.del(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'service_worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.SERVICE_WORKER,
         ],
     },
 );
