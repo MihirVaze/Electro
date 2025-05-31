@@ -39,6 +39,10 @@ export const CUSTOMER_RESPONSES = {
         status: 404,
         message: 'NO WORKER AVAILABLE IN THIS AREA',
     },
+    WORKER_ASSIGNED_TO_CUSTOMER: {
+        status: 201,
+        message: 'WORKER ASSINED TO CUSTOMER',
+    },
 
     //CUSTOMER-METER
     CUSTOMER_METER_NOT_FOUND: {

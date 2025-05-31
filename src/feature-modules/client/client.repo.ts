@@ -1,10 +1,10 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Client } from './client.type';
+import { Client, CreateClient, UpdateClient } from './client.type';
 import { ClientSchema } from './client.schema';
 
 class ClientRepo {
-    public async create(client: Client, schema: SchemaName) {
+    public async create(client: CreateClient, schema: SchemaName) {
         return ClientSchema.schema(schema).create(client);
     }
 
@@ -17,14 +17,17 @@ class ClientRepo {
     }
 
     public async update(
-        client: Partial<Client>,
-        options: UpdateOptions<Client>,
+        client: Partial<UpdateClient>,
+        options: UpdateOptions<CreateClient>,
         schema: SchemaName,
     ) {
         return ClientSchema.schema(schema).update(client, options);
     }
 
-    public async delete(options: UpdateOptions<Client>, schema: SchemaName) {
+    public async delete(
+        options: UpdateOptions<CreateClient>,
+        schema: SchemaName,
+    ) {
         return ClientSchema.schema(schema).update({ isDeleted: true }, options);
     }
 }

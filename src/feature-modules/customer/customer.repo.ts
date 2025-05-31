@@ -1,5 +1,5 @@
 import { SchemaName } from '../../utility/umzug-migration';
-import { FindOptions, UpdateOptions } from 'sequelize';
+import { CreateOptions, FindOptions, UpdateOptions } from 'sequelize';
 import {
     Customer,
     CustomerWorker,
@@ -14,8 +14,12 @@ import {
 } from './customer.schema';
 
 class CustomerRepo {
-    public async create(customer: CreateCustomer, schema: SchemaName) {
-        return CustomerSchema.schema(schema).create(customer);
+    public async create(
+        customer: CreateCustomer,
+        options: CreateOptions<CreateCustomer>,
+        schema: SchemaName,
+    ) {
+        return CustomerSchema.schema(schema).create(customer, options);
     }
 
     public async get(options: FindOptions<Customer>, schema: SchemaName) {
@@ -48,9 +52,13 @@ class CustomerRepo {
 
     public async createCustomerWorker(
         customerWorker: CustomerWorker,
+        options: CreateOptions<CustomerWorker>,
         schema: SchemaName,
     ) {
-        return CustomerWorkerSchema.schema(schema).create(customerWorker);
+        return CustomerWorkerSchema.schema(schema).create(
+            customerWorker,
+            options,
+        );
     }
 
     public async getCustomerWorker(
@@ -91,9 +99,13 @@ class CustomerRepo {
     //CustomerMeter
     public async createCustomerMeter(
         customerMeter: CustomerMeter,
+        options: CreateOptions<CustomerMeter>,
         schema: SchemaName,
     ) {
-        return CustomerMeterSchema.schema(schema).create(customerMeter);
+        return CustomerMeterSchema.schema(schema).create(
+            customerMeter,
+            options,
+        );
     }
 
     public async getCustomerMeter(

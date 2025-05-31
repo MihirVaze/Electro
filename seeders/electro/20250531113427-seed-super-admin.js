@@ -1,8 +1,11 @@
+const bcrypt = require('bcryptjs');
 module.exports = {
     up: async ({ context }) => {
         const { queryInterface } = context;
         const transaction = await queryInterface.sequelize.transaction();
         try {
+            const salt = await bcrypt.genSalt(10);
+
             await queryInterface.bulkInsert(
                 { tableName: 'User', schema: 'public' },
                 [
@@ -11,8 +14,7 @@ module.exports = {
                         name: 'electro_super_admin',
                         email: 'electro@gmail.com',
                         phoneNo: '7017492168',
-                        password:
-                            '$2b$10$JxL4ElYQrPoIxzbvO5iW3uorU9Ks0I9S.lWDKCTBdd0KhAH4e9cBK',
+                        password: await bcrypt.hash('12345', salt),
                     },
                 ],
                 { transaction },
