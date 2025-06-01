@@ -4,6 +4,7 @@ import { ZCredentials, Credentials, ZChangePassWord } from './auth.type';
 import { ResponseHandler } from '../../utility/response-handler';
 import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
@@ -29,7 +30,6 @@ router.post(
     { is_protected: false },
 );
 
-
 router.put(
     '/',
     [
@@ -50,7 +50,20 @@ router.put(
             }
         },
     ],
-    { is_protected: true, has_Access: [] },
+    {
+        is_protected: true,
+        has_Access: [
+            ROLE.CITY_MANAGER,
+            ROLE.CLIENT_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.CUSTOMER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.SERVICE_WORKER,
+            ROLE.STATE_MANAGER,
+            ROLE.SUPER_ADMIN,
+            ROLE.WORKER,
+        ],
+    },
 );
 
 export default new Route('/auth', router.ExpressRouter);

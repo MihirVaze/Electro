@@ -1,12 +1,12 @@
-import multer from "multer";
-import { CustomRouter } from "../../routes/custom.router";
-import { ResponseHandler } from "../../utility/response-handler";
-import { validate } from "../../utility/validate";
-import meterService from "./meter.service";
-import { ZFilterMeter, Zmeter, ZUpdateMeter } from "./meter.type";
-import { Route } from "../../routes/routes.types";
-import { FileUpload } from "../../utility/multer.storage";
-
+import multer from 'multer';
+import { CustomRouter } from '../../routes/custom.router';
+import { ResponseHandler } from '../../utility/response-handler';
+import { validate } from '../../utility/validate';
+import meterService from './meter.service';
+import { ZFilterMeter, Zmeter, ZUpdateMeter } from './meter.type';
+import { Route } from '../../routes/routes.types';
+import { FileUpload } from '../../utility/multer.storage';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 const upload = FileUpload('./uploads', {
@@ -21,61 +21,65 @@ router.get(
             try {
                 const schema = req.payload.schema;
                 const { limit, page, ...filters } = req.query;
-                const result = await meterService.getMeters(Number(limit), Number(page), filters, schema);
+                const result = await meterService.getMeters(
+                    Number(limit),
+                    Number(page),
+                    filters,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
-        }
+        },
     ],
-    { is_protected: true, has_Access: ['client_admin'] }
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
 );
 
 router.get(
     '/:id',
-    [   
+    [
         validate(Zmeter),
         async (req, res, next) => {
             try {
-                
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                 
+
                 const result = await meterService.findOneMeter({ id }, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
-        }
+        },
     ],
-    { is_protected: true, has_Access: ['client_admin'] }
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
 );
 
 router.post(
     '/',
-    [   
+    [
         upload.single('avatar'),
         validate(Zmeter),
         async (req, res, next) => {
             try {
-                if(!req.file){
-                   throw {status:400,message:"Bad Request"}
+                if (!req.file) {
+                    throw { status: 400, message: 'Bad Request' };
                 }
-                const image=req.file.path;
+                const image = req.file.path;
                 const schema = req.payload.schema;
-                const body={
+                const body = {
                     ...req.body,
-                    image:image,
-                    createdBy:req.payload.id
-                }
+                    image: image,
+                    createdBy: req.payload.id,
+                };
                 const result = await meterService.createMeter(body, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
-        }
+        },
     ],
-    { is_protected: true, has_Access: ['client_admin'] }
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
 );
 
 router.patch(
@@ -86,18 +90,22 @@ router.patch(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const detailsToUpdate={
-                ...req.body,
-                updatedBy:req.payload.id
-             };
-                const result = await meterService.updateMeter(id, detailsToUpdate, schema);
+                const detailsToUpdate = {
+                    ...req.body,
+                    updatedBy: req.payload.id,
+                };
+                const result = await meterService.updateMeter(
+                    id,
+                    detailsToUpdate,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
-        }
+        },
     ],
-    { is_protected: true, has_Access: ['client_admin'] }
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
 );
 
 router.del(
@@ -108,15 +116,19 @@ router.del(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const userId=req.payload.id;
-                const result = await meterService.deleteMeter(id, schema,userId);
+                const userId = req.payload.id;
+                const result = await meterService.deleteMeter(
+                    id,
+                    schema,
+                    userId,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
-        }
+        },
     ],
-    { is_protected: true, has_Access: ['client_admin'] }
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
 );
 
 export default new Route('/meter', router.ExpressRouter);

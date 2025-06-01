@@ -32,11 +32,11 @@ router.get(
     {
         is_protected: false,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
         ],
     },
 );

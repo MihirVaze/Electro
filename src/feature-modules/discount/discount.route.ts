@@ -2,6 +2,7 @@ import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
+import { ROLE } from '../role/role.data';
 import discountService from './discount.service';
 import {
     ZCreateDiscount,
@@ -33,7 +34,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -51,7 +52,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.post(
@@ -68,7 +69,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -90,7 +91,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -108,7 +109,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 export default new Route('/discount', router.ExpressRouter);

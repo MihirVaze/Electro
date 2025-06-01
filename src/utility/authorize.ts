@@ -22,26 +22,17 @@ export const authorizeR =
     (AuthorizedFor: Has_Access) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { roleId, schema } = req.payload;
-
-            const Accessedfor = await Promise.all(
-                AuthorizedFor.map(async (e) => {
-                    const schemaName =
-                        e === ROLE.CLIENT_ADMIN ? 'public' : schema;
-                    const role = await roleServices.getRole(
-                        { id: e },
-                        schemaName,
-                    );
-                    return role.id;
-                }),
-            );
+            const { roleId } = req.payload;
 
             if (
-                roleId.length !== 0 &&
-                Accessedfor.some((e) => (e ? roleId.includes(e) : false))
-            )
+                Array.isArray(roleId) &&
+                roleId.length > 0 &&
+                AuthorizedFor.some((e) => roleId.includes(e))
+            ) {
                 next();
-            else throw 'FORBIDDEN';
+            } else {
+                throw 'FORBIDDEN';
+            }
         } catch (e) {
             next({ status: 403, message: 'FORBIDDEN' });
         }
