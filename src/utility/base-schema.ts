@@ -9,4 +9,6 @@ export const ZBaseSchema = z.object({
     updatedBy: z.string().trim().uuid(),
     deletedAt: z.date(),
     restoredAt: z.date(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
 });

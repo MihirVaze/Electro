@@ -1,45 +1,22 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZState = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZState = ZBaseSchema.partial().extend({
     name: z.string().trim(),
-    isDeleted: z.boolean().default(false),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type State = z.infer<typeof ZState>;
 
-export const ZDistrict = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZDistrict = ZBaseSchema.partial().extend({
     stateId: z.string().trim().uuid(),
     name: z.string().trim(),
-    isDeleted: z.boolean().default(false),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type District = z.infer<typeof ZDistrict>;
 
-export const ZCity = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZCity = ZBaseSchema.partial().extend({
     districtId: z.string().trim().uuid(),
     name: z.string().trim(),
-    isDeleted: z.boolean().default(false),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type City = z.infer<typeof ZCity>;
