@@ -91,6 +91,9 @@ UserSchema.hasMany(StateUserSchema, {
     as: 'stateUser',
 });
 
+StateSchema.hasMany(StateUserSchema, { foreignKey: 'stateId' });
+StateUserSchema.belongsTo(StateSchema, { foreignKey: 'stateId' });
+
 export class DistrictUserSchema extends Model<DistrictUser, DistrictUser> {}
 
 DistrictUserSchema.init(
@@ -174,6 +177,9 @@ UserSchema.hasMany(DistrictUserSchema, {
     as: 'districtUser',
 });
 
+DistrictSchema.hasMany(DistrictUserSchema, { foreignKey: 'districtId' });
+DistrictUserSchema.belongsTo(DistrictSchema, { foreignKey: 'districtId' });
+
 export class CityUserSchema extends Model<CityUser, CityUser> {}
 
 CityUserSchema.init(
@@ -256,3 +262,6 @@ UserSchema.hasMany(CityUserSchema, {
     sourceKey: 'id',
     as: 'cityUser',
 });
+
+CitySchema.hasMany(CityUserSchema, { as: 'cityUser', foreignKey: 'cityId' });
+CityUserSchema.belongsTo(CitySchema, { as: 'city', foreignKey: 'cityId' });

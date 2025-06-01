@@ -17,7 +17,7 @@ export type GrievanceType = z.infer<typeof ZGrievanceType>;
 
 export const ZFindGrievanceTypes = z.object({
     query: z.object({
-        name: z.string().trim().nonempty(),
+        name: z.string().trim().optional(),
     }),
 });
 

@@ -19,8 +19,8 @@ export const CONSUMPTION_RESPONSES = {
         status: 200,
         message: 'UI Updated Of The Client',
     },
-    CONSUMPTION_DELETED:{
-        status:200,
-        message:"UI deleted Successfully"
-    }
+    CONSUMPTION_DELETED: {
+        status: 200,
+        message: 'UI deleted Successfully',
+    },
 };
