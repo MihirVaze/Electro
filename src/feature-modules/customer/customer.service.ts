@@ -225,11 +225,12 @@ class CustomerServices {
             const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
-            const workers = await workerService.getAllWorkers(
-                { cityId },
-                limit,
-                'public',
-            );
+            const workers =
+                await workerService.getAllWorkersSortedByCustomerCount(
+                    { cityId },
+                    limit,
+                    'public',
+                );
 
             if (!workers.count)
                 throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
@@ -241,7 +242,7 @@ class CustomerServices {
                 throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
 
             await this.addCustomerWorker(
-                { userId: customerMeter.userId ?? '', workerId },
+                { userId, workerId },
                 schema,
                 transaction,
             );
@@ -249,8 +250,9 @@ class CustomerServices {
             const updatedCount = customerCount + 1;
             await workerService.updateWorker(
                 { customerCount: updatedCount },
-                { userId: workerId },
+                workerId,
                 'public',
+                transaction,
             );
 
             transaction.commit();

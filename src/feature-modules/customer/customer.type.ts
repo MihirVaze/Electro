@@ -76,6 +76,10 @@ export const ZRegisterCustomerMeter = z.object({
     meterId: z.string().uuid(),
 });
 
+export const ZValidateRegisterCustomerMeter = z.object({
+    body: ZRegisterCustomerMeter,
+});
+
 export const ZFindCustomerMeters = z.object({
     query: ZCustomerMeter.pick({
         name: true,
