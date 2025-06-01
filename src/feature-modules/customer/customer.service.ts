@@ -185,7 +185,7 @@ class CustomerServices {
                 },
                 schema,
             );
-            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
+            if (!result[0]) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
         } catch (e) {
@@ -222,7 +222,7 @@ class CustomerServices {
                 { userId: customerMeter.userId },
                 schema,
             );
-            const { cityId, userId: customerId } = customer.dataValues;
+            const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
             const workers = await workerService.getAllWorkers(
@@ -237,7 +237,7 @@ class CustomerServices {
 
             const { customerCount, userId: workerId } =
                 workerToBeAssigned.dataValues;
-            if (!customerCount || !workerId)
+            if (!(typeof customerCount === 'number') || !workerId)
                 throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
 
             await this.addCustomerWorker(
@@ -249,8 +249,8 @@ class CustomerServices {
             const updatedCount = customerCount + 1;
             await workerService.updateWorker(
                 { customerCount: updatedCount },
-                workerId,
-                schema,
+                { userId: workerId },
+                'public',
             );
 
             transaction.commit();

@@ -191,7 +191,7 @@ class ClientServices {
                 },
                 schema,
             );
-            if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
+            if (!result[0]) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
 
             return CLIENT_RESPONSES.CLIENT_UPDATED;
         } catch (e) {

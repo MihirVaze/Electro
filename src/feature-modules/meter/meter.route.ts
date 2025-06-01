@@ -10,7 +10,7 @@ import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 const upload = FileUpload('./uploads', {
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
 });
 
 router.get(
@@ -59,7 +59,7 @@ router.post(
     '/',
     [
         upload.single('avatar'),
-        validate(Zmeter),
+        //validate(Zmeter),
         async (req, res, next) => {
             try {
                 if (!req.file) {
@@ -70,7 +70,7 @@ router.post(
                 const body = {
                     ...req.body,
                     image: image,
-                    createdBy: req.payload.id,
+                    // createdBy: req.payload.id,
                 };
                 const result = await meterService.createMeter(body, schema);
                 res.send(new ResponseHandler(result));

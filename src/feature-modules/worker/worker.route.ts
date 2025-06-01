@@ -74,36 +74,36 @@ router.post(
     },
 );
 
-router.patch(
-    '/:workerId',
-    [
-        validate(ZupdateWorker),
-        async (req, res, next) => {
-            try {
-                const { workerId } = req.params;
-                const result = await workerService.updateWorker(
-                    req.body,
-                    workerId,
-                    'public',
-                );
-                res.send(new ResponseHandler(result));
-            } catch (e) {
-                next(e);
-            }
-        },
-    ],
-    {
-        is_protected: true,
-        has_Access: [
-            ROLE.SUPER_ADMIN,
-            ROLE.CLIENT_MANAGER,
-            ROLE.STATE_MANAGER,
-            ROLE.DISTRICT_MANAGER,
-            ROLE.CITY_MANAGER,
-            ROLE.SERVICE_WORKER,
-        ],
-    },
-);
+// router.patch(
+//     '/:workerId',
+//     [
+//         validate(ZupdateWorker),
+//         async (req, res, next) => {
+//             try {
+//                 const { workerId } = req.params;
+//                 const result = await workerService.updateWorker(
+//                     req.body,
+//                     workerId,
+//                     'public',
+//                 );
+//                 res.send(new ResponseHandler(result));
+//             } catch (e) {
+//                 next(e);
+//             }
+//         },
+//     ],
+//     {
+//         is_protected: true,
+//         has_Access: [
+//             ROLE.SUPER_ADMIN,
+//             ROLE.CLIENT_MANAGER,
+//             ROLE.STATE_MANAGER,
+//             ROLE.DISTRICT_MANAGER,
+//             ROLE.CITY_MANAGER,
+//             ROLE.SERVICE_WORKER,
+//         ],
+//     },
+// );
 
 router.del(
     '/:id',
