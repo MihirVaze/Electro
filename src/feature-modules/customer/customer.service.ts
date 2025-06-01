@@ -76,6 +76,13 @@ class CustomerServices {
                             'updatedBy',
                         ],
                     },
+                    include: [
+                        {
+                            model: UserSchema.schema(schema),
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
+                        },
+                    ],
                 },
                 schema,
             );
@@ -138,7 +145,8 @@ class CustomerServices {
                         {
                             model: UserSchema.schema(schema),
                             where: userWhere,
-                            attributes: ['name', 'email'],
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
                         },
                     ],
                     limit,
