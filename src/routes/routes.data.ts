@@ -24,4 +24,6 @@ export const routes: Routes = [
     customerRoutes,
     userRoutes,
     meterRoute,
+    consumptionRoute,
+    customerBillRoute,
 ];

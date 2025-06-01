@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { ZCustomerMeter } from '../customer/customer.type';
 
 export const Zconsumption = z.object({
     id: z.string().uuid().optional(),
     customerMeterId: z.string().trim().uuid(),
     workerId: z.string().trim().uuid(),
     unitsUsed: z.number().positive(),
-    description: z.string().trim(),
+    description: z.string().trim().optional(),
     isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
@@ -14,6 +15,7 @@ export const Zconsumption = z.object({
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
     updatedAt: z.date().optional(),
+    customerMeter: ZCustomerMeter.optional(),
 });
 
 export type Consumption = z.infer<typeof Zconsumption>;
