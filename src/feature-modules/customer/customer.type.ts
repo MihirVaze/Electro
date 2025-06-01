@@ -1,6 +1,7 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
 import { ZUser } from '../user/user.types';
+import { Zmeter } from '../meter/meter.type';
 
 export const ZCustomer = z
     .object({
@@ -68,6 +69,8 @@ export const ZCustomerMeter = z
         meterName: z.string().trim().nonempty().optional(),
         limit: z.coerce.number().default(10).optional(),
         page: z.coerce.number().default(1).optional(),
+        meter: Zmeter.optional(),
+        user: ZUser.optional(),
     })
     .merge(ZBaseSchema.partial());
 
