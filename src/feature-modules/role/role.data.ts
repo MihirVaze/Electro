@@ -7,5 +7,5 @@ export const ROLE = {
     WORKER: '77e801c6-11fc-42c5-ac66-d9e5c546fb8b',
     CLIENT_ADMIN: '9b7038ab-ca52-4f89-bb2d-008a5262a807',
     CUSTOMER: 'ad769c24-0da3-40cf-b7e9-ea85e0123878',
-    SERVICE_WORKER: '022e69fe-49d1-4bdc-ae69-8f2527df00de',
+    SERVICE_WORKER: '56ec84bd-829a-4e61-b4bf-92a789d12a94',
 };
