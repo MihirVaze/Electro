@@ -96,7 +96,7 @@ CustomerWorkerSchema.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        customerId: {
+        userId: {
             type: DataTypes.UUID,
             references: {
                 model: UserSchema,
@@ -230,18 +230,15 @@ CustomerMeterSchema.init(
     },
 );
 
-
-CustomerMeterSchema.hasMany(MeterSchema, {
-    foreignKey: 'meterId',
-    as: 'meter',
-});
-MeterSchema.belongsTo(CustomerMeterSchema, {
+CustomerMeterSchema.belongsTo(MeterSchema, {
     foreignKey: 'meterId',
     as: 'meter',
 });
 
-CustomerMeterSchema.hasMany(MeterSchema, { foreignKey: 'meterId' });
-MeterSchema.belongsTo(CustomerMeterSchema, { foreignKey: 'meterId' });
+MeterSchema.hasOne(CustomerMeterSchema, {
+    foreignKey: 'meterId',
+    as: 'customerMeter',
+});
 
 CustomerWorkerSchema.belongsTo(UserSchema, {
     foreignKey: 'customerId',
@@ -261,6 +258,10 @@ UserSchema.hasMany(CustomerWorkerSchema, {
     as: 'worker',
 });
 
-UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
-CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId', as: 'user' });
+CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId', as: 'user' });
 
+CustomerMeterSchema.belongsTo(CustomerSchema, {
+    foreignKey: 'userId',
+    as: 'customer',
+});

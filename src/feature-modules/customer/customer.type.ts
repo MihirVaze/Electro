@@ -87,7 +87,7 @@ export const ZFindCustomerMeters = z.object({
 
 export const ZCustomerWorker = z
     .object({
-        customerId: z.string().trim().uuid(),
+        userId: z.string().trim().uuid(),
         workerId: z.string().trim().uuid(),
         limit: z.coerce.number().default(10).optional(),
         page: z.coerce.number().default(1).optional(),
@@ -96,7 +96,7 @@ export const ZCustomerWorker = z
 
 export const ZFindCustomerWorker = z.object({
     query: ZCustomerWorker.pick({
-        customerId: true,
+        userId: true,
         workerId: true,
         limit: true,
         page: true,

@@ -5,8 +5,12 @@ import { CONSUMPTION_RESPONSES } from './consumption.response';
 // import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
 import { Op, WhereOptions } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
-import { CustomerMeterSchema } from '../customer/customer.schema';
+import {
+    CustomerMeterSchema,
+    CustomerSchema,
+} from '../customer/customer.schema';
 import { MeterSchema } from '../meter/meter.schema';
+import { UserSchema } from '../user/user.schema';
 
 class ConsumptionService {
     async createConsumption(data: Consumption, userId: string, schema: string) {
@@ -114,15 +118,7 @@ class ConsumptionService {
         const currentYear = today.getFullYear();
 
         const startDate = new Date(currentYear, currentMonth - 1, 25);
-        const endDate = new Date(
-            currentYear,
-            currentMonth,
-            24,
-            23,
-            59,
-            59,
-            999,
-        );
+        const endDate = new Date(currentYear, currentMonth, 24, 23, 59, 59);
 
         return await consumptionRepo.getAllConsumptions(
             {
@@ -133,24 +129,38 @@ class ConsumptionService {
                 },
                 include: [
                     {
-                        model: CustomerMeterSchema,
+                        association: 'customerMeter',
+                        model: CustomerMeterSchema.schema(schema),
                         as: 'customerMeter',
                         required: true,
                         include: [
                             {
-                                model: MeterSchema,
+                                association: 'customer',
+                                model: CustomerSchema.schema(schema),
+                                as: 'customer',
+                                required: true,
+                                include: [
+                                    {
+                                        association: 'user',
+                                        model: UserSchema.schema(schema),
+                                        as: 'user',
+                                        required: true,
+                                    },
+                                ],
+                            },
+                            {
+                                association: 'meter',
+                                model: MeterSchema.schema(schema),
                                 as: 'meter',
                                 required: true,
                             },
                         ],
                     },
                 ],
-                raw: true,
             },
             schema,
         );
     }
-
 }
 
 export default new ConsumptionService();
