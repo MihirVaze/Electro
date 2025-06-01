@@ -78,7 +78,7 @@ router.post(
         async (req, res, next) => {
             try {
                 const result = await clientService.addClient(
-                    req.body,
+                    { ...req.body, createdBy: req.payload.id },
                     'public',
                 );
                 res.send(new ResponseHandler(result));
@@ -98,7 +98,7 @@ router.patch(
             try {
                 const userId = req.body.userId || req.payload.id;
                 const result = await clientService.updateClient(
-                    req.body,
+                    { ...req.body, updatedBy: userId },
                     userId,
                     'public',
                 );
