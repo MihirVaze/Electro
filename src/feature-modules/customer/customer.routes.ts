@@ -185,11 +185,13 @@ router.get(
 router.post(
     '/customer-meter',
     [
-        validate(ZRegisterCustomerMeter),
+        //validate(ZRegisterCustomerMeter),
         async (req, res, next) => {
             try {
+                console.log(req.body);
                 if (!req.body.userId) {
                     req.body.userId = req.payload.id;
+                    console.log(req.body.userId);
                 }
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(

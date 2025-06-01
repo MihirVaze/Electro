@@ -67,6 +67,16 @@ module.exports = {
                     restoredAt: {
                         type: DataTypes.DATE,
                     },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
+                    },
                 },
                 { transaction },
             );

@@ -18,7 +18,7 @@ router.post(
                 const userId = req.payload.id;
                 const body = {
                     ...req.body,
-                    createdBy: req.payload.id,
+                    //createdBy: req.payload.id,
                 };
                 const result = await consumptionService.createConsumption(
                     body,
