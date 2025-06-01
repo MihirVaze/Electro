@@ -5,11 +5,14 @@ import { ZUser } from '../feature-modules/user/user.types';
 export const validate = (schema: AnyZodObject): RequestHandler => {
     return async (req, res, next) => {
         try {
-            await schema.parseAsync({
+            const parsed = await schema.parseAsync({
                 body: req.body,
                 query: req.query,
                 params: req.params,
             });
+            if (parsed.query !== undefined) {
+                req.parsedQuery = parsed.query;
+            }
             next();
         } catch (error) {
             res.status(400).json(error);
