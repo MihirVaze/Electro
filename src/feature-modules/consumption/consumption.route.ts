@@ -2,6 +2,7 @@ import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
+import { ROLE } from '../role/role.data';
 import consumptionService from './consumption.service';
 import { Zconsumption, Zcreate, Zupdate } from './conumption.type';
 
@@ -30,7 +31,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['worker'] },
+    { is_protected: true, has_Access: [ROLE.WORKER] },
 );
 
 router.get(
@@ -53,7 +54,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['worker', 'city_manager'] },
+    { is_protected: true, has_Access: [ROLE.WORKER, ROLE.CITY_MANAGER] },
 );
 
 router.get(
@@ -75,7 +76,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['worker', 'city_manager'] },
+    { is_protected: true, has_Access: [ROLE.WORKER, ROLE.CITY_MANAGER] },
 );
 
 router.patch(
@@ -102,7 +103,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['city_manager'] },
+    { is_protected: true, has_Access: [ROLE.CITY_MANAGER] },
 );
 
 router.del(
@@ -125,7 +126,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['city_manager'] },
+    { is_protected: true, has_Access: [ROLE.CITY_MANAGER] },
 );
 
 export default new Route('/consumption', router.ExpressRouter);

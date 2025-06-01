@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { Consumption } from './conumption.type';
 import { sequelize } from '../../connections/pg.connection';
-import { CustomerSchema } from '../customer/customer.schema';
+import { CustomerMeterSchema } from '../customer/customer.schema';
 import { UserSchema } from '../user/user.schema';
 import { WorkerSchema } from '../worker/worker.schema';
 
@@ -14,10 +14,10 @@ ConsumptionSchema.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        customerId: {
+        customerMeterId: {
             type: DataTypes.UUID,
             references: {
-                model: 'Customer',
+                model: CustomerMeterSchema,
                 key: 'id',
             },
         },
@@ -85,9 +85,13 @@ ConsumptionSchema.init(
     },
 );
 
-ConsumptionSchema.belongsTo(CustomerSchema, {
-    foreignKey: 'customerId',
-    as: 'customerId',
+CustomerMeterSchema.hasMany(ConsumptionSchema, {
+    foreignKey: 'customerMeterId',
+    as: 'consumptions',
+});
+ConsumptionSchema.belongsTo(CustomerMeterSchema, {
+    foreignKey: 'customerMeterId',
+    as: 'customerMeter',
 });
 
 ConsumptionSchema.belongsTo(WorkerSchema, {

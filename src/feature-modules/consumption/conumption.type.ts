@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const Zconsumption = z.object({
     id: z.string().uuid().optional(),
-    customerId: z.string().trim().uuid(),
+    customerMeterId: z.string().trim().uuid(),
     workerId: z.string().trim().uuid(),
     unitsUsed: z.number().positive(),
     description: z.string().trim(),

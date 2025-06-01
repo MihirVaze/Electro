@@ -6,6 +6,7 @@ import clientUIService from './clientUI.service';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
 import { FileUpload } from '../../utility/multer.storage';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 const upload = FileUpload('./uploads', {
@@ -40,7 +41,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -59,7 +60,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -83,7 +84,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -104,7 +105,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 export default new Route('/ui', router.ExpressRouter);

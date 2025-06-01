@@ -6,6 +6,7 @@ export const ZWorker = z.object({
 
     userId: z.string().trim().uuid().nonempty().optional(),
     cityId: z.string().trim().uuid().nonempty(),
+    customerCount: z.coerce.number().min(0).optional(),
 
     phoneNo: z
         .string()

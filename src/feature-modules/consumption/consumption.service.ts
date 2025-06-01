@@ -4,6 +4,9 @@ import consumptionRepo from './consumption.repo';
 import { CONSUMPTION_RESPONSES } from './consumption.response';
 // import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
 import { Op, WhereOptions } from 'sequelize';
+import { SchemaName } from '../../utility/umzug-migration';
+import { CustomerMeterSchema } from '../customer/customer.schema';
+import { MeterSchema } from '../meter/meter.schema';
 
 class ConsumptionService {
     async createConsumption(data: Consumption, userId: string, schema: string) {
@@ -103,6 +106,49 @@ class ConsumptionService {
             console.dir(e);
             throw e;
         }
+    }
+
+    async getConsumptionForBillingCycle(schema: SchemaName) {
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+
+        const startDate = new Date(currentYear, currentMonth - 1, 25);
+        const endDate = new Date(
+            currentYear,
+            currentMonth,
+            24,
+            23,
+            59,
+            59,
+            999,
+        );
+
+        return await consumptionRepo.getAllConsumptions(
+            {
+                where: {
+                    updatedAt: {
+                        [Op.between]: [startDate, endDate],
+                    },
+                },
+                include: [
+                    {
+                        model: CustomerMeterSchema,
+                        as: 'customerMeter',
+                        required: true,
+                        include: [
+                            {
+                                model: MeterSchema,
+                                as: 'meter',
+                                required: true,
+                            },
+                        ],
+                    },
+                ],
+                raw: true,
+            },
+            schema,
+        );
     }
 }
 
