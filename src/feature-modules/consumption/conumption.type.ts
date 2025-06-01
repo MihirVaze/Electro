@@ -35,6 +35,9 @@ export const Zfilter = z.object({
     customerId: z.string().trim().uuid().optional(),
     workerId: z.string().trim().uuid().optional(),
     unitsUsed: z.number().positive().optional(),
+    limit: z.coerce.number().min(1),
+    page: z.coerce.number().min(1),
+
 });
 
 export type Filter = z.infer<typeof Zfilter>;

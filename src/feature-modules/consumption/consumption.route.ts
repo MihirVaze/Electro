@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import { ROLE } from '../role/role.data';
 import consumptionService from './consumption.service';
-import { Zconsumption, Zcreate, Zupdate } from './conumption.type';
+import { Zconsumption, Zcreate, Zfilter, Zupdate } from './conumption.type';
 
 const router = new CustomRouter();
 
@@ -37,7 +37,7 @@ router.post(
 router.get(
     '/',
     [
-        validate(Zconsumption),
+        validate(Zfilter),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
