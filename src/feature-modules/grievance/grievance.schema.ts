@@ -4,6 +4,7 @@ import { UserSchema } from '../user/user.schema';
 import { sequelize } from '../../connections/pg.connection';
 import { GrievanceTypeSchema } from '../grievanceType/grievanceType.schema';
 import { RoleSchema } from '../role/role.schema';
+import { CitySchema } from '../location/location.schema';
 
 export class GrievanceSchema extends Model<Grievance, Grievance> {}
 
@@ -16,9 +17,17 @@ GrievanceSchema.init(
         },
         userId: {
             type: DataTypes.UUID,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
         },
         grievanceTypeId: {
             type: DataTypes.UUID,
+            references: {
+                model: GrievanceTypeSchema,
+                key: 'id',
+            },
         },
         comments: {
             type: DataTypes.STRING,
@@ -45,8 +54,12 @@ GrievanceSchema.init(
             },
         },
         location: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: true,
+            references: {
+                model: CitySchema,
+                key: 'id',
+            },
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -101,3 +114,9 @@ GrievanceSchema.belongsTo(GrievanceTypeSchema, {
     foreignKey: 'grievanceTypeId',
 });
 GrievanceTypeSchema.hasMany(GrievanceSchema, { foreignKey: 'grievanceTypeId' });
+
+GrievanceSchema.belongsTo(CitySchema, { foreignKey: 'location', as: 'city' });
+CitySchema.hasMany(GrievanceSchema, {
+    foreignKey: 'location',
+    as: 'grievances',
+});

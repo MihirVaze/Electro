@@ -22,7 +22,6 @@ export const ZClientUIData = z.object({
     updatedBy: z.string().trim().uuid().optional(),
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
-    
 });
 
 export type ClientUIData = z.infer<typeof ZClientUIData>;
