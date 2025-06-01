@@ -50,8 +50,11 @@ CustomerBillSchema.init(
         dueDate: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: () =>
-                new Date(new Date().setDate(new Date().getDate() + 15)),
+        },
+        status: {
+            type: DataTypes.ENUM(),
+            values: ['unpaid', 'paid'],
+            defaultValue: 'unpaid',
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -101,7 +104,9 @@ CustomerBillSchema.init(
 
 CustomerMeterSchema.hasMany(CustomerBillSchema, {
     foreignKey: 'customerMeterId',
+    as: 'customerMeter',
 });
 CustomerBillSchema.belongsTo(CustomerMeterSchema, {
     foreignKey: 'customerMeterId',
+    as: 'customerMeter',
 });

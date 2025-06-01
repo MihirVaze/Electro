@@ -49,10 +49,11 @@ module.exports = {
                     dueDate: {
                         type: DataTypes.DATE,
                         allowNull: false,
-                        defaultValue: () =>
-                            new Date(
-                                new Date().setDate(new Date().getDate() + 15),
-                            ),
+                    },
+                    status: {
+                        type: DataTypes.ENUM(),
+                        values: ['unpaid', 'paid'],
+                        defaultValue: 'unpaid',
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
@@ -91,6 +92,16 @@ module.exports = {
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                    },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
                     },
                 },
                 { transaction },

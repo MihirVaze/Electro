@@ -324,6 +324,10 @@ class UserServices {
             throw error;
         }
     }
+
+    async getOneUser(user: Partial<User>, schema: SchemaName) {
+        return await userRepo.getUser({ where: user }, schema);
+    }
 }
 
 export default new UserServices();

@@ -8,74 +8,74 @@ module.exports = {
             await queryInterface.createTable(
                 { tableName: 'Consumption', schema },
                 {
-                    id:{
-                            type:DataTypes.UUID,
-                            defaultValue:DataTypes.UUIDV4,
-                            primaryKey:true
+                    id: {
+                        type: DataTypes.UUID,
+                        defaultValue: DataTypes.UUIDV4,
+                        primaryKey: true,
+                    },
+                    customerMeterId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'CustomerMeter',
+                            key: 'id',
                         },
-                        customerId:{
-                            type:DataTypes.UUID,
-                            references:{
-                                model:'Customer',
-                                key:'id'
-                            }
+                    },
+                    workerId: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: { tableName: 'Worker', schema: 'public' },
+                            key: 'id',
                         },
-                        workerId:{
-                            type:DataTypes.UUID,
-                            references:{
-                                model:{tableName:'Worker',schema:'public'},
-                                key:'id'
-                            }
+                    },
+                    unitsUsed: {
+                        type: DataTypes.INTEGER,
+                        allowNull: false,
+                    },
+                    description: {
+                        type: DataTypes.STRING,
+                        allowNull: true,
+                    },
+                    isDeleted: {
+                        type: DataTypes.BOOLEAN,
+                        defaultValue: false,
+                    },
+                    deletedBy: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
                         },
-                        unitsUsed:{
-                            type:DataTypes.INTEGER,
-                            allowNull:false
+                    },
+                    restoredBy: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
                         },
-                        description:{
-                            type:DataTypes.STRING,
-                            allowNull:true
+                    },
+                    createdBy: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
                         },
-                        isDeleted: {
-                                type: DataTypes.BOOLEAN,
-                                defaultValue: false,
-                            },
-                            deletedBy: {
-                                type: DataTypes.UUID,
-                                references: {
-                                    model: 'User',
-                                    key: 'id',
-                                },
-                            },
-                            restoredBy: {
-                                type: DataTypes.UUID,
-                                references: {
-                                    model: 'User',
-                                    key: 'id',
-                                },
-                            },
-                            createdBy: {
-                                type: DataTypes.UUID,
-                                references: {
-                                    model: 'User',
-                                    key: 'id',
-                                },
-                            },
-                            updatedBy: {
-                                type: DataTypes.UUID,
-                                references: {
-                                    model: 'User',
-                                    key: 'id',
-                                },
-                            },
-                            deletedAt: {
-                                type: DataTypes.DATE,
-                            },
-                            restoredAt: {
-                                type: DataTypes.DATE,
-                            },
-                            updatedAt: {
-                                type: DataTypes.DATE,
-                            },
+                    },
+                    updatedBy: {
+                        type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
+                    },
+                    deletedAt: {
+                        type: DataTypes.DATE,
+                    },
+                    restoredAt: {
+                        type: DataTypes.DATE,
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                    },
                 },
                 { transaction },
             );

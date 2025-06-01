@@ -87,7 +87,7 @@ ConsumptionSchema.init(
 
 CustomerMeterSchema.hasMany(ConsumptionSchema, {
     foreignKey: 'customerMeterId',
-    as: 'consumptions',
+    as: 'customerMeter',
 });
 ConsumptionSchema.belongsTo(CustomerMeterSchema, {
     foreignKey: 'customerMeterId',

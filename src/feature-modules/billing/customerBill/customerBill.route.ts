@@ -7,6 +7,26 @@ import { ZFindBills, ZUpdateBill } from './customerBill.type';
 
 const router = new CustomRouter();
 
+router.post(
+    '/',
+    [
+        async (req, res, next) => {
+            try {
+                const schema = req.payload.schema;
+                const result =
+                    await customerBillService.generateCustomerBill(schema);
+                res.send(result);
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    {
+        is_protected: true,
+        has_Access: ['superadmin'],
+    },
+);
+
 router.get(
     '/',
     [
