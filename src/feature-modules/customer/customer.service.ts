@@ -185,7 +185,7 @@ class CustomerServices {
                 },
                 schema,
             );
-            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
+            if (!result[0]) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
         } catch (e) {
