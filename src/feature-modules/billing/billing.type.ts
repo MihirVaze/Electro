@@ -1,7 +1,7 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZBilling = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZBilling = ZBaseSchema.partial().extend({
     planId: z.string().trim().uuid(),
     basePrice: z.number(),
     discountId: z.string().trim().uuid(),
@@ -9,13 +9,6 @@ export const ZBilling = z.object({
     discountValue: z.number(),
     clientId: z.string().trim().uuid(),
     total: z.number(),
-    isDeleted: z.boolean().default(false),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type Billing = z.infer<typeof ZBilling>;

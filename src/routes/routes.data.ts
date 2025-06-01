@@ -11,6 +11,7 @@ import customerRoutes from '../feature-modules/customer/customer.routes';
 import meterRoute from '../feature-modules/meter/meter.route';
 import consumptionRoute from '../feature-modules/consumption/consumption.route';
 import customerBillRoute from '../feature-modules/billing/customerBill/customerBill.route';
+import reportRoutes from '../feature-modules/report/report.routes';
 
 export const routes: Routes = [
     authRoutes,
@@ -26,4 +27,5 @@ export const routes: Routes = [
     meterRoute,
     consumptionRoute,
     customerBillRoute,
+    reportRoutes,
 ];

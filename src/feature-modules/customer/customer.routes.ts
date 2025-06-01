@@ -9,6 +9,7 @@ import {
     ZFindCustomerWorker,
     ZRegisterCustomerMeter,
     ZValidateRegisterCustomer,
+    ZValidateRegisterCustomerMeter,
     ZValidateUpdateCustomer,
 } from './customer.type';
 import userService from '../user/user.service';
@@ -185,7 +186,7 @@ router.get(
 router.post(
     '/customer-meter',
     [
-        //validate(ZRegisterCustomerMeter),
+        validate(ZValidateRegisterCustomerMeter),
         async (req, res, next) => {
             try {
                 console.log(req.body);
@@ -195,7 +196,7 @@ router.post(
                 }
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
-                    req.body,
+                    { ...req.body, createdBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));

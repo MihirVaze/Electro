@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { ZCustomerMeter } from '../customer/customer.type';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const Zconsumption = z.object({
-    id: z.string().uuid().optional(),
+
+export const Zconsumption = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),
     workerId: z.string().trim().uuid(),
     unitsUsed: z.number().positive(),
