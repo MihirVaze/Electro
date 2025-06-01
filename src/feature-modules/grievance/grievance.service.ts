@@ -7,7 +7,7 @@ import { SchemaName } from '../../utility/umzug-migration';
 import userLocationRepo from '../userLocation/userLocation.repo';
 import roleServices from '../role/role.services';
 import locationRepo from '../location/location.repo';
-import { Op, WhereOptions } from 'sequelize';
+import { FindOptions, Op, WhereOptions } from 'sequelize';
 import {
     CitySchema,
     DistrictSchema,
@@ -244,6 +244,16 @@ class GrievanceService {
             if (!escalateTo)
                 throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
             return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
+        }
+    }
+
+    async GrievanceReport(schema: SchemaName, options: FindOptions<Grievance>) {
+        try {
+            const results = await grievanceRepo.getAll(options, schema);
+            return results;
+        } catch (e) {
+            console.dir(e);
+            throw e;
         }
     }
 }
