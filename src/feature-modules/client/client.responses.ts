@@ -31,4 +31,8 @@ export const CLIENT_RESPONSES = {
         status: 200,
         message: 'CLIENT UPDATED SUCCESSFULLY',
     },
+    CLIENT_RESTORED: {
+        status: 200,
+        message: 'CLIENT RESTORED SUCCESSFULLY',
+    },
 };

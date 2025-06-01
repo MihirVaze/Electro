@@ -7,8 +7,6 @@ export const ZClient = z
         clientName: z.string().trim().nonempty(),
         schemaName: z.string().trim().nonempty(),
         userId: z.string().uuid().optional(),
-        limit: z.coerce.number().default(10),
-        page: z.coerce.number().default(1),
     })
     .extend(ZUser.shape);
 
@@ -39,12 +37,16 @@ export const ZFindClients = z.object({
     query: ZClient.pick({
         clientName: true,
         email: true,
-        limit: true,
-        page: true,
-    }).partial(),
+    })
+        .partial()
+        .extend({
+            limit: z.coerce.number().min(1),
+            page: z.coerce.number().min(1),
+        }),
 });
 
 export const ZUpdateClient = ZClient.pick({
+    userId: true,
     clientName: true,
     email: true,
     phoneNo: true,

@@ -75,16 +75,16 @@ router.post(
 );
 
 router.patch(
-    '/:customerId',
+    '/',
     [
         validate(ZValidateUpdateCustomer),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const { customerId } = req.params;
+                const userId = req.body.userId || req.payload.id;
                 const result = await customerService.updateCustomer(
                     req.body,
-                    customerId,
+                    userId,
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -93,7 +93,17 @@ router.patch(
             }
         },
     ],
-    { is_protected: false, has_Access: [ROLE.SUPER_ADMIN] },
+    {
+        is_protected: true,
+        has_Access: [
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.CUSTOMER,
+        ],
+    },
 );
 
 router.del(

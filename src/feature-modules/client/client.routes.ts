@@ -5,15 +5,40 @@ import clientService from './client.service';
 import { validate } from '../../utility/validate';
 import {
     ZFindClients,
-    ZUpdateClient,
     ZValidateRegisterClient,
     ZValidateUpdateClient,
 } from './client.type';
-import userService from '../user/user.service';
-import { HasPermission } from '../../utility/usersPermissions';
 import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
+
+router.get(
+    '/:userId',
+    [
+        async (req, res, next) => {
+            try {
+                const { userId } = req.params;
+                const result = await clientService.getClient(
+                    { userId },
+                    'public',
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    {
+        is_protected: true,
+        has_Access: [
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+        ],
+    },
+);
 
 router.get(
     '/',
@@ -35,7 +60,7 @@ router.get(
         },
     ],
     {
-        is_protected: false,
+        is_protected: true,
         has_Access: [
             ROLE.SUPER_ADMIN,
             ROLE.CLIENT_MANAGER,
@@ -66,15 +91,15 @@ router.post(
 );
 
 router.patch(
-    '/:clientId',
+    '/',
     [
         validate(ZValidateUpdateClient),
         async (req, res, next) => {
             try {
-                const { clientId } = req.params;
+                const userId = req.body.userId || req.payload.id;
                 const result = await clientService.updateClient(
                     req.body,
-                    clientId,
+                    userId,
                     'public',
                 );
                 res.send(new ResponseHandler(result));
@@ -83,7 +108,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: false, has_Access: [ROLE.SUPER_ADMIN] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN, ROLE.CLIENT_ADMIN] },
 );
 
 router.del(
@@ -92,22 +117,10 @@ router.del(
         async (req, res, next) => {
             try {
                 const userId = req.params.id;
-                const schema = req.payload.schema;
-                const deletorRoleId = req.payload.roleId;
-                const userRoles = (
-                    await userService.getUserRoles({ userId }, schema)
-                )
-                    .map((e) => e.dataValues.id)
-                    .filter((e): e is string => !!e);
-
-                const canUpdate = HasPermission(
-                    deletorRoleId,
-                    userRoles,
-                    schema,
+                const result = await clientService.deleteClient(
+                    userId,
+                    'public',
                 );
-                if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
-
-                const result = await clientService.deleteClient(userId, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

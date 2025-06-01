@@ -7,8 +7,6 @@ export const ZCustomer = z
         cityId: z.string().trim().uuid().nonempty(),
         address: z.string().trim().nonempty(),
         userId: z.string().uuid(),
-        limit: z.coerce.number().default(10).optional(),
-        page: z.coerce.number().default(1).optional(),
     })
     .extend(ZUser.shape);
 
@@ -33,9 +31,12 @@ export const ZFindCustomers = z.object({
     query: ZCustomer.pick({
         name: true,
         email: true,
-        limit: true,
-        page: true,
-    }).partial(),
+    })
+        .partial()
+        .extend({
+            limit: z.coerce.number().min(1),
+            page: z.coerce.number().min(1),
+        }),
 });
 
 export const ZFindCustomer = z.object({

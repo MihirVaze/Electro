@@ -109,7 +109,7 @@ class CustomerServices {
             }
 
             if (address) {
-                customerWhere.address = { [Op.iLike]: `${address}` };
+                customerWhere.address = { [Op.iLike]: `%${address}%` };
             }
 
             const offset = (page - 1) * limit;
@@ -156,19 +156,12 @@ class CustomerServices {
 
     async updateCustomer(
         customer: Partial<Customer>,
-        customerId: string,
+        userId: string,
         schema: SchemaName,
     ) {
         try {
             const { name, phoneNo, email, ...restOfCustomer } = customer;
             if (name || phoneNo || email) {
-                const customerToBeUpdated = await customerRepo.get(
-                    {
-                        where: { id: customerId },
-                    },
-                    schema,
-                );
-
                 const updateUser: any = {};
                 if (phoneNo) {
                     updateUser.phoneNo = phoneNo;
@@ -176,8 +169,11 @@ class CustomerServices {
                 if (email) {
                     updateUser.email = email;
                 }
+                if (name) {
+                    updateUser.name = name;
+                }
 
-                updateUser.id = customerToBeUpdated?.dataValues.id;
+                updateUser.id = userId;
 
                 await userService.updateUser(updateUser, schema);
             }
@@ -185,7 +181,7 @@ class CustomerServices {
             const result = await customerRepo.update(
                 restOfCustomer,
                 {
-                    where: { id: customerId },
+                    where: { userId },
                 },
                 schema,
             );
