@@ -8,13 +8,20 @@ import userService from '../user/user.service';
 import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
-import roleServices from '../role/role.services';
 import { ROLE } from '../role/role.data';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, schemaName } = client;
+
+            // const deletedClient = await this.getClient({ clientName, isDeleted: true }, schema);
+            // const { id: clientId, userId } = deletedClient.dataValues;
+            // if (userId && clientId) {
+            //     await this.updateClient({ isDeleted: false }, clientId, schema);
+            //     await userService.updateUser({ id: userId, isDeleted: false }, schema);
+            //     return CLIENT_RESPONSES.CLIENT_RESTORED;
+            // }
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -78,6 +85,12 @@ class ClientServices {
                             'updatedBy',
                         ],
                     },
+                    include: [
+                        {
+                            model: UserSchema,
+                            attributes: ['name', 'email', 'phoneNo'],
+                        },
+                    ],
                 },
                 schema,
             );
@@ -131,7 +144,7 @@ class ClientServices {
                         {
                             model: UserSchema,
                             where,
-                            attributes: ['name', 'email'],
+                            attributes: ['name', 'email', 'phoneNo'],
                         },
                     ],
                     limit,
@@ -149,19 +162,12 @@ class ClientServices {
 
     async updateClient(
         client: Partial<Client>,
-        clientId: string,
+        userId: string,
         schema: SchemaName,
     ) {
         try {
-            const { phoneNo, email, ...restOfClient } = client;
-            if (phoneNo || email) {
-                const clientToBeUpdated = await clientRepo.get(
-                    {
-                        where: { id: clientId },
-                    },
-                    schema,
-                );
-
+            const { phoneNo, email, clientName, ...remainingClient } = client;
+            if (phoneNo || email || clientName) {
                 const updateUser: any = {};
                 if (phoneNo) {
                     updateUser.phoneNo = phoneNo;
@@ -169,16 +175,19 @@ class ClientServices {
                 if (email) {
                     updateUser.email = email;
                 }
+                if (clientName) {
+                    updateUser.name = clientName;
+                }
 
-                updateUser.id = clientToBeUpdated?.dataValues.id;
+                updateUser.id = userId;
 
                 await userService.updateUser(updateUser, schema);
             }
 
             const result = await clientRepo.update(
-                restOfClient,
+                { clientName, ...remainingClient },
                 {
-                    where: { id: clientId },
+                    where: { userId },
                 },
                 schema,
             );
@@ -191,13 +200,17 @@ class ClientServices {
         }
     }
 
-    async deleteClient(clientId: string, schema: SchemaName) {
+    async deleteClient(userId: string, schema: SchemaName) {
         try {
-            const result = await clientRepo.delete(
-                { where: { userId: clientId } },
+            const deletedClient = await clientRepo.delete(
+                { where: { userId } },
                 schema,
             );
-            if (!result) throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
+
+            const deletedUser = await userService.deleteUser(userId, schema);
+
+            if (!deletedClient || !deletedUser)
+                throw CLIENT_RESPONSES.CLIENT_NOT_FOUND;
             return CLIENT_RESPONSES.CLIENT_DELETED;
         } catch (e) {
             console.log(e);
