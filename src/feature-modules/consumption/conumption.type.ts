@@ -1,19 +1,11 @@
 import { z } from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const Zconsumption = z.object({
-    id: z.string().uuid().optional(),
+export const Zconsumption = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),
     workerId: z.string().trim().uuid(),
     unitsUsed: z.number().positive(),
     description: z.string().trim(),
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
-    updatedAt: z.date().optional(),
 });
 
 export type Consumption = z.infer<typeof Zconsumption>;

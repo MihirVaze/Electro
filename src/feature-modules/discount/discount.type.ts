@@ -1,22 +1,13 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZDiscount = z.object({
-    id: z.string().trim().uuid().optional(),
-
+export const ZDiscount = ZBaseSchema.partial().extend({
     clientId: z.string().trim().uuid(),
     type: z.enum(['increment', 'decrement', 'none']),
     value: z.number().positive(),
 
     minValue: z.number().positive().optional(),
     maxValue: z.number().positive().optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type Discount = z.infer<typeof ZDiscount>;

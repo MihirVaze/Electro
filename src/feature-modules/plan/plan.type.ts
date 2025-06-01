@@ -1,22 +1,13 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZPlan = z.object({
-    id: z.string().trim().uuid().optional(),
-
+export const ZPlan = ZBaseSchema.partial().extend({
     minCustomers: z.number().positive(),
     maxCustomers: z.number().positive(),
     basePrice: z.number().positive(),
 
     minPrice: z.number().positive().optional(),
     maxPrice: z.number().positive().optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type Plan = z.infer<typeof ZPlan>;
