@@ -144,7 +144,6 @@ class WorkerService {
     ) {
         try {
             const { phoneNo, email, ...remainingWorker } = worker;
-            console.log(remainingWorker);
             if (phoneNo || email) {
                 const updateUser: any = {};
                 if (phoneNo) {
@@ -168,10 +167,8 @@ class WorkerService {
                 schema,
             );
             if (!result[0]) throw WORKER_RESPONSES.WORKER_UPDATION_FAILED;
-            if (transaction) transaction.commit();
             return WORKER_RESPONSES.WORKER_UPDATED;
         } catch (error) {
-            if (transaction) transaction.rollback();
             console.dir(error);
             throw error;
         }
