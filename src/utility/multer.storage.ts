@@ -12,7 +12,12 @@ export const FileUpload = (
     const {
         maxFileSize = 5,
         maxFiles = 5,
-        allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'],
+        allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/jpg',
+        ],
     } = options || {};
 
     const storage = multer.diskStorage({

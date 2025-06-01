@@ -138,18 +138,22 @@ class WorkerService {
 
     async updateWorker(
         worker: Partial<Worker>,
-        workerId: string,
+        workerId: Partial<Worker>,
         schema: SchemaName,
     ) {
         try {
+            console.log(worker);
+            console.log(workerId);
             const { phoneNo, email, ...remainingWorker } = worker;
+            console.log(remainingWorker);
             if (phoneNo || email) {
                 const workerToBeUpdated = await workerRepo.get(
                     {
-                        where: { id: workerId },
+                        where: { userId: workerId.userId },
                     },
                     schema,
                 );
+                console.log('....', workerToBeUpdated);
 
                 const updateUser: any = {};
                 if (phoneNo) {
@@ -167,7 +171,7 @@ class WorkerService {
             const result = await workerRepo.update(
                 remainingWorker,
                 {
-                    where: { id: workerId },
+                    where: { userId: workerId.userId },
                 },
                 schema,
             );
