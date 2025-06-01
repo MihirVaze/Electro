@@ -1,9 +1,8 @@
 import { SchemaName } from '../../utility/umzug-migration';
 
 import userService from '../user/user.service';
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
-import roleServices from '../role/role.services';
 import {
     Customer,
     CustomerWorker,
@@ -12,30 +11,27 @@ import {
 } from './customer.type';
 import { CUSTOMER_RESPONSES } from './customer.responses';
 import customerRepo from './customer.repo';
-import workerService from '../worker/worker.service';
 import { MeterSchema } from '../meter/meter.schema';
+import { ROLE } from '../role/role.data';
+import { sequelize } from '../../connections/pg.connection';
+import workerService from '../worker/worker.service';
 
 class CustomerServices {
     async addCustomer(customer: RegisterCustomer, schema: SchemaName) {
+        const transaction = await sequelize.transaction();
         try {
-            const { name, phoneNo, email, password, cityId, address } =
-                customer;
-
-            const roleId = (
-                await roleServices.getRole({ role: 'customer' }, schema)
-            ).id!;
-            console.log(roleId);
+            const { name, phoneNo, email, cityId, address } = customer;
 
             const createdUser = await userService.onBoardUser(
                 {
                     name,
                     phoneNo,
                     email,
-                    password,
+                    password: '',
                 },
                 [
                     {
-                        roleId,
+                        roleId: ROLE.CUSTOMER,
                         locationIds: [cityId],
                     },
                 ],
@@ -51,31 +47,14 @@ class CustomerServices {
                     cityId,
                     address,
                 },
+                { transaction },
                 schema,
             );
 
-            const limit = 10;
-            const page = 1;
-
-            const workers = await workerService.getWorkers(
-                { cityId },
-                limit,
-                page,
-                'public',
-            );
-
-            if (workers.rows.length === 0)
-                throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
-
-            const randomNum = Math.floor(Math.random() * workers.count);
-            const workerToBeAssigned = workers.rows[randomNum];
-
-            const workerId = workerToBeAssigned.dataValues.userId!;
-
-            await this.addCustomerWorker({ workerId, customerId: id }, schema);
-
+            transaction.commit();
             return CUSTOMER_RESPONSES.CUSTOMER_CREATED;
         } catch (error) {
+            transaction.rollback();
             console.dir(error);
             throw error;
         }
@@ -116,23 +95,32 @@ class CustomerServices {
         schema: SchemaName,
     ) {
         try {
-            let where: any = {};
+            let userWhere: any = {};
+            let customerWhere: any = {};
 
-            const { email, name, ...remainingCustomer } = customer;
+            const { email, name, address, ...remainingCustomer } = customer;
 
             if (email) {
-                where.email = { [Op.iLike]: `%${email}%` };
+                userWhere.email = { [Op.iLike]: `%${email}%` };
             }
 
             if (name) {
-                where.name = { [Op.iLike]: `%${name}%` };
+                userWhere.name = { [Op.iLike]: `%${name}%` };
+            }
+
+            if (address) {
+                customerWhere.address = { [Op.iLike]: `${address}` };
             }
 
             const offset = (page - 1) * limit;
 
             const result = await customerRepo.getAll(
                 {
-                    where: { isDeleted: false, ...remainingCustomer },
+                    where: {
+                        isDeleted: false,
+                        ...customerWhere,
+                        ...remainingCustomer,
+                    },
                     attributes: {
                         exclude: [
                             'isDeleted',
@@ -142,12 +130,14 @@ class CustomerServices {
                             'restoredAt',
                             'createdBy',
                             'updatedBy',
+                            'createdAt',
+                            'updatedAt',
                         ],
                     },
                     include: [
                         {
-                            model: UserSchema,
-                            where,
+                            model: UserSchema.schema(schema),
+                            where: userWhere,
                             attributes: ['name', 'email'],
                         },
                     ],
@@ -224,16 +214,53 @@ class CustomerServices {
 
     //CustomerMeter
     async addCustomerMeter(customerMeter: CustomerMeter, schema: SchemaName) {
+        const transaction = await sequelize.transaction();
         try {
             const result = await customerRepo.createCustomerMeter(
                 customerMeter,
+                { transaction },
                 schema,
             );
-            if (!result)
-                throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FAILED;
 
+            const customer = await this.getCustomer(
+                { userId: customerMeter.userId },
+                schema,
+            );
+            const { cityId, userId: customerId } = customer.dataValues;
+
+            const limit = 1;
+            const workers = await workerService.getAllWorkers(
+                { cityId },
+                limit,
+                'public',
+            );
+
+            if (!workers.count)
+                throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
+            const workerToBeAssigned = workers.rows[0];
+
+            const { customerCount, userId: workerId } =
+                workerToBeAssigned.dataValues;
+            if (!customerCount || !workerId)
+                throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
+
+            await this.addCustomerWorker(
+                { customerId, workerId },
+                schema,
+                transaction,
+            );
+
+            const updatedCount = customerCount + 1;
+            await workerService.updateWorker(
+                { customerCount: updatedCount },
+                workerId,
+                schema,
+            );
+
+            transaction.commit();
             return CUSTOMER_RESPONSES.CUSTOMER_METER_CREATED;
         } catch (e) {
+            transaction.rollback();
             console.dir(e);
             throw e;
         }
@@ -260,11 +287,11 @@ class CustomerServices {
                     },
                     include: [
                         {
-                            model: UserSchema,
+                            model: UserSchema.schema(schema),
                             attributes: ['name', 'email'],
                         },
                         {
-                            model: MeterSchema,
+                            model: MeterSchema.schema(schema),
                             attributes: [
                                 'name',
                                 'image',
@@ -328,12 +355,12 @@ class CustomerServices {
                     },
                     include: [
                         {
-                            model: UserSchema,
+                            model: UserSchema.schema(schema),
                             where: whereUser,
                             attributes: ['name', 'email'],
                         },
                         {
-                            model: MeterSchema,
+                            model: MeterSchema.schema(schema),
                             where: whereMeter,
                             attributes: [
                                 'name',
@@ -413,7 +440,13 @@ class CustomerServices {
                     },
                     include: [
                         {
-                            model: UserSchema,
+                            model: UserSchema.schema(schema),
+                            as: 'customer',
+                            attributes: ['name', 'email'],
+                        },
+                        {
+                            model: UserSchema.schema('public'),
+                            as: 'worker',
                             attributes: ['name', 'email'],
                         },
                     ],
@@ -434,14 +467,18 @@ class CustomerServices {
     async addCustomerWorker(
         customerWorker: CustomerWorker,
         schema: SchemaName,
+        transaction: Transaction,
     ) {
         try {
-            const result = await customerRepo.createCustomerWorker(
+            await customerRepo.createCustomerWorker(
                 customerWorker,
+                { transaction },
                 schema,
             );
-            return result;
+            transaction.commit();
+            return CUSTOMER_RESPONSES.WORKER_ASSIGNED_TO_CUSTOMER;
         } catch (e) {
+            transaction.rollback();
             console.log(e);
             throw e;
         }

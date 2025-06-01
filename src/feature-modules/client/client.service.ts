@@ -9,17 +9,12 @@ import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import roleServices from '../role/role.services';
+import { ROLE } from '../role/role.data';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, schemaName } = client;
-            if (!phoneNo || !email)
-                throw CLIENT_RESPONSES.CLIENT_CREATION_FIELDS_MISSING;
-
-            const roleId = (
-                await roleServices.getRole({ role: 'client_admin' }, schema)
-            ).id!;
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -28,7 +23,7 @@ class ClientServices {
                     email,
                     password: '',
                 },
-                [{ roleId }],
+                [{ roleId: ROLE.CLIENT_ADMIN }],
                 schema,
             );
 
@@ -106,7 +101,7 @@ class ClientServices {
 
             let clientWhere: any = {};
 
-            const { email, clientName, ...remainingClient } = client;
+            const { email, clientName } = client;
 
             if (email) {
                 where.email = { [Op.iLike]: `%${email}%` };
@@ -118,11 +113,9 @@ class ClientServices {
 
             const offset = (page - 1) * limit;
 
-            clientWhere = { ...clientWhere, remainingClient };
-
             const result = await clientRepo.getAll(
                 {
-                    where: { isDeleted: false, ...remainingClient },
+                    where: { isDeleted: false, ...clientWhere },
                     attributes: {
                         exclude: [
                             'isDeleted',

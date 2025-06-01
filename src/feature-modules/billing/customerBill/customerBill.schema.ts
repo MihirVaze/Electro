@@ -1,42 +1,57 @@
 import { DataTypes, Model } from 'sequelize';
-import { Worker } from './worker.type';
-import { UserSchema } from '../user/user.schema';
-import { CitySchema } from '../location/location.schema';
-import { sequelize } from '../../connections/pg.connection';
+import { CustomerBill } from './customerBill.type';
+import { CustomerMeterSchema } from '../../customer/customer.schema';
+import { ConsumptionSchema } from '../../consumption/consumption.schema';
+import { sequelize } from '../../../connections/pg.connection';
+import { UserSchema } from '../../user/user.schema';
 
-export class WorkerSchema extends Model<Worker, Worker> {}
+export class CustomerBillSchema extends Model<CustomerBill, CustomerBill> {}
 
-WorkerSchema.init(
+CustomerBillSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        workerName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        userId: {
+        customerMeterId: {
             type: DataTypes.UUID,
             references: {
-                model: UserSchema,
+                model: CustomerMeterSchema,
                 key: 'id',
             },
             allowNull: false,
         },
-        cityId: {
-            type: DataTypes.UUID,
-            references: {
-                model: CitySchema,
-                key: 'id',
-            },
-            allowNull: false,
-        },
-        customerCount: {
+        basePrice: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 0,
+        },
+        perUnitCost: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        consumptionId: {
+            type: DataTypes.UUID,
+            references: {
+                model: ConsumptionSchema,
+                key: 'id',
+            },
+            allowNull: false,
+        },
+        total: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        billingDate: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW(),
+        },
+        dueDate: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: () =>
+                new Date(new Date().setDate(new Date().getDate() + 15)),
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -79,13 +94,14 @@ WorkerSchema.init(
     },
     {
         sequelize,
-        tableName: 'Worker',
-        modelName: 'Worker',
+        modelName: 'CustomerBill',
+        tableName: 'CustomerBill',
     },
 );
 
-UserSchema.hasMany(WorkerSchema, { foreignKey: 'userId' });
-WorkerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
-
-CitySchema.hasMany(WorkerSchema, { foreignKey: 'cityId' });
-WorkerSchema.belongsTo(CitySchema, { foreignKey: 'cityId' });
+CustomerMeterSchema.hasMany(CustomerBillSchema, {
+    foreignKey: 'customerMeterId',
+});
+CustomerBillSchema.belongsTo(CustomerMeterSchema, {
+    foreignKey: 'customerMeterId',
+});
