@@ -241,7 +241,7 @@ class CustomerServices {
                 throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
 
             await this.addCustomerWorker(
-                { customerId, workerId },
+                { userId: customerMeter.userId ?? '', workerId },
                 schema,
                 transaction,
             );
