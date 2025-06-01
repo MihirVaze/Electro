@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
 import { CitySchema } from '../location/location.schema';
 import roleServices from '../role/role.services';
@@ -119,7 +119,7 @@ class WorkerService {
         }
     }
 
-    async getAllWorkers(
+    async getAllWorkersSortedByCustomerCount(
         worker: Partial<Worker>,
         limit: number,
         schema: SchemaName,
@@ -138,23 +138,13 @@ class WorkerService {
 
     async updateWorker(
         worker: Partial<Worker>,
-        workerId: Partial<Worker>,
+        userId: string,
         schema: SchemaName,
+        transaction?: Transaction,
     ) {
         try {
-            console.log(worker);
-            console.log(workerId);
             const { phoneNo, email, ...remainingWorker } = worker;
-            console.log(remainingWorker);
             if (phoneNo || email) {
-                const workerToBeUpdated = await workerRepo.get(
-                    {
-                        where: { userId: workerId.userId },
-                    },
-                    schema,
-                );
-                console.log('....', workerToBeUpdated);
-
                 const updateUser: any = {};
                 if (phoneNo) {
                     updateUser.phoneNo = phoneNo;
@@ -163,7 +153,7 @@ class WorkerService {
                     updateUser.email = email;
                 }
 
-                updateUser.id = workerToBeUpdated?.dataValues.id;
+                updateUser.id = userId;
 
                 await userService.updateUser(updateUser, schema);
             }
@@ -171,12 +161,12 @@ class WorkerService {
             const result = await workerRepo.update(
                 remainingWorker,
                 {
-                    where: { userId: workerId.userId },
+                    where: { userId },
+                    transaction,
                 },
                 schema,
             );
             if (!result[0]) throw WORKER_RESPONSES.WORKER_UPDATION_FAILED;
-
             return WORKER_RESPONSES.WORKER_UPDATED;
         } catch (error) {
             console.dir(error);

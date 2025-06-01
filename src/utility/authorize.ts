@@ -8,11 +8,9 @@ import { ROLE } from '../feature-modules/role/role.data';
 export const authorizeT = (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.headers.authorization;
-        console.log(token);
         if (!token) throw 'UNAUTHORISED';
 
         const payload = verify(token, process.env.JWT_SECRET_KEY) as Payload;
-        console.log(payload);
         req.payload = payload;
         next();
     } catch (e) {
