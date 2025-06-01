@@ -8,12 +8,17 @@ import userLocationRepo from '../userLocation/userLocation.repo';
 import roleServices from '../role/role.services';
 import locationRepo from '../location/location.repo';
 import { Op, WhereOptions } from 'sequelize';
-import { DistrictSchema, StateSchema } from '../location/location.schema';
+import {
+    CitySchema,
+    DistrictSchema,
+    StateSchema,
+} from '../location/location.schema';
 import {
     CityUserSchema,
     DistrictUserSchema,
     StateUserSchema,
 } from '../userLocation/userLocation.schema';
+import { ROLE } from '../role/role.data';
 
 class GrievanceService {
     async raiseGrievance(
@@ -46,189 +51,198 @@ class GrievanceService {
         return GRIEVANCE_RESPONSES.GRIEVANCE_CREATED;
     }
 
-    // async getGrievance(
-    //     userId: string,
-    //     roleIds: string[],
-    //     limit: number,
-    //     page: number,
-    //     grievance: Partial<Grievance>,
-    //     schema: SchemaName,
-    // ) {
-    //     try {
-    //         const offset = (page - 1) * limit;
+    async getGrievances(
+        userId: string,
+        roleIds: string[],
+        limit: number,
+        page: number,
+        grievance: Partial<Grievance>,
+        schema: SchemaName,
+    ) {
+        try {
+            const offset = (page - 1) * limit;
 
-    //         const where: WhereOptions<Grievance> = {
-    //             isDeleted: false,
-    //             ...grievance,
-    //         };
+            const where: WhereOptions<Grievance> = {
+                isDeleted: false,
+                ...grievance,
+            };
 
-    //         if (roleIds.includes(ROLE.CLIENT_MANAGER)) {
-    //             return grievanceRepo.getAll({ where, limit, offset }, schema);
-    //         };
-
-    // const cities: string[] = [];
-
-    // if (roleNames.includes('state_manager')) {
-    //     const userStates = await userLocationRepo.getAllUserState(
-    //         { where: { userId } },
-    //         schema,
-    //     );
-    //     const stateIds = userStates.rows.map(
-    //         (state) => state.dataValues.stateId,
-    //     );
-
-    //     const cityIds = await locationRepo.getAllCities(
-    //         {
-    //             include: [
-    //                 {
-    //                     model: DistrictSchema,
-    //                     attributes: [],
-    //                     where: {
-    //                         stateId: {
-    //                             [Op.in]: stateIds,
-    //                         },
-    //                     },
-    //                 },
-    //             ],
-    //             attributes: ['id'],
-    //         },
-    //         schema,
-    //     );
-
-    //     for (const cityId of cityIds.rows) {
-    //         if (!cityId.dataValues.id) throw 'id invalid';
-    //         cities.push(cityId.dataValues.id);
-    //     }
-    // } else if (roleNames.includes('district_manager')) {
-    //     const userDistricts = await userLocationRepo.getAllUserDistrict(
-    //         { where: { userId } },
-    //         schema,
-    //     );
-    //     const districtIds = userDistricts.rows.map(
-    //         (district) => district.dataValues.districtId,
-    //     );
-
-    //     const cityIds = await locationRepo.getAllCities(
-    //         {
-    //             where: {
-    //                 districtId: {
-    //                     [Op.in]: districtIds,
-    //                 },
-    //             },
-    //             attributes: ['id'],
-    //         },
-    //         schema,
-    //     );
-
-    //     for (const cityId of cityIds.rows) {
-    //         if (!cityId.dataValues.id) throw 'id invalid';
-    //         cities.push(cityId.dataValues.id);
-    //     }
-    // } else if (
-    //     roleNames.includes('city_manager') ||
-    //     roleNames.includes('service_worker')
-    // ) {
-    //     const cityIds = await userLocationRepo.getAllUserCity(
-    //         {
-    //             where: {
-    //                 userId,
-    //             },
-    //             attributes: ['id'],
-    //         },
-    //         schema,
-    //     );
-
-    //     for (const cityId of cityIds.rows) {
-    //         if (!cityId.dataValues.id) throw 'id invalid';
-    //         cities.push(cityId.dataValues.id);
-    //     }
-    // }
-
-    //         const cities: string[] = [];
-    //         StateUserSchema.findAll({
-    //             where: {
-    //                 userId,
-    //                 attribute: ['stateId']
-    //             },
-    //             include: [
-    //                 {
-    //                     model: StateSchema,
-    //                         include: [{
-    //                                 model: DistrictSchema,
-    //                                 include: [{
-    //                                     model: CityUserSchema,
-    //                                 }]
-    //                             }]
-    //                         }]
-    //                 })
-
-    //         CityUserSchema.findAll({
-    //             where: {
-    //                 userId,
-    //             }
-    //         })
-
-    //         //where.location = cities;
-    //         where.location = { [Op.in]: cities };
-    //         return await grievanceRepo.getAll({ where, limit, offset }, schema);
-    //     } catch (e) {
-    //         console.dir(e);
-    //         throw e;
-    //     }
-    // }
+            if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
+                return await grievanceRepo.getAll(
+                    { where, limit, offset },
+                    schema,
+                );
+            } else if (roleIds.includes(ROLE.STATE_MANAGER)) {
+                return await grievanceRepo.getAll(
+                    {
+                        where: {
+                            isDeleted: false,
+                            ...grievance,
+                        },
+                        include: [
+                            {
+                                model: CitySchema.schema(schema),
+                                as: 'city',
+                                required: true,
+                                where: { isDeleted: false },
+                                include: [
+                                    {
+                                        model: DistrictSchema.schema(schema),
+                                        as: 'district',
+                                        required: true,
+                                        where: { isDeleted: false },
+                                        include: [
+                                            {
+                                                model: StateUserSchema.schema(
+                                                    schema,
+                                                ),
+                                                as: 'stateUser',
+                                                required: true,
+                                                where: {
+                                                    userId: userId,
+                                                    isDeleted: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                        limit,
+                        offset,
+                    },
+                    schema,
+                );
+            } else if (roleIds.includes(ROLE.DISTRICT_MANAGER)) {
+                return await grievanceRepo.getAll(
+                    {
+                        where: {
+                            isDeleted: false,
+                            ...grievance,
+                        },
+                        include: [
+                            {
+                                model: CitySchema.schema(schema),
+                                as: 'city',
+                                where: { isDeleted: false },
+                                include: [
+                                    {
+                                        model: DistrictSchema.schema(schema),
+                                        as: 'district',
+                                        required: true,
+                                        where: { isDeleted: false },
+                                        include: [
+                                            {
+                                                model: DistrictUserSchema.schema(
+                                                    schema,
+                                                ),
+                                                as: 'districtUser',
+                                                required: true,
+                                                where: {
+                                                    userId: userId,
+                                                    isDeleted: false,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                        limit,
+                        offset,
+                    },
+                    schema,
+                );
+            } else if (
+                roleIds.includes(ROLE.CITY_MANAGER) ||
+                roleIds.includes(ROLE.SERVICE_WORKER)
+            ) {
+                return await grievanceRepo.getAll(
+                    {
+                        where: {
+                            isDeleted: false,
+                            ...grievance,
+                        },
+                        include: [
+                            {
+                                model: CitySchema.schema(schema),
+                                as: 'city',
+                                required: true,
+                                where: {
+                                    isDeleted: false,
+                                },
+                                include: [
+                                    {
+                                        model: CityUserSchema.schema(schema),
+                                        as: 'cityUser',
+                                        required: true,
+                                        where: {
+                                            userId: userId,
+                                            isDeleted: false,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        limit,
+                        offset,
+                    },
+                    schema,
+                );
+            }
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
 
     async assignOrEscalateGrievance(
         userId: string,
         roleId: string[],
-        grievanceId: string,
+        id: string,
         action: 'pick' | 'escalate',
         schema: SchemaName,
     ) {
-        const grievance = await grievanceRepo.get(
-            { where: { id: grievanceId } },
-            schema,
-        );
+        const grievance = await grievanceRepo.get({ where: { id } }, schema);
         if (!grievance) throw GRIEVANCE_RESPONSES.GRIEVANCE_NOT_FOUND;
 
-        const roleNames = await Promise.all(
-            roleId.map(
-                async (id) => (await roleServices.getRole({ id }, schema)).role,
-            ),
-        );
-
         if (action === 'pick') {
-            await grievanceRepo.update(
+            const assignedTo = await grievanceRepo.update(
                 {
                     assignedTo: userId,
                     status: 'in-progress',
                 },
-                { where: { id: grievanceId } },
+                { where: { id } },
                 schema,
             );
+            if (!assignedTo)
+                throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
 
             return GRIEVANCE_RESPONSES.GRIEVANCE_ASSIGNED;
         }
 
         if (action === 'escalate') {
             let escalateTo = '';
-            if (roleNames.includes('service_worker'))
-                escalateTo = 'city_manager';
-            else if (roleNames.includes('city_manager'))
-                escalateTo = 'district_manager';
-            else if (roleNames.includes('district_manager'))
-                escalateTo = 'state_manager';
-            else if (roleNames.includes('state_manager'))
-                escalateTo = 'client_manager';
+            if (roleId.includes(ROLE.SERVICE_WORKER))
+                escalateTo = ROLE.CITY_MANAGER;
+            else if (roleId.includes(ROLE.CITY_MANAGER))
+                escalateTo = ROLE.DISTRICT_MANAGER;
+            else if (roleId.includes(ROLE.DISTRICT_MANAGER))
+                escalateTo = ROLE.STATE_MANAGER;
+            else if (roleId.includes(ROLE.STATE_MANAGER))
+                escalateTo = ROLE.CLIENT_ADMIN;
             else throw GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATION_NOT_ALLOWED;
 
-            await grievanceRepo.update(
+            const escalatedTo = await grievanceRepo.update(
                 {
                     escalatedTo: escalateTo,
                     status: 'pending',
                 },
-                { where: { id: grievanceId } },
+                { where: { id } },
                 schema,
             );
+            if (!escalateTo)
+                throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
             return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
         }
     }

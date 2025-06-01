@@ -15,6 +15,11 @@ export const ZGrievance = z.object({
     escalatedTo: z.string().trim().uuid().nullable().optional(),
     location: z.string().optional(),
 
+    limit: z.coerce.number().default(10).optional(),
+    page: z.coerce.number().default(1).optional(),
+
+    action: z.enum(['pick', 'escalate']).optional(),
+
     isDeleted: z.boolean().default(false).optional(),
     deletedBy: z.string().trim().uuid().optional(),
     restoredBy: z.string().trim().uuid().optional(),
@@ -36,15 +41,20 @@ export const ZRaiseGrievance = z.object({
 export type RaiseGrievance = z.infer<typeof ZRaiseGrievance>;
 
 export const ZFindGrievance = z.object({
-    query: z.object({
-        status: z
-            .enum(['pending', 'in-progress', 'resolved'])
-            .default('pending')
-            .optional(),
-        assignedTo: z.string().trim().uuid().optional(),
-        escalatedTo: z.string().trim().uuid().optional(),
-        location: z.string().optional(),
-    }),
+    query: ZGrievance.pick({
+        status: true,
+        assignedTo: true,
+        escalatedTo: true,
+        limit: true,
+        page: true,
+    }).partial(),
 });
 
-export type FindGrievance = z.infer<typeof ZFindGrievance>;
+export const ZAssignOrEscalateGrievance = z.object({
+    params: ZGrievance.pick({
+        id: true,
+    }),
+    body: ZGrievance.pick({
+        action: true,
+    }),
+});

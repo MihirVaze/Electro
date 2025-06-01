@@ -1,3 +1,5 @@
+const { allowedNodeEnvironmentFlags } = require('process');
+
 module.exports = {
     async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
@@ -15,9 +17,17 @@ module.exports = {
                     },
                     userId: {
                         type: DataTypes.UUID,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
                     },
                     grievanceTypeId: {
                         type: DataTypes.UUID,
+                        references: {
+                            model: 'GrievanceType',
+                            key: 'id',
+                        },
                     },
                     comments: {
                         type: DataTypes.STRING,
@@ -48,8 +58,12 @@ module.exports = {
                         },
                     },
                     location: {
-                        type: DataTypes.STRING,
+                        type: DataTypes.UUID,
                         allowNull: true,
+                        references: {
+                            model: 'City',
+                            key: 'id',
+                        },
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
@@ -85,9 +99,21 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
+                        allowNull: true,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                        allowNull: true,
+                    },
+                    createdAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
+                    },
+                    updatedAt: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: Date.now(),
                     },
                 },
                 { transaction },

@@ -62,8 +62,8 @@ class CustomerBillService {
                 newBillEntries.push(bill);
                 billData.push({
                     bill,
-                    name: getCustomerDetails.name,
-                    email: getCustomerDetails.email,
+                    //name: getCustomerDetails.name,
+                    //email: getCustomerDetails.email,
                     meterId: meter.id,
                     customerMeterId,
                     unitsUsed: consumption.dataValues.unitsUsed,
