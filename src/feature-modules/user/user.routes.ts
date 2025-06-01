@@ -5,6 +5,7 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import userService from './user.service';
 import { User, UserRoleLocation, ZEditUser, ZregisterUser } from './user.types';
+import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
 
@@ -39,12 +40,12 @@ router.post(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
         ],
     },
 );
@@ -87,14 +88,14 @@ router.patch(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
-            'worker',
-            'service_worker',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.WORKER,
+            ROLE.SERVICE_WORKER,
         ],
     },
 );
@@ -130,12 +131,12 @@ router.del(
     {
         is_protected: true,
         has_Access: [
-            'superadmin',
-            'client_manager',
-            'client_admin',
-            'state_manager',
-            'district_manager',
-            'city_manager',
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_MANAGER,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
         ],
     },
 );

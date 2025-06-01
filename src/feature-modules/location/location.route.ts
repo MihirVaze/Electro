@@ -1,6 +1,7 @@
 import { CustomRouter } from '../../routes/custom.router';
 import { Route } from '../../routes/routes.types';
 import { ResponseHandler } from '../../utility/response-handler';
+import { ROLE } from '../role/role.data';
 import locationService from './location.service';
 
 const router = new CustomRouter();
@@ -18,7 +19,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -34,7 +35,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -50,7 +51,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -70,7 +71,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -89,7 +90,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 //DISTRICT
@@ -106,7 +107,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -125,7 +126,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -141,7 +142,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -161,7 +162,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -180,7 +181,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 //CITY
@@ -197,7 +198,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -213,7 +214,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(
@@ -229,7 +230,7 @@ router.get(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.patch(
@@ -249,7 +250,7 @@ router.patch(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.del(
@@ -268,7 +269,7 @@ router.del(
             }
         },
     ],
-    { is_protected: true, has_Access: ['superadmin'] },
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 export default new Route('/location', router.ExpressRouter);
