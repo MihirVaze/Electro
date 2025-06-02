@@ -14,8 +14,11 @@ router.post(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const result =
-                    await customerBillService.generateCustomerBill(schema);
+                const userId = req.payload.id;
+                const result = await customerBillService.generateCustomerBill(
+                    userId,
+                    schema,
+                );
                 res.send(result);
             } catch (e) {
                 next(e);
@@ -75,9 +78,13 @@ router.patch(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
+                const body = {
+                    ...req.body,
+                    updatedBy: req.payload.id,
+                };
                 const { billId } = req.params;
                 const result = await customerBillService.updateBillStatus(
-                    req.body,
+                    body,
                     billId,
                     schema,
                 );

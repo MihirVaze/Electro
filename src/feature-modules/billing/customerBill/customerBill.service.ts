@@ -12,7 +12,7 @@ import { sendEmail } from '../../../utility/sendmail';
 import userService from '../../user/user.service';
 
 class CustomerBillService {
-    async generateCustomerBill(schema: SchemaName) {
+    async generateCustomerBill(userId: string, schema: SchemaName) {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
@@ -42,6 +42,7 @@ class CustomerBillService {
                         new Date().setDate(new Date().getDate() + 15),
                     ),
                     status: 'unpaid',
+                    createdBy: userId,
                 };
 
                 newBillEntries.push(bill);
@@ -50,9 +51,7 @@ class CustomerBillService {
                     meter: consumption.dataValues.customerMeter?.meterName,
                     customerMeter: consumption.dataValues.customerMeter,
                     unitsUsed: consumption.dataValues.unitsUsed,
-                    total:
-                        BASE_PRICE +
-                        PER_UNIT_COST * consumption.dataValues.unitsUsed,
+                    total,
                     billingDate: new Date(),
                     dueDate: new Date(
                         new Date().setDate(new Date().getDate() + 15),

@@ -3,7 +3,15 @@ import { CustomRouter } from '../../routes/custom.router';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import meterService from './meter.service';
-import { ZFilterMeter, Zmeter, ZUpdateMeter } from './meter.type';
+import {
+    ZFilterMeter,
+    Zmeter,
+    ZUpdateMeter,
+    ZValidateCreateMeter,
+    ZValidateGetPaginatedMeters,
+    ZValidateMeterId,
+    ZValidateUpdateMeter,
+} from './meter.type';
 import { Route } from '../../routes/routes.types';
 import { FileUpload } from '../../utility/multer.storage';
 import { ROLE } from '../role/role.data';
@@ -16,7 +24,7 @@ const upload = FileUpload('./uploads', {
 router.get(
     '/',
     [
-        validate(ZFilterMeter),
+        validate(ZValidateGetPaginatedMeters),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -39,7 +47,7 @@ router.get(
 router.get(
     '/:id',
     [
-        validate(Zmeter),
+        validate(ZValidateMeterId),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -58,6 +66,7 @@ router.get(
 router.post(
     '/',
     [
+        validate(ZValidateCreateMeter),
         upload.single('avatar'),
         //validate(Zmeter),
         async (req, res, next) => {
@@ -85,7 +94,7 @@ router.post(
 router.patch(
     '/:id',
     [
-        validate(ZUpdateMeter),
+        validate(ZValidateUpdateMeter),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -111,7 +120,7 @@ router.patch(
 router.del(
     '/:id',
     [
-        validate(Zmeter),
+        validate(ZValidateMeterId),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;

@@ -9,7 +9,7 @@ class DiscountServices {
         try {
             const discountRecord = await discountRepo.get(
                 {
-                    where: { id: discount.id, isDeleted: false },
+                    where: { ...discount, isDeleted: false },
                     attributes: {
                         exclude: [
                             'isDeleted',
