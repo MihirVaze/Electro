@@ -49,8 +49,8 @@ class ReportServices {
                 ],
                 where,
                 group: ['grievanceTypeId', literal('periodLabel') as any],
-                order: [[literal('periodLabel'), 'ASC'], 'grievanceTypeId'],
-                raw: true,
+                order: [literal('count'), 'ASC'],
+                // raw: true,
             };
 
             const results = await grievanceService.GrievanceReport(
