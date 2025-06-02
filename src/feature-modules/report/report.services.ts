@@ -35,9 +35,9 @@ class ReportServices {
             }
 
             let truncUnit = options.period || 'month';
-            const trunkColumn = fn(
+            const periodLabel = fn(
                 'DATE_TRUNC',
-                literal(truncUnit),
+                literal(`'${truncUnit}'`),
                 col('createdAt'),
             );
 
@@ -45,12 +45,12 @@ class ReportServices {
                 attributes: [
                     'grievanceTypeId',
                     [fn('COUNT', col('id')), 'count'],
-                    [trunkColumn, 'trunkColumn'],
+                    [periodLabel, 'periodLabel'],
                 ],
                 where,
-                group: ['grievanceTypeId', literal(`"trunkColumn"`) as any],
+                group: ['grievanceTypeId', literal(`"periodLabel"`) as any],
                 order: [
-                    [literal(`"trunkColumn"`), 'ASC'],
+                    [literal(`"periodLabel"`), 'ASC'],
                     [literal('count'), 'DESC'],
                 ],
                 raw: true,
