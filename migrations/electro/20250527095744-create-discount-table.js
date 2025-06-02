@@ -14,8 +14,14 @@ module.exports = {
                         primaryKey: true,
                     },
                     clientId: {
-                        type: DataTypes.INTEGER,
+                        type: DataTypes.UUID,
                         allowNull: false,
+                        references: {
+                            model: {
+                                tableName: 'User',
+                                schema: 'public',
+                            },
+                        },
                     },
                     type: {
                         type: DataTypes.ENUM('increment', 'decrement', 'none'),

@@ -22,7 +22,7 @@ router.get(
             try {
                 const schema = req.payload.schema;
                 const { limit, page, ...search } = req.query;
-                const result = planService.getPlans(
+                const result = await planService.getPlans(
                     Number(limit),
                     Number(page),
                     search,
@@ -45,7 +45,7 @@ router.get(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.findOnePlan({ id }, schema);
+                const result = await planService.findOnePlan({ id }, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -62,7 +62,8 @@ router.post(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const result = planService.createPlan(req.body, schema);
+                const result = await planService.createPlan(req.body, schema);
+                console.log(result);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -80,7 +81,11 @@ router.patch(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.updatePlan(id, req.body, schema);
+                const result = await planService.updatePlan(
+                    id,
+                    req.body,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -98,7 +103,7 @@ router.del(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = planService.deleteplan(id, schema);
+                const result = await planService.deleteplan(id, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

@@ -14,8 +14,12 @@ DiscountSchema.init(
             primaryKey: true,
         },
         clientId: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: UserSchema,
+                key: 'id',
+            },
         },
         type: {
             type: DataTypes.ENUM('increment', 'decrement', 'none'),
@@ -71,14 +75,12 @@ DiscountSchema.init(
     },
 );
 
-DiscountSchema.belongsTo(ClientSchema, {
+DiscountSchema.belongsTo(UserSchema, {
     foreignKey: 'clientId',
-    targetKey: 'id',
     as: 'client',
 });
 
-ClientSchema.hasOne(DiscountSchema, {
+UserSchema.hasOne(DiscountSchema, {
     foreignKey: 'clientId',
-    sourceKey: 'id',
     as: 'discount',
 });
