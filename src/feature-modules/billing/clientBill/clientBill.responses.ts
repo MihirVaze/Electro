@@ -15,4 +15,12 @@ export const CLIENT_BILL_RESPONSES = {
         status: 201,
         message: 'CLIENT BILL CREATED SUCCESSFULLY',
     },
+    CLIENT_BILL_CANT_BE_UPDATED: {
+        status: 500,
+        message: 'CLIENT BILL CANT BE UPDATED SUCCESSFULLY',
+    },
+    CLIENT_BILL_UPDATED: {
+        status: 200,
+        message: 'CLIENT BILL UPDATED SUCCESSFULLY',
+    },
 };
