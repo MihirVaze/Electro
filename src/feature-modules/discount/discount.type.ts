@@ -3,7 +3,7 @@ import { ZBaseSchema } from '../../utility/base-schema';
 
 export const ZDiscount = ZBaseSchema.partial().extend({
     clientId: z.string().trim().uuid(),
-    type: z.enum(['increment', 'decrement', 'none']),
+    type: z.enum(['increment', 'decrement']),
     value: z.number().positive(),
 
     minValue: z.number().positive().optional(),
