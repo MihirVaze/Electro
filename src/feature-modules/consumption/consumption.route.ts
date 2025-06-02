@@ -4,14 +4,20 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import { ROLE } from '../role/role.data';
 import consumptionService from './consumption.service';
-import { Zconsumption, Zcreate, Zupdate } from './conumption.type';
+import {
+    ZConsumption,
+    Zcreate,
+    Zfilter,
+    ZIdParams,
+    Zupdate,
+} from './conumption.type';
 
 const router = new CustomRouter();
 
 router.post(
     '/',
     [
-        //validate(Zconsumption),
+        validate(Zcreate),
         async (req, res, next) => {
             try {
                 const schema = req.headers.schema;
@@ -38,7 +44,7 @@ router.post(
 router.get(
     '/',
     [
-        validate(Zconsumption),
+        validate(ZConsumption),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -61,7 +67,7 @@ router.get(
 router.get(
     '/:id',
     [
-        validate(Zconsumption),
+        validate(Zfilter),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -110,7 +116,7 @@ router.patch(
 router.del(
     '/:id',
     [
-        validate(Zconsumption),
+        validate(ZIdParams),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
