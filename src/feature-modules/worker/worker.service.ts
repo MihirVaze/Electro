@@ -119,7 +119,7 @@ class WorkerService {
         }
     }
 
-    async getAllWorkersSortedByCustomerCount(
+    async getWorkersSortedByCustomerCount(
         worker: Partial<Worker>,
         limit: number,
         schema: SchemaName,
