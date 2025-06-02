@@ -142,7 +142,7 @@ class planServices {
             schema,
         );
         if (!plan) throw PLAN_RESPONSES.PLAN_NOT_FOUND;
-        return plan.dataValues.basePrice;
+        return plan.dataValues;
     }
 }
 

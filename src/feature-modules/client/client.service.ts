@@ -160,6 +160,17 @@ class ClientServices {
         }
     }
 
+    async getAllClients() {
+        try {
+            const result = await clientRepo.getAll({}, 'public');
+            const clients = result.rows;
+            return clients;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
     async updateClient(
         client: Partial<Client>,
         userId: string,
