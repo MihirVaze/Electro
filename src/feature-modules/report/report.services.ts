@@ -145,9 +145,9 @@ class ReportServices {
             where,
             include: [
                 {
-                    model: CitySchema,           
+                    model: CitySchema.schema(schema),           
                     as: 'city',                  
-                    attributes: [],             
+                    attributes: ['name'],             
                 },
             ],
             group: ['City.id'],  
