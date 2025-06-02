@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
 import { CitySchema } from '../location/location.schema';
 import roleServices from '../role/role.services';
@@ -119,7 +119,7 @@ class WorkerService {
         }
     }
 
-    async getAllWorkers(
+    async getAllWorkersSortedByCustomerCount(
         worker: Partial<Worker>,
         limit: number,
         schema: SchemaName,
@@ -138,19 +138,13 @@ class WorkerService {
 
     async updateWorker(
         worker: Partial<Worker>,
-        workerId: string,
+        userId: string,
         schema: SchemaName,
+        transaction?: Transaction,
     ) {
         try {
             const { phoneNo, email, ...remainingWorker } = worker;
             if (phoneNo || email) {
-                const workerToBeUpdated = await workerRepo.get(
-                    {
-                        where: { id: workerId },
-                    },
-                    schema,
-                );
-
                 const updateUser: any = {};
                 if (phoneNo) {
                     updateUser.phoneNo = phoneNo;
@@ -159,7 +153,7 @@ class WorkerService {
                     updateUser.email = email;
                 }
 
-                updateUser.id = workerToBeUpdated?.dataValues.id;
+                updateUser.id = userId;
 
                 await userService.updateUser(updateUser, schema);
             }
@@ -167,12 +161,12 @@ class WorkerService {
             const result = await workerRepo.update(
                 remainingWorker,
                 {
-                    where: { id: workerId },
+                    where: { userId },
+                    transaction,
                 },
                 schema,
             );
             if (!result[0]) throw WORKER_RESPONSES.WORKER_UPDATION_FAILED;
-
             return WORKER_RESPONSES.WORKER_UPDATED;
         } catch (error) {
             console.dir(error);

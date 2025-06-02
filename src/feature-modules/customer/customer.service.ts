@@ -76,6 +76,13 @@ class CustomerServices {
                             'updatedBy',
                         ],
                     },
+                    include: [
+                        {
+                            model: UserSchema.schema(schema),
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
+                        },
+                    ],
                 },
                 schema,
             );
@@ -138,7 +145,8 @@ class CustomerServices {
                         {
                             model: UserSchema.schema(schema),
                             where: userWhere,
-                            attributes: ['name', 'email'],
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
                         },
                     ],
                     limit,
@@ -185,7 +193,7 @@ class CustomerServices {
                 },
                 schema,
             );
-            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
+            if (!result[0]) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
         } catch (e) {
@@ -222,14 +230,15 @@ class CustomerServices {
                 { userId: customerMeter.userId },
                 schema,
             );
-            const { cityId, userId: customerId } = customer.dataValues;
+            const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
-            const workers = await workerService.getAllWorkers(
-                { cityId },
-                limit,
-                'public',
-            );
+            const workers =
+                await workerService.getAllWorkersSortedByCustomerCount(
+                    { cityId },
+                    limit,
+                    'public',
+                );
 
             if (!workers.count)
                 throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
@@ -237,11 +246,11 @@ class CustomerServices {
 
             const { customerCount, userId: workerId } =
                 workerToBeAssigned.dataValues;
-            if (!customerCount || !workerId)
+            if (!(typeof customerCount === 'number') || !workerId)
                 throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
 
             await this.addCustomerWorker(
-                { userId: customerMeter.userId ?? '', workerId },
+                { userId, workerId },
                 schema,
                 transaction,
             );
@@ -250,7 +259,8 @@ class CustomerServices {
             await workerService.updateWorker(
                 { customerCount: updatedCount },
                 workerId,
-                schema,
+                'public',
+                transaction,
             );
 
             transaction.commit();

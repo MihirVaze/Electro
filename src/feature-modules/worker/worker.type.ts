@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZWorker = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZWorker = ZBaseSchema.partial().extend({
     workerName: z.string().trim().nonempty(),
 
     userId: z.string().trim().uuid().nonempty().optional(),
@@ -24,14 +24,6 @@ export const ZWorker = z.object({
         .trim()
         .min(5, { message: 'password must be 5 chars long' })
         .optional(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type Worker = z.infer<typeof ZWorker>;

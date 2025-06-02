@@ -75,15 +75,15 @@ router.post(
 );
 
 router.patch(
-    '/:workerId',
+    '/:userId',
     [
         validate(ZupdateWorker),
         async (req, res, next) => {
             try {
-                const { workerId } = req.params;
+                const { userId } = req.params;
                 const result = await workerService.updateWorker(
                     req.body,
-                    workerId,
+                    userId,
                     'public',
                 );
                 res.send(new ResponseHandler(result));

@@ -1,6 +1,6 @@
-import { FindOptions, UpdateOptions } from "sequelize";
-import { Meter } from "./meter.type";
-import { MeterSchema } from "./meter.schema";
+import { FindOptions, UpdateOptions } from 'sequelize';
+import { Meter } from './meter.type';
+import { MeterSchema } from './meter.schema';
 
 class MeterRepo {
     public async create(meter: Meter, schema: string) {
@@ -25,4 +25,3 @@ class MeterRepo {
 }
 
 export default new MeterRepo();
-

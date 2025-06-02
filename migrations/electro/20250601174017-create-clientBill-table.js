@@ -6,28 +6,73 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'CustomerMeter', schema },
+                { tableName: 'ClientBill', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    userId: {
+
+                    basePrice: {
+                        type: DataTypes.INTEGER,
+                        allowNull: false,
+                    },
+                    total: {
+                        type: DataTypes.INTEGER,
+                        allowNull: false,
+                    },
+                    billingDate: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                        defaultValue: DataTypes.NOW(),
+                    },
+                    dueDate: {
+                        type: DataTypes.DATE,
+                        allowNull: false,
+                    },
+                    status: {
+                        type: DataTypes.ENUM(),
+                        values: ['unpaid', 'paid'],
+                        defaultValue: 'unpaid',
+                    },
+                    clientId: {
                         type: DataTypes.UUID,
                         allowNull: false,
                         references: {
-                            model: 'User',
-                            key: 'id',
+                            model: {
+                                tableName: 'User',
+                                schema: 'public',
+                            },
                         },
                     },
-                    meterId: {
+                    planId: {
                         type: DataTypes.UUID,
                         allowNull: false,
                         references: {
-                            model: 'Meter',
-                            key: 'id',
+                            model: {
+                                tableName: 'Plan',
+                                schema: 'public',
+                            },
                         },
+                    },
+                    discountId: {
+                        type: DataTypes.UUID,
+                        allowNull: false,
+                        references: {
+                            model: {
+                                tableName: 'Discount',
+                                schema: 'public',
+                            },
+                        },
+                    },
+                    discountType: {
+                        type: DataTypes.ENUM('increment', 'decrement', 'none'),
+                        allowNull: false,
+                    },
+                    discountValue: {
+                        type: DataTypes.INTEGER,
+                        allowNull: false,
                     },
                     isDeleted: {
                         type: DataTypes.BOOLEAN,
@@ -63,9 +108,11 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                        defaultValue: null,
                     },
                     createdAt: {
                         type: DataTypes.DATE,
@@ -97,7 +144,7 @@ module.exports = {
 
         try {
             await queryInterface.dropTable({
-                tableName: 'CustomerMeter',
+                tableName: 'ClientBill',
                 schema,
             });
 

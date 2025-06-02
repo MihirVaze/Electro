@@ -18,7 +18,7 @@ class ConsumptionService {
             const payload = {
                 ...data,
                 id: uuidv4(),
-                createdBy: userId,
+                //createdBy: userId,
             };
             const result = await consumptionRepo.createConsumption(
                 payload,
@@ -57,10 +57,12 @@ class ConsumptionService {
 
     async getOneConsumption(id: string, schema: string) {
         try {
+            console.log('here', id);
             const result = await consumptionRepo.getOneConsumption(
                 { where: { id } },
                 schema,
             );
+            console.log(result);
             if (!result) throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
             return result;
         } catch (e) {
@@ -122,34 +124,23 @@ class ConsumptionService {
 
         return await consumptionRepo.getAllConsumptions(
             {
-                where: {
-                    updatedAt: {
-                        [Op.between]: [startDate, endDate],
-                    },
-                },
+                // where: {
+                //     updatedAt: {
+                //         [Op.between]: [startDate, endDate],
+                //     },
+                // },
                 include: [
                     {
-                        association: 'customerMeter',
                         model: CustomerMeterSchema.schema(schema),
                         as: 'customerMeter',
                         required: true,
                         include: [
                             {
-                                association: 'customer',
-                                model: CustomerSchema.schema(schema),
-                                as: 'customer',
+                                model: UserSchema.schema(schema),
+                                as: 'user',
                                 required: true,
-                                include: [
-                                    {
-                                        association: 'user',
-                                        model: UserSchema.schema(schema),
-                                        as: 'user',
-                                        required: true,
-                                    },
-                                ],
                             },
                             {
-                                association: 'meter',
                                 model: MeterSchema.schema(schema),
                                 as: 'meter',
                                 required: true,
@@ -157,6 +148,7 @@ class ConsumptionService {
                         ],
                     },
                 ],
+                raw: true,
             },
             schema,
         );

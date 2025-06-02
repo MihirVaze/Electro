@@ -1,3 +1,5 @@
+const { allowedNodeEnvironmentFlags } = require('process');
+
 module.exports = {
     async up({ context }) {
         const { queryInterface, Sequelize, schema } = context;
@@ -6,7 +8,7 @@ module.exports = {
 
         try {
             await queryInterface.createTable(
-                { tableName: 'CustomerMeter', schema },
+                { tableName: 'Grievance', schema },
                 {
                     id: {
                         type: DataTypes.UUID,
@@ -15,17 +17,51 @@ module.exports = {
                     },
                     userId: {
                         type: DataTypes.UUID,
-                        allowNull: false,
                         references: {
                             model: 'User',
                             key: 'id',
                         },
                     },
-                    meterId: {
+                    grievanceTypeId: {
                         type: DataTypes.UUID,
-                        allowNull: false,
                         references: {
-                            model: 'Meter',
+                            model: 'GrievanceType',
+                            key: 'id',
+                        },
+                    },
+                    comments: {
+                        type: DataTypes.STRING,
+                        allowNull: true,
+                    },
+                    status: {
+                        type: DataTypes.ENUM(
+                            'pending',
+                            'in-progress',
+                            'resolved',
+                        ),
+                        defaultValue: 'pending',
+                    },
+                    assignedTo: {
+                        type: DataTypes.UUID,
+                        allowNull: true,
+                        references: {
+                            model: 'User',
+                            key: 'id',
+                        },
+                    },
+                    escalatedTo: {
+                        type: DataTypes.UUID,
+                        allowNull: true,
+                        references: {
+                            model: 'Role',
+                            key: 'id',
+                        },
+                    },
+                    location: {
+                        type: DataTypes.UUID,
+                        allowNull: true,
+                        references: {
+                            model: 'City',
                             key: 'id',
                         },
                     },
@@ -63,9 +99,11 @@ module.exports = {
                     },
                     deletedAt: {
                         type: DataTypes.DATE,
+                        allowNull: true,
                     },
                     restoredAt: {
                         type: DataTypes.DATE,
+                        allowNull: true,
                     },
                     createdAt: {
                         type: DataTypes.DATE,
@@ -97,7 +135,7 @@ module.exports = {
 
         try {
             await queryInterface.dropTable({
-                tableName: 'CustomerMeter',
+                tableName: 'Grievance',
                 schema,
             });
 

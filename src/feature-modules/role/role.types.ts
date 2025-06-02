@@ -1,4 +1,5 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
 export const ZRoleEnum = z.enum([
     'superadmin',
@@ -13,15 +14,7 @@ export const ZRoleEnum = z.enum([
 ]);
 export type RoleEnum = z.infer<typeof ZRoleEnum>;
 
-export const ZRole = z.object({
-    id: z.string().uuid().optional(),
+export const ZRole = ZBaseSchema.partial().extend({
     role: ZRoleEnum,
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 export type Role = z.infer<typeof ZRole>;
