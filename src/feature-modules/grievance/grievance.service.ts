@@ -4,15 +4,8 @@ import { GRIEVANCE_RESPONSES } from './grievance.responses';
 import { Grievance } from './grievance.type';
 import grievanceRepo from './grievance.repo';
 import { SchemaName } from '../../utility/umzug-migration';
-import userLocationRepo from '../userLocation/userLocation.repo';
-import roleServices from '../role/role.services';
-import locationRepo from '../location/location.repo';
-import { FindOptions, Op, WhereOptions } from 'sequelize';
-import {
-    CitySchema,
-    DistrictSchema,
-    StateSchema,
-} from '../location/location.schema';
+import { FindOptions, WhereOptions } from 'sequelize';
+import { CitySchema, DistrictSchema } from '../location/location.schema';
 import {
     CityUserSchema,
     DistrictUserSchema,
@@ -200,7 +193,7 @@ class GrievanceService {
         userId: string,
         roleId: string[],
         id: string,
-        action: 'pick' | 'escalate',
+        action: 'pick' | 'escalate' | 'resolved',
         schema: SchemaName,
     ) {
         const grievance = await grievanceRepo.get({ where: { id } }, schema);
@@ -244,6 +237,18 @@ class GrievanceService {
             if (!escalatedTo)
                 throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
             return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
+        }
+
+        if (action === 'resolved') {
+            const resolved = await grievanceRepo.update(
+                {
+                    status: 'resolved',
+                },
+                { where: { id } },
+                schema,
+            );
+            if (!resolved) throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
+            return GRIEVANCE_RESPONSES.GRIEVANCE_RESOLVED;
         }
     }
 
