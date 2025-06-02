@@ -43,4 +43,8 @@ export const GRIEVANCE_RESPONSES = {
         status: 200,
         message: 'GRIEVANCE ESCALATION NOT ALLOWED',
     },
+    GRIEVANCE_RESOLVED: {
+        status: 200,
+        message: 'GRIEVANCE RESOLVED',
+    },
 };

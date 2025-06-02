@@ -130,6 +130,20 @@ class planServices {
             throw e;
         }
     }
+
+    async getBasePrice(customerCount: number, schema: SchemaName) {
+        const plan = await planRepo.get(
+            {
+                where: {
+                    minCustomers: { [Op.lte]: customerCount },
+                    maxCustomers: { [Op.gte]: customerCount },
+                },
+            },
+            schema,
+        );
+        if (!plan) throw PLAN_RESPONSES.PLAN_NOT_FOUND;
+        return plan.dataValues.basePrice;
+    }
 }
 
 export default new planServices();

@@ -1,16 +1,9 @@
 import { z } from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZGrievanceType = z.object({
+export const ZGrievanceType = ZBaseSchema.partial().extend({
     id: z.string().trim().uuid().optional(),
     name: z.string().trim(),
-
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type GrievanceType = z.infer<typeof ZGrievanceType>;
