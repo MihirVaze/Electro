@@ -16,66 +16,43 @@ class CustomerBillService {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
-            console.dir(consumptionForTheMonth);
             if (consumptionForTheMonth.count === 0)
                 throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
 
-            const newBillEntries: any[] = [];
+            const newBillEntries: CustomerBill[] = [];
             const billData: any[] = [];
 
             for (const consumption of consumptionForTheMonth.rows) {
-                const consumptionDetails =
-                    await consumptionService.getOneConsumption(
-                        consumption.dataValues.id ?? '',
-                        schema,
-                    );
-                const customerMeterId =
-                    consumptionDetails.dataValues.customerMeterId ?? '';
-                const customerMeter = (
-                    await customerService.getCustomerMeter(
-                        { id: customerMeterId },
-                        schema,
-                    )
-                ).dataValues;
-                const getMeterDetails = await meterService.findOneMeter(
-                    { id: customerMeter.id },
-                    schema,
-                );
-                const getCustomerDetails = (
-                    await customerService.getCustomer(
-                        { userId: customerMeter.userId },
-                        schema,
-                    )
-                ).dataValues;
-
-                const userDetails = await userService.getOneUser(
-                    { id: getCustomerDetails.userId },
-                    schema,
-                );
-
+                const BASE_PRICE =
+                    consumption.dataValues.customerMeter?.meter?.basePrice!;
+                const PER_UNIT_COST =
+                    consumption.dataValues.customerMeter?.meter?.pricePerUnit!;
+                const total =
+                    Number(BASE_PRICE) +
+                    Number(PER_UNIT_COST) *
+                        Number(consumption.dataValues.unitsUsed);
                 const bill = {
                     customerMeterId: consumption.dataValues.customerMeterId,
-                    basePrice: getMeterDetails.basePrice,
-                    perUnitCost: getMeterDetails.pricePerUnit,
+                    basePrice: BASE_PRICE,
+                    perUnitCost: PER_UNIT_COST,
                     consumptionId: consumption.dataValues.id,
-                    total:
-                        getMeterDetails.basePrice +
-                        getMeterDetails.pricePerUnit *
-                            consumption.dataValues.unitsUsed,
+                    total,
                     billingDate: new Date(),
+                    dueDate: new Date(
+                        new Date().setDate(new Date().getDate() + 15),
+                    ),
                     status: 'unpaid',
                 };
 
                 newBillEntries.push(bill);
                 billData.push({
-                    email: userDetails?.dataValues.email,
-                    meterId: customerMeter.id,
-                    customerMeterId,
+                    email: consumption.dataValues.customerMeter?.user?.email,
+                    meter: consumption.dataValues.customerMeter?.meterName,
+                    customerMeter: consumption.dataValues.customerMeter,
                     unitsUsed: consumption.dataValues.unitsUsed,
                     total:
-                        getMeterDetails.basePrice +
-                        getMeterDetails.pricePerUnit *
-                            consumption.dataValues.unitsUsed,
+                        BASE_PRICE +
+                        PER_UNIT_COST * consumption.dataValues.unitsUsed,
                     billingDate: new Date(),
                     dueDate: new Date(
                         new Date().setDate(new Date().getDate() + 15),
@@ -92,8 +69,9 @@ class CustomerBillService {
             for (const {
                 email,
                 total,
+                meter,
                 billingDate,
-                customerMeterId,
+                customerMeter,
                 unitsUsed,
                 dueDate,
             } of billData) {
@@ -109,8 +87,8 @@ class CustomerBillService {
 
                     <body>
                         <p>Here is your electricity bill for this month:</p>
-
-                        <p><strong>Meter ID:</strong> ${customerMeterId}</p>
+                        <p><strong>CustomerMeter:</strong> ${customerMeter}</p>
+                        <p><strong>Meter:</strong> ${meter}</p>
                         <p><strong>Units Used:</strong> ${unitsUsed}</p>
                         <p><strong>Total Amount:</strong> ${total}</p>
                         <p><strong>Billing Date:</strong> ${billingDate}</p>
@@ -120,7 +98,7 @@ class CustomerBillService {
                 </html>`,
                 );
             }
-            return result;
+            return CUSTOMER_BILL_RESPONSES.BILL_CREATED;
         } catch (e) {
             console.dir(e);
             throw e;
