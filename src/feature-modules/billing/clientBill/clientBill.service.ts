@@ -21,12 +21,15 @@ class ClientBillService {
                     { clientId: userId },
                     schema,
                 );
+                console.log('discount', discount);
                 const countOfCustomer =
                     await customerService.getCustomerCount(schemaName);
+                console.log('countOfCustomer', countOfCustomer);
                 const plan = await planService.getBasePrice(
                     countOfCustomer,
                     schema,
                 );
+                console.log('plan', plan);
 
                 const { id: planId, basePrice } = plan;
                 const {
