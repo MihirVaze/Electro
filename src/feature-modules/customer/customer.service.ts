@@ -162,6 +162,17 @@ class CustomerServices {
         }
     }
 
+    async getCustomerCount(schema: SchemaName) {
+        try {
+            const result = await customerRepo.getAll({}, schema);
+            const countOfCustomer = result.count;
+            return countOfCustomer;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
     async updateCustomer(
         customer: Partial<Customer>,
         userId: string,
