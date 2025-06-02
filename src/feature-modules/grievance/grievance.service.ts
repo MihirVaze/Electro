@@ -241,7 +241,7 @@ class GrievanceService {
                 { where: { id } },
                 schema,
             );
-            if (!escalateTo)
+            if (!escalatedTo)
                 throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
             return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
         }
