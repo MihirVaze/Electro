@@ -9,19 +9,12 @@ import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import { ROLE } from '../role/role.data';
+import discountService from '../discount/discount.service';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, schemaName } = client;
-
-            // const deletedClient = await this.getClient({ clientName, isDeleted: true }, schema);
-            // const { id: clientId, userId } = deletedClient.dataValues;
-            // if (userId && clientId) {
-            //     await this.updateClient({ isDeleted: false }, clientId, schema);
-            //     await userService.updateUser({ id: userId, isDeleted: false }, schema);
-            //     return CLIENT_RESPONSES.CLIENT_RESTORED;
-            // }
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -60,6 +53,15 @@ class ClientServices {
                 client.schemaName,
                 'seeders/common/*js',
                 'seeder',
+            );
+
+            await discountService.createDiscount(
+                {
+                    clientId: id,
+                    type: 'none',
+                    value: 0,
+                },
+                schema,
             );
 
             return CLIENT_RESPONSES.CLIENT_CREATED;

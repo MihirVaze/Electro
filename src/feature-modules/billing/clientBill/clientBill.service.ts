@@ -47,14 +47,14 @@ class ClientBillService {
                 }
 
                 const clientBill: ClientBill = {
-                    status: 'unpaid',
+                    planId,
+                    basePrice,
+                    discountId,
+                    discountType,
+                    discountValue,
+                    total,
                     clientId: userId,
-                    planId: planId,
-                    basePrice: basePrice,
-                    discountId: discountId,
-                    discountType: discountType,
-                    discountValue: discountValue,
-                    total: total,
+                    status: 'unpaid',
                     billingDate: new Date(),
                     dueDate: dueDate,
                 };
