@@ -13,10 +13,10 @@ module.exports = {
                         defaultValue: DataTypes.UUIDV4,
                         primaryKey: true,
                     },
-                    customerId: {
+                    customerMeterId: {
                         type: DataTypes.UUID,
                         references: {
-                            model: 'Customer',
+                            model: 'CustomerMeter',
                             key: 'id',
                         },
                     },

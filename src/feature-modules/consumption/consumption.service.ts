@@ -5,8 +5,12 @@ import { CONSUMPTION_RESPONSES } from './consumption.response';
 // import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
 import { Op, WhereOptions } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
-import { CustomerMeterSchema } from '../customer/customer.schema';
+import {
+    CustomerMeterSchema,
+    CustomerSchema,
+} from '../customer/customer.schema';
 import { MeterSchema } from '../meter/meter.schema';
+import { UserSchema } from '../user/user.schema';
 
 class ConsumptionService {
     async createConsumption(data: Consumption, userId: string, schema: string) {
@@ -14,7 +18,7 @@ class ConsumptionService {
             const payload = {
                 ...data,
                 id: uuidv4(),
-                createdBy: userId,
+                //createdBy: userId,
             };
             const result = await consumptionRepo.createConsumption(
                 payload,
@@ -53,10 +57,12 @@ class ConsumptionService {
 
     async getOneConsumption(id: string, schema: string) {
         try {
+            console.log('here', id);
             const result = await consumptionRepo.getOneConsumption(
                 { where: { id } },
                 schema,
             );
+            console.log(result);
             if (!result) throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
             return result;
         } catch (e) {
@@ -114,31 +120,28 @@ class ConsumptionService {
         const currentYear = today.getFullYear();
 
         const startDate = new Date(currentYear, currentMonth - 1, 25);
-        const endDate = new Date(
-            currentYear,
-            currentMonth,
-            24,
-            23,
-            59,
-            59,
-            999,
-        );
+        const endDate = new Date(currentYear, currentMonth, 24, 23, 59, 59);
 
         return await consumptionRepo.getAllConsumptions(
             {
-                where: {
-                    updatedAt: {
-                        [Op.between]: [startDate, endDate],
-                    },
-                },
+                // where: {
+                //     updatedAt: {
+                //         [Op.between]: [startDate, endDate],
+                //     },
+                // },
                 include: [
                     {
-                        model: CustomerMeterSchema,
+                        model: CustomerMeterSchema.schema(schema),
                         as: 'customerMeter',
                         required: true,
                         include: [
                             {
-                                model: MeterSchema,
+                                model: UserSchema.schema(schema),
+                                as: 'user',
+                                required: true,
+                            },
+                            {
+                                model: MeterSchema.schema(schema),
                                 as: 'meter',
                                 required: true,
                             },

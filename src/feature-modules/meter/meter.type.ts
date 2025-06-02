@@ -1,19 +1,12 @@
 import { z } from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const Zmeter = z.object({
-    id: z.string().uuid().optional(),
+export const Zmeter = ZBaseSchema.partial().extend({
     name: z.string().trim().min(1, { message: 'Name cannot be blank' }),
     image: z.string().nonempty(),
     basePrice: z.number().positive(),
     pricePerUnit: z.number().positive(),
     requiredPhotos: z.number().positive(),
-    isDeleted: z.boolean().optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type Meter = z.infer<typeof Zmeter>;

@@ -9,18 +9,18 @@ export const CONSUMPTION_RESPONSES = {
     },
     CONSUMPTION_CREATED: {
         status: 201,
-        message: 'UI Successfully Added',
+        message: 'Consumption Successfully Added',
     },
     CONSUMPTION_NOT_FOUND: {
         status: 404,
-        message: 'UI Not Found For Given Id',
+        message: 'Consumption Not Found For Given Id',
     },
     CONSUMPTION_UPDATED: {
         status: 200,
-        message: 'UI Updated Of The Client',
+        message: 'Consumption Updated Of The Client',
     },
     CONSUMPTION_DELETED: {
         status: 200,
-        message: 'UI deleted Successfully',
+        message: 'Consumption deleted Successfully',
     },
 };

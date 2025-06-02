@@ -8,7 +8,10 @@ import grievanceTypeRoutes from '../feature-modules/grievanceType/grievanceType.
 import clientRoutes from '../feature-modules/client/client.routes';
 import workerRoute from '../feature-modules/worker/worker.route';
 import customerRoutes from '../feature-modules/customer/customer.routes';
-import grievanceRoutes from '../feature-modules/grievance/grievance.route';
+import meterRoute from '../feature-modules/meter/meter.route';
+import consumptionRoute from '../feature-modules/consumption/consumption.route';
+import customerBillRoute from '../feature-modules/billing/customerBill/customerBill.route';
+import reportRoutes from '../feature-modules/report/report.routes';
 
 export const routes: Routes = [
     authRoutes,
@@ -21,5 +24,8 @@ export const routes: Routes = [
     workerRoute,
     customerRoutes,
     userRoutes,
-    grievanceRoutes,
+    meterRoute,
+    consumptionRoute,
+    customerBillRoute,
+    reportRoutes,
 ];

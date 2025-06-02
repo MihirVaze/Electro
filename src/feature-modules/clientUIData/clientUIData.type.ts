@@ -1,7 +1,7 @@
 import z from 'zod';
+import { ZBaseSchema } from '../../utility/base-schema';
 
-export const ZClientUIData = z.object({
-    id: z.string().trim().uuid().optional(),
+export const ZClientUIData = ZBaseSchema.partial().extend({
     clientId: z.string().trim().uuid(),
     baseColor: z
         .string()
@@ -15,13 +15,6 @@ export const ZClientUIData = z.object({
     baseFont: z.string().trim().url('enter a valid font URL'),
     accentFont: z.string().trim().url('enter a valid font URL'),
     logo: z.string().trim().optional(),
-    isDeleted: z.boolean().default(false).optional(),
-    deletedBy: z.string().trim().uuid().optional(),
-    restoredBy: z.string().trim().uuid().optional(),
-    createdBy: z.string().trim().uuid().optional(),
-    updatedBy: z.string().trim().uuid().optional(),
-    deletedAt: z.date().optional(),
-    restoredAt: z.date().optional(),
 });
 
 export type ClientUIData = z.infer<typeof ZClientUIData>;

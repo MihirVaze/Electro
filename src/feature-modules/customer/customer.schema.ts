@@ -84,6 +84,16 @@ CustomerSchema.init(
     },
 );
 
+CustomerSchema.belongsTo(UserSchema, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+
+CustomerSchema.belongsTo(CitySchema, {
+    foreignKey: 'cityId',
+    as: 'city',
+});
+
 export class CustomerWorkerSchema extends Model<
     CustomerWorker,
     CustomerWorker
@@ -96,7 +106,7 @@ CustomerWorkerSchema.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        customerId: {
+        userId: {
             type: DataTypes.UUID,
             references: {
                 model: UserSchema,
@@ -156,8 +166,18 @@ CustomerWorkerSchema.init(
         sequelize,
         modelName: 'CustomerWorker',
         tableName: 'CustomerWorker',
+        schema: 'public',
     },
 );
+
+CustomerWorkerSchema.belongsTo(UserSchema, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+CustomerWorkerSchema.belongsTo(UserSchema.schema('public'), {
+    foreignKey: 'workerId',
+    as: 'worker',
+});
 
 export class CustomerMeterSchema extends Model<CustomerMeter, CustomerMeter> {}
 
@@ -230,35 +250,48 @@ CustomerMeterSchema.init(
     },
 );
 
-CustomerMeterSchema.hasMany(MeterSchema, {
+CustomerMeterSchema.belongsTo(UserSchema, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+
+CustomerMeterSchema.belongsTo(MeterSchema, {
     foreignKey: 'meterId',
     as: 'meter',
 });
-MeterSchema.belongsTo(CustomerMeterSchema, {
-    foreignKey: 'meterId',
-    as: 'meter',
-});
 
-CustomerMeterSchema.hasMany(MeterSchema, { foreignKey: 'meterId' });
-MeterSchema.belongsTo(CustomerMeterSchema, { foreignKey: 'meterId' });
+// CustomerMeterSchema.belongsTo(MeterSchema, {
+//     foreignKey: 'meterId',
+//     as: 'meter',
+// });
 
-CustomerWorkerSchema.belongsTo(UserSchema, {
-    foreignKey: 'customerId',
-    as: 'customer',
-});
-CustomerWorkerSchema.belongsTo(UserSchema, {
-    foreignKey: 'workerId',
-    as: 'worker',
-});
+// MeterSchema.hasOne(CustomerMeterSchema, {
+//     foreignKey: 'meterId',
+//     as: 'customerMeter',
+// });
 
-UserSchema.hasMany(CustomerWorkerSchema, {
-    foreignKey: 'customerId',
-    as: 'customer',
-});
-UserSchema.hasMany(CustomerWorkerSchema, {
-    foreignKey: 'workerId',
-    as: 'worker',
-});
+// CustomerWorkerSchema.belongsTo(UserSchema, {
+//     foreignKey: 'userId',
+//     as: 'user',
+// });
+// CustomerWorkerSchema.belongsTo(UserSchema, {
+//     foreignKey: 'workerId',
+//     as: 'worker',
+// });
 
-UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId' });
-CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId' });
+// UserSchema.hasMany(CustomerWorkerSchema, {
+//     foreignKey: 'customerId',
+//     as: 'customer',
+// });
+// UserSchema.hasMany(CustomerWorkerSchema, {
+//     foreignKey: 'workerId',
+//     as: 'worker',
+// });
+
+// UserSchema.hasMany(CustomerSchema, { foreignKey: 'userId', as: 'user' });
+// CustomerSchema.belongsTo(UserSchema, { foreignKey: 'userId', as: 'user' });
+
+// CustomerMeterSchema.belongsTo(CustomerSchema, {
+//     foreignKey: 'userId',
+//     as: 'customer',
+// });

@@ -9,6 +9,7 @@ import {
     ZFindCustomerWorker,
     ZRegisterCustomerMeter,
     ZValidateRegisterCustomer,
+    ZValidateRegisterCustomerMeter,
     ZValidateUpdateCustomer,
 } from './customer.type';
 import userService from '../user/user.service';
@@ -75,16 +76,16 @@ router.post(
 );
 
 router.patch(
-    '/:customerId',
+    '/',
     [
         validate(ZValidateUpdateCustomer),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const { customerId } = req.params;
+                const userId = req.body.userId || req.payload.id;
                 const result = await customerService.updateCustomer(
                     req.body,
-                    customerId,
+                    userId,
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -93,7 +94,17 @@ router.patch(
             }
         },
     ],
-    { is_protected: false, has_Access: [ROLE.SUPER_ADMIN] },
+    {
+        is_protected: true,
+        has_Access: [
+            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
+            ROLE.STATE_MANAGER,
+            ROLE.DISTRICT_MANAGER,
+            ROLE.CITY_MANAGER,
+            ROLE.CUSTOMER,
+        ],
+    },
 );
 
 router.del(
@@ -175,15 +186,17 @@ router.get(
 router.post(
     '/customer-meter',
     [
-        validate(ZRegisterCustomerMeter),
+        validate(ZValidateRegisterCustomerMeter),
         async (req, res, next) => {
             try {
+                console.log(req.body);
                 if (!req.body.userId) {
                     req.body.userId = req.payload.id;
+                    console.log(req.body.userId);
                 }
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
-                    req.body,
+                    { ...req.body, createdBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));

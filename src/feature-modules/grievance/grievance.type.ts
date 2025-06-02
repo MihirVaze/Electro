@@ -27,6 +27,8 @@ export const ZGrievance = z.object({
     updatedBy: z.string().trim().uuid().optional(),
     deletedAt: z.date().optional(),
     restoredAt: z.date().optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
 });
 
 export type Grievance = z.infer<typeof ZGrievance>;

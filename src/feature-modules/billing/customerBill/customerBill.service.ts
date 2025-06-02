@@ -9,12 +9,14 @@ import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
 import customerService from '../../customer/customer.service';
 import meterService from '../../meter/meter.service';
 import { sendEmail } from '../../../utility/sendmail';
+import userService from '../../user/user.service';
 
 class CustomerBillService {
     async generateCustomerBill(schema: SchemaName) {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
+            console.dir(consumptionForTheMonth);
             if (consumptionForTheMonth.count === 0)
                 throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
 
@@ -28,23 +30,28 @@ class CustomerBillService {
                         schema,
                     );
                 const customerMeterId =
-                    (await consumptionDetails.dataValues.customerMeterId) ?? '';
-                const meter = (
+                    consumptionDetails.dataValues.customerMeterId ?? '';
+                const customerMeter = (
                     await customerService.getCustomerMeter(
                         { id: customerMeterId },
                         schema,
                     )
                 ).dataValues;
                 const getMeterDetails = await meterService.findOneMeter(
-                    { id: meter.id },
+                    { id: customerMeter.id },
                     schema,
                 );
                 const getCustomerDetails = (
                     await customerService.getCustomer(
-                        { userId: meter.userId },
+                        { userId: customerMeter.userId },
                         schema,
                     )
                 ).dataValues;
+
+                const userDetails = await userService.getOneUser(
+                    { id: getCustomerDetails.userId },
+                    schema,
+                );
 
                 const bill = {
                     customerMeterId: consumption.dataValues.customerMeterId,
@@ -61,12 +68,18 @@ class CustomerBillService {
 
                 newBillEntries.push(bill);
                 billData.push({
-                    bill,
-                    //name: getCustomerDetails.name,
-                    //email: getCustomerDetails.email,
-                    meterId: meter.id,
+                    email: userDetails?.dataValues.email,
+                    meterId: customerMeter.id,
                     customerMeterId,
                     unitsUsed: consumption.dataValues.unitsUsed,
+                    total:
+                        getMeterDetails.basePrice +
+                        getMeterDetails.pricePerUnit *
+                            consumption.dataValues.unitsUsed,
+                    billingDate: new Date(),
+                    dueDate: new Date(
+                        new Date().setDate(new Date().getDate() + 15),
+                    ),
                 });
             }
 
@@ -76,10 +89,15 @@ class CustomerBillService {
             );
             if (!result) throw CUSTOMER_BILL_RESPONSES.BILL_CREATION_FAILED;
 
-            for (const data of billData) {
-                const { bill, email, meter, unitsUsed } = data;
-
-                await sendEmail(
+            for (const {
+                email,
+                total,
+                billingDate,
+                customerMeterId,
+                unitsUsed,
+                dueDate,
+            } of billData) {
+                sendEmail(
                     email,
                     'Monthly Electricity Bill',
                     `<!DOCTYPE html>
@@ -92,11 +110,11 @@ class CustomerBillService {
                     <body>
                         <p>Here is your electricity bill for this month:</p>
 
-                        <p><strong>Meter ID:</strong> ${meter}</p>
+                        <p><strong>Meter ID:</strong> ${customerMeterId}</p>
                         <p><strong>Units Used:</strong> ${unitsUsed}</p>
-                        <p><strong>Total Amount:</strong> ${bill.total}</p>
-                        <p><strong>Billing Date:</strong> ${bill.billingDate}</p>
-                        <p><strong>Due Date:</strong> ${bill.dueDate}</p>
+                        <p><strong>Total Amount:</strong> ${total}</p>
+                        <p><strong>Billing Date:</strong> ${billingDate}</p>
+                        <p><strong>Due Date:</strong> ${dueDate}</p>
                     </body>
 
                 </html>`,

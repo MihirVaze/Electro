@@ -11,19 +11,20 @@ const router = new CustomRouter();
 router.post(
     '/',
     [
-        validate(Zcreate),
+        //validate(Zconsumption),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
-                const userId = req.payload.id;
+                const schema = req.headers.schema;
+                console.log(schema);
+                const workerId = req.payload.id;
                 const body = {
                     ...req.body,
-                    createdBy: req.payload.id,
+                    //createdBy: req.payload.id,
                 };
                 const result = await consumptionService.createConsumption(
                     body,
-                    userId,
-                    schema,
+                    workerId,
+                    'adani',
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {

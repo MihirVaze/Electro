@@ -1,14 +1,13 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
 import { ZUser } from '../user/user.types';
+import { Zmeter } from '../meter/meter.type';
 
 export const ZCustomer = z
     .object({
         cityId: z.string().trim().uuid().nonempty(),
         address: z.string().trim().nonempty(),
         userId: z.string().uuid(),
-        limit: z.coerce.number().default(10).optional(),
-        page: z.coerce.number().default(1).optional(),
     })
     .extend(ZUser.shape);
 
@@ -33,9 +32,12 @@ export const ZFindCustomers = z.object({
     query: ZCustomer.pick({
         name: true,
         email: true,
-        limit: true,
-        page: true,
-    }).partial(),
+    })
+        .partial()
+        .extend({
+            limit: z.coerce.number().min(1),
+            page: z.coerce.number().min(1),
+        }),
 });
 
 export const ZFindCustomer = z.object({
@@ -67,12 +69,18 @@ export const ZCustomerMeter = z
         meterName: z.string().trim().nonempty().optional(),
         limit: z.coerce.number().default(10).optional(),
         page: z.coerce.number().default(1).optional(),
+        meter: Zmeter.optional(),
+        user: ZUser.optional(),
     })
     .merge(ZBaseSchema.partial());
 
 export const ZRegisterCustomerMeter = z.object({
     userId: z.string().uuid().optional(),
     meterId: z.string().uuid(),
+});
+
+export const ZValidateRegisterCustomerMeter = z.object({
+    body: ZRegisterCustomerMeter,
 });
 
 export const ZFindCustomerMeters = z.object({
@@ -87,7 +95,7 @@ export const ZFindCustomerMeters = z.object({
 
 export const ZCustomerWorker = z
     .object({
-        customerId: z.string().trim().uuid(),
+        userId: z.string().trim().uuid(),
         workerId: z.string().trim().uuid(),
         limit: z.coerce.number().default(10).optional(),
         page: z.coerce.number().default(1).optional(),
@@ -96,7 +104,7 @@ export const ZCustomerWorker = z
 
 export const ZFindCustomerWorker = z.object({
     query: ZCustomerWorker.pick({
-        customerId: true,
+        userId: true,
         workerId: true,
         limit: true,
         page: true,

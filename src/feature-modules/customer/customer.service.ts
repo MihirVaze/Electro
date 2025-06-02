@@ -76,6 +76,13 @@ class CustomerServices {
                             'updatedBy',
                         ],
                     },
+                    include: [
+                        {
+                            model: UserSchema.schema(schema),
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
+                        },
+                    ],
                 },
                 schema,
             );
@@ -109,7 +116,7 @@ class CustomerServices {
             }
 
             if (address) {
-                customerWhere.address = { [Op.iLike]: `${address}` };
+                customerWhere.address = { [Op.iLike]: `%${address}%` };
             }
 
             const offset = (page - 1) * limit;
@@ -138,7 +145,8 @@ class CustomerServices {
                         {
                             model: UserSchema.schema(schema),
                             where: userWhere,
-                            attributes: ['name', 'email'],
+                            as: 'user',
+                            attributes: ['name', 'email', 'phoneNo'],
                         },
                     ],
                     limit,
@@ -156,19 +164,12 @@ class CustomerServices {
 
     async updateCustomer(
         customer: Partial<Customer>,
-        customerId: string,
+        userId: string,
         schema: SchemaName,
     ) {
         try {
             const { name, phoneNo, email, ...restOfCustomer } = customer;
             if (name || phoneNo || email) {
-                const customerToBeUpdated = await customerRepo.get(
-                    {
-                        where: { id: customerId },
-                    },
-                    schema,
-                );
-
                 const updateUser: any = {};
                 if (phoneNo) {
                     updateUser.phoneNo = phoneNo;
@@ -176,8 +177,11 @@ class CustomerServices {
                 if (email) {
                     updateUser.email = email;
                 }
+                if (name) {
+                    updateUser.name = name;
+                }
 
-                updateUser.id = customerToBeUpdated?.dataValues.id;
+                updateUser.id = userId;
 
                 await userService.updateUser(updateUser, schema);
             }
@@ -185,11 +189,11 @@ class CustomerServices {
             const result = await customerRepo.update(
                 restOfCustomer,
                 {
-                    where: { id: customerId },
+                    where: { userId },
                 },
                 schema,
             );
-            if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
+            if (!result[0]) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
         } catch (e) {
@@ -226,10 +230,10 @@ class CustomerServices {
                 { userId: customerMeter.userId },
                 schema,
             );
-            const { cityId, userId: customerId } = customer.dataValues;
+            const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
-            const workers = await workerService.getAllWorkers(
+            const workers = await workerService.getWorkersSortedByCustomerCount(
                 { cityId },
                 limit,
                 'public',
@@ -241,11 +245,11 @@ class CustomerServices {
 
             const { customerCount, userId: workerId } =
                 workerToBeAssigned.dataValues;
-            if (!customerCount || !workerId)
+            if (!(typeof customerCount === 'number') || !workerId)
                 throw CUSTOMER_RESPONSES.CUSTOMER_METER_CREATION_FIELDS_MISSING;
 
             await this.addCustomerWorker(
-                { customerId, workerId },
+                { userId, workerId },
                 schema,
                 transaction,
             );
@@ -254,7 +258,8 @@ class CustomerServices {
             await workerService.updateWorker(
                 { customerCount: updatedCount },
                 workerId,
-                schema,
+                'public',
+                transaction,
             );
 
             transaction.commit();

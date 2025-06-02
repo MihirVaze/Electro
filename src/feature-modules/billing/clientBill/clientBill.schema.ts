@@ -1,41 +1,25 @@
 import { DataTypes, Model } from 'sequelize';
-import { CustomerBill } from './customerBill.type';
-import { CustomerMeterSchema } from '../../customer/customer.schema';
-import { ConsumptionSchema } from '../../consumption/consumption.schema';
 import { sequelize } from '../../../connections/pg.connection';
 import { UserSchema } from '../../user/user.schema';
+import { CreateClientBill } from './clientBill.types';
+import { PlanSchema } from '../../plan/plan.schema';
+import { DiscountSchema } from '../../discount/discount.schema';
 
-export class CustomerBillSchema extends Model<CustomerBill, CustomerBill> {}
+export class ClientBillSchema extends Model<
+    CreateClientBill,
+    CreateClientBill
+> {}
 
-CustomerBillSchema.init(
+ClientBillSchema.init(
     {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        customerMeterId: {
-            type: DataTypes.UUID,
-            references: {
-                model: CustomerMeterSchema,
-                key: 'id',
-            },
-            allowNull: false,
-        },
+
         basePrice: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        perUnitCost: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        consumptionId: {
-            type: DataTypes.UUID,
-            references: {
-                model: ConsumptionSchema,
-                key: 'id',
-            },
             allowNull: false,
         },
         total: {
@@ -55,6 +39,44 @@ CustomerBillSchema.init(
             type: DataTypes.ENUM(),
             values: ['unpaid', 'paid'],
             defaultValue: 'unpaid',
+        },
+        clientId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: {
+                    tableName: 'User',
+                    schema: 'public',
+                },
+            },
+        },
+        planId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: {
+                    tableName: 'Plan',
+                    schema: 'public',
+                },
+            },
+        },
+        discountId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: {
+                    tableName: 'Discount',
+                    schema: 'public',
+                },
+            },
+        },
+        discountType: {
+            type: DataTypes.ENUM('increment', 'decrement', 'none'),
+            allowNull: false,
+        },
+        discountValue: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
@@ -97,16 +119,16 @@ CustomerBillSchema.init(
     },
     {
         sequelize,
-        modelName: 'CustomerBill',
-        tableName: 'CustomerBill',
+        modelName: 'ClientBill',
+        tableName: 'ClientBill',
     },
 );
 
-CustomerMeterSchema.hasMany(CustomerBillSchema, {
-    foreignKey: 'customerMeterId',
-    as: 'bills',
-});
-CustomerBillSchema.belongsTo(CustomerMeterSchema, {
-    foreignKey: 'customerMeterId',
-    as: 'customerMeter',
-});
+ClientBillSchema.belongsTo(UserSchema, { foreignKey: 'clientId' });
+UserSchema.hasMany(ClientBillSchema, { foreignKey: 'clientId' });
+
+ClientBillSchema.belongsTo(PlanSchema, { foreignKey: 'planId' });
+PlanSchema.hasMany(ClientBillSchema, { foreignKey: 'planId' });
+
+ClientBillSchema.belongsTo(DiscountSchema, { foreignKey: 'discountId' });
+DiscountSchema.hasMany(ClientBillSchema, { foreignKey: 'discountId' });
