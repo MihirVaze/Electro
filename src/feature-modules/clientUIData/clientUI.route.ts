@@ -46,8 +46,8 @@ router.post(
 
 router.get(
     '/:id',
-    [  
-         validate(ZValidateClientUI),
+    [
+        validate(ZValidateClientUI),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -67,7 +67,7 @@ router.get(
 router.patch(
     '/:id',
     [
-         validate(ZvalidatePatch),
+        validate(ZvalidatePatch),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -92,7 +92,7 @@ router.patch(
 router.del(
     '/:id',
     [
-         validate(ZValidateClientUI),
+        validate(ZValidateClientUI),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;

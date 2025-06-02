@@ -19,8 +19,8 @@ export const UI_RESPONSES = {
         status: 200,
         message: 'UI Updated Of The Client',
     },
-    UI_DELETED:{
-        status:200,
-        message:"UI deleted Successfully"
-    }
+    UI_DELETED: {
+        status: 200,
+        message: 'UI deleted Successfully',
+    },
 };

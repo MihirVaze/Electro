@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { ZCustomerMeter } from '../customer/customer.type';
 import { ZBaseSchema } from '../../utility/base-schema';
 
-
 export const Zconsumption = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),
     workerId: z.string().trim().uuid(),
@@ -40,7 +39,6 @@ export const Zfilter = z.object({
     unitsUsed: z.number().positive().optional(),
     limit: z.coerce.number().min(1),
     page: z.coerce.number().min(1),
-
 });
 
 export type Filter = z.infer<typeof Zfilter>;

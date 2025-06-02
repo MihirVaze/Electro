@@ -12,14 +12,13 @@ export const Zmeter = ZBaseSchema.partial().extend({
 export type Meter = z.infer<typeof Zmeter>;
 
 export const ZFilterMeter = z.object({
-  name: z.string().optional(),
-  basePrice: z.coerce.number().optional(),
-  pricePerUnit: z.coerce.number().optional(),
-  requiredPhotos: z.coerce.number().optional(),
-  isDeleted: z.coerce.boolean().optional(),
-limit: z.coerce.number().min(1),
-page: z.coerce.number().min(1),
-
+    name: z.string().optional(),
+    basePrice: z.coerce.number().optional(),
+    pricePerUnit: z.coerce.number().optional(),
+    requiredPhotos: z.coerce.number().optional(),
+    isDeleted: z.coerce.boolean().optional(),
+    limit: z.coerce.number().min(1),
+    page: z.coerce.number().min(1),
 });
 export type ZFilterMeterType = z.infer<typeof ZFilterMeter>;
 

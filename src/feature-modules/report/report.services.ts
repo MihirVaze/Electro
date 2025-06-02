@@ -1,7 +1,11 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { Op, WhereOptions, fn, col, literal, FindOptions } from 'sequelize';
 import { Grievance } from '../grievance/grievance.type';
-import { GrievanceReportOptions, MeterReportOptions, WorkerReportOptions, } from './report.types';
+import {
+    GrievanceReportOptions,
+    MeterReportOptions,
+    WorkerReportOptions,
+} from './report.types';
 import grievanceService from '../grievance/grievance.service';
 import customerRepo from '../customer/customer.repo';
 import { Meter } from '../meter/meter.type';
@@ -74,8 +78,8 @@ class ReportServices {
         schema: SchemaName,
         options: MeterReportOptions = {
             limit: 10,
-            page: 1
-        }
+            page: 1,
+        },
     ) {
         const where: WhereOptions<CustomerMeter> = {
             isDeleted: false,
@@ -86,24 +90,22 @@ class ReportServices {
                 [Op.in]: options.meterIds,
             };
         }
-         const limit=options.limit;
-         const offset = (options.page - 1) * options.limit;
-          
+        const limit = options.limit;
+        const offset = (options.page - 1) * options.limit;
+
         const findOptions: FindOptions<CustomerMeter> = {
-            attributes: [
-                'meterId',
-                [fn('COUNT', col('id')), 'usageCount'],
-            ],
+            attributes: ['meterId', [fn('COUNT', col('id')), 'usageCount']],
             where,
             include: [
                 {
                     model: MeterSchema.schema(schema),
-                    attributes: ['name', 'pricePerUnit'], 
-                }],
+                    attributes: ['name', 'pricePerUnit'],
+                },
+            ],
             group: ['meterId'],
             raw: true,
             limit,
-            offset
+            offset,
         };
 
         if (options.sortBy === 'usageCountAsc') {
@@ -112,17 +114,19 @@ class ReportServices {
             findOptions.order = [[fn('COUNT', col('id')), 'DESC']];
         }
 
-        const result = await customerRepo.getAllCustomerMeter(findOptions, schema);
+        const result = await customerRepo.getAllCustomerMeter(
+            findOptions,
+            schema,
+        );
         return result;
     }
 
-  
-      async workerReport(
+    async workerReport(
         schema: SchemaName,
         options: WorkerReportOptions = {
             limit: 10,
-            page: 1     
-        }
+            page: 1,
+        },
     ) {
         const where: WhereOptions<Worker> = {
             isDeleted: false,
@@ -139,17 +143,17 @@ class ReportServices {
 
         const findOptions: FindOptions<Worker> = {
             attributes: [
-                [fn('COUNT', col('Worker.id')), 'workerCount'], 
-                [col('City.name'), 'cityName'],                   
+                [fn('COUNT', col('Worker.id')), 'workerCount'],
+                [col('City.name'), 'cityName'],
             ],
             where,
             include: [
                 {
-                    model: CitySchema.schema(schema),                            
-                    attributes: ['name'],             
+                    model: CitySchema.schema(schema),
+                    attributes: ['name'],
                 },
             ],
-            group: ['City.id'],  
+            group: ['City.id'],
             raw: true,
             limit,
             offset,
@@ -161,10 +165,9 @@ class ReportServices {
             findOptions.order = [[fn('COUNT', col('Worker.id')), 'DESC']];
         }
 
-        const result = await workerRepo.getAll(findOptions,schema);
+        const result = await workerRepo.getAll(findOptions, schema);
         return result;
     }
 }
-
 
 export default new ReportServices();
