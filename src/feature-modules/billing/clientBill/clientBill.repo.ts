@@ -22,8 +22,8 @@ class ClientBillRepo {
         return ClientBillSchema.schema(schema).findOne(clientBill);
     }
 
-    public async create(clientBill: CreateClientBill, schema: SchemaName) {
-        return ClientBillSchema.schema(schema).create(clientBill);
+    public async create(clientBill: CreateClientBill[], schema: SchemaName) {
+        return ClientBillSchema.schema(schema).bulkCreate(clientBill);
     }
 
     public async update(
