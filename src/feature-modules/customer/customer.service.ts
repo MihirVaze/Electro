@@ -233,12 +233,11 @@ class CustomerServices {
             const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
-            const workers =
-                await workerService.getAllWorkersSortedByCustomerCount(
-                    { cityId },
-                    limit,
-                    'public',
-                );
+            const workers = await workerService.getWorkersSortedByCustomerCount(
+                { cityId },
+                limit,
+                'public',
+            );
 
             if (!workers.count)
                 throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
