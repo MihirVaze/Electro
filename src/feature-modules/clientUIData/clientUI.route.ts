@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { CustomRouter } from '../../routes/custom.router';
 import { validate } from '../../utility/validate';
-import { uiData } from './clientUIData.type';
+import { uiData, ZValidateClientUI, ZvalidatePatch } from './clientUIData.type';
 import clientUIService from './clientUI.service';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
@@ -17,7 +17,7 @@ router.post(
     '/:id',
     [
         upload.single('avatar'),
-        validate(uiData),
+        validate(ZValidateClientUI),
         async (req, res, next) => {
             try {
                 if (!req.file) {
@@ -46,7 +46,8 @@ router.post(
 
 router.get(
     '/:id',
-    [
+    [  
+         validate(ZValidateClientUI),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -66,6 +67,7 @@ router.get(
 router.patch(
     '/:id',
     [
+         validate(ZvalidatePatch),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
@@ -90,6 +92,7 @@ router.patch(
 router.del(
     '/:id',
     [
+         validate(ZValidateClientUI),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;

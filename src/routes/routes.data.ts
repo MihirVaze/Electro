@@ -12,6 +12,7 @@ import meterRoute from '../feature-modules/meter/meter.route';
 import consumptionRoute from '../feature-modules/consumption/consumption.route';
 import customerBillRoute from '../feature-modules/billing/customerBill/customerBill.route';
 import reportRoutes from '../feature-modules/report/report.routes';
+import clientUIRoute from '../feature-modules/clientUIData/clientUI.route';
 
 export const routes: Routes = [
     authRoutes,
@@ -28,4 +29,7 @@ export const routes: Routes = [
     consumptionRoute,
     customerBillRoute,
     reportRoutes,
-];
+    clientUIRoute,
+    meterRoute,
+    consumptionRoute,
+    ];

@@ -11,7 +11,7 @@ const router = new CustomRouter();
 router.post(
     '/',
     [
-        //validate(Zconsumption),
+        validate(Zcreate),
         async (req, res, next) => {
             try {
                 const schema = req.headers.schema;

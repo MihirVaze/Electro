@@ -88,9 +88,8 @@ ClientUISchema.init(
 
 ClientUISchema.belongsTo(ClientSchema, {
     foreignKey: 'clientId',
-    as: 'clientId',
+    as: 'clientInfo', 
 });
-
 ClientUISchema.belongsTo(UserSchema, {
     foreignKey: 'createdBy',
     as: 'createdByUser',
