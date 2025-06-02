@@ -9,7 +9,7 @@ export const ZCustomerBill = ZBaseSchema.partial().extend({
     total: z.number().positive().optional(),
     billingDate: z.date().optional(),
     dueDate: z.date(),
-    status: z.enum(['paid', 'unpaid']).default('unpaid').optional(),
+    status: z.string().default('unpaid').optional(),
 
     limit: z.coerce.number().default(10).optional(),
     page: z.coerce.number().default(1).optional(),
