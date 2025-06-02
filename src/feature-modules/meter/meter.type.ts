@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { boolean, z } from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
 
 export const Zmeter = ZBaseSchema.partial().extend({
@@ -29,3 +29,26 @@ export const ZUpdateMeter = z.object({
 });
 
 export type Update = z.infer<typeof ZUpdateMeter>;
+
+export const ZValidateCreateMeter = z.object({
+    body: Zmeter.omit({
+        image: true,
+    }),
+});
+
+export const ZValidateUpdateMeter = z.object({
+    body: Zmeter.optional(),
+});
+
+export const ZValidateMeterId = z.object({
+    params: Zmeter.pick({
+        id: true,
+    }),
+});
+
+export const ZValidateGetPaginatedMeters = z.object({
+    query: Zmeter.extend({
+        limit: z.number().optional(),
+        page: z.number().optional(),
+    }),
+});
