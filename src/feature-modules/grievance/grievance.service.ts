@@ -5,7 +5,11 @@ import { Grievance } from './grievance.type';
 import grievanceRepo from './grievance.repo';
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, WhereOptions } from 'sequelize';
-import { CitySchema, DistrictSchema } from '../location/location.schema';
+import {
+    CitySchema,
+    DistrictSchema,
+    StateSchema,
+} from '../location/location.schema';
 import {
     CityUserSchema,
     DistrictUserSchema,
@@ -86,15 +90,24 @@ class GrievanceService {
                                         where: { isDeleted: false },
                                         include: [
                                             {
-                                                model: StateUserSchema.schema(
+                                                model: StateSchema.schema(
                                                     schema,
                                                 ),
-                                                as: 'stateUser',
+                                                as: 'state',
                                                 required: true,
-                                                where: {
-                                                    userId: userId,
-                                                    isDeleted: false,
-                                                },
+                                                include: [
+                                                    {
+                                                        model: StateUserSchema.schema(
+                                                            schema,
+                                                        ),
+                                                        as: 'stateUser',
+                                                        required: true,
+                                                        where: {
+                                                            userId: userId,
+                                                            isDeleted: false,
+                                                        },
+                                                    },
+                                                ],
                                             },
                                         ],
                                     },
