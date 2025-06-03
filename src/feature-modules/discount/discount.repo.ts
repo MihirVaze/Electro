@@ -1,10 +1,10 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Discount } from './discount.type';
+import { CreateDiscount, Discount } from './discount.type';
 import { DiscountSchema } from './discount.schema';
 
 class DiscountRepo {
-    public async create(discount: Discount, schema: SchemaName) {
+    public async create(discount: CreateDiscount, schema: SchemaName) {
         return DiscountSchema.schema(schema).create(discount);
     }
 

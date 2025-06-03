@@ -58,35 +58,17 @@ router.get(
     { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
-router.post(
-    '/',
-    [
-        validate(ZCreateDiscount),
-        async (req, res, next) => {
-            try {
-                const schema = req.payload.schema;
-                const result = await discountService.createDiscount(
-                    req.body,
-                    schema,
-                );
-                res.send(new ResponseHandler(result));
-            } catch (e) {
-                next(e);
-            }
-        },
-    ],
-    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
-);
-
 router.patch(
     '/:id',
     [
         validate(ZUpdateDiscount),
         async (req, res, next) => {
             try {
+                const userId = req.payload.id;
                 const schema = req.payload.schema;
                 const id = req.params.id;
                 const result = await discountService.updateDiscount(
+                    userId,
                     id,
                     req.body,
                     schema,

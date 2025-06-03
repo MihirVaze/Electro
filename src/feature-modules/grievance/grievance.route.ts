@@ -23,13 +23,13 @@ router.get(
                 const userId = req.payload.id;
                 const schema = req.payload.schema;
                 const roleIds = req.payload.roleIds;
-                const { limit, page, ...search } = req.query;
+                const { limit, page, ...filter } = req.query;
                 const result = await grievanceService.getGrievances(
                     userId,
                     roleIds,
                     Number(limit),
                     Number(page),
-                    search,
+                    filter,
                     schema,
                 );
                 res.send(new ResponseHandler(result));

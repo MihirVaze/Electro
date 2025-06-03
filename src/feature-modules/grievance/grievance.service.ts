@@ -4,7 +4,7 @@ import { GRIEVANCE_RESPONSES } from './grievance.responses';
 import { Grievance } from './grievance.type';
 import grievanceRepo from './grievance.repo';
 import { SchemaName } from '../../utility/umzug-migration';
-import { FindOptions, WhereOptions } from 'sequelize';
+import { FindOptions, Op, WhereOptions } from 'sequelize';
 import {
     CitySchema,
     DistrictSchema,
@@ -57,7 +57,7 @@ class GrievanceService {
         roleIds: string[],
         limit: number,
         page: number,
-        grievance: Partial<Grievance>,
+        filter: Partial<Grievance>,
         schema: SchemaName,
     ) {
         try {
@@ -65,7 +65,7 @@ class GrievanceService {
 
             const where: WhereOptions<Grievance> = {
                 isDeleted: false,
-                ...grievance,
+                ...filter,
             };
 
             if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
@@ -96,6 +96,9 @@ class GrievanceService {
                                                 ),
                                                 as: 'state',
                                                 required: true,
+                                                where: {
+                                                    isDeleted: false,
+                                                },
                                                 include: [
                                                     {
                                                         model: StateUserSchema.schema(

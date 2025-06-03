@@ -79,7 +79,7 @@ class DiscountServices {
 
     async createDiscount(discount: Discount, schema: SchemaName) {
         try {
-            const result = await discountRepo.create(discount, schema);
+            await discountRepo.create(discount, schema);
             return DISCOUNT_RESPONSES.DISCOUNT_CREATED;
         } catch (e) {
             console.dir(e);
@@ -88,6 +88,7 @@ class DiscountServices {
     }
 
     async updateDiscount(
+        userId: string,
         id: string,
         discount: Partial<Discount>,
         schema: SchemaName,
