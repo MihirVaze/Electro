@@ -30,7 +30,10 @@ class GrievanceService {
         let { comments } = grievance;
         if (!comments) comments = 'none';
 
-        const user = await customerRepo.get({ where: { userId } }, schema);
+        const user = await customerRepo.getCustomer(
+            { where: { userId } },
+            schema,
+        );
         if (!user) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
         const location = user.dataValues.cityId;

@@ -60,7 +60,7 @@ router.post(
             try {
                 const { client } = req.body;
                 const result = await customerService.addCustomer(
-                    req.body,
+                    { ...req.body, createdBy: req.payload.id },
                     client,
                 );
                 res.send(new ResponseHandler(result));
@@ -84,7 +84,7 @@ router.patch(
                 const schema = req.payload.schema;
                 const userId = req.body.userId || req.payload.id;
                 const result = await customerService.updateCustomer(
-                    req.body,
+                    { ...req.body, updatedBy: req.payload.id },
                     userId,
                     schema,
                 );
@@ -115,7 +115,7 @@ router.del(
                 const userId = req.params.id;
                 const schema = req.payload.schema;
                 const result = await customerService.deleteCustomer(
-                    userId,
+                    { userId, deletedBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));

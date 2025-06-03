@@ -23,6 +23,7 @@ export const ZRegisterCustomer = ZCustomer.pick({
     phoneNo: true,
     cityId: true,
     address: true,
+    createdBy: true,
 });
 export const ZValidateRegisterCustomer = z.object({
     body: ZRegisterCustomer.extend({ client: z.string().trim().nonempty() }),
