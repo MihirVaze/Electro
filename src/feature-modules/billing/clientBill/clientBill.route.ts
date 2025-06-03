@@ -52,12 +52,12 @@ router.get(
 );
 
 router.patch(
-    '/',
+    '/:id',
     [
         validate(ZValidateUpdateClientBill),
         async (req, res, next) => {
             try {
-                const { id } = req.body;
+                const { id } = req.params;
                 const result = await clientBillService.updateClientBill(
                     req.body,
                     id,
