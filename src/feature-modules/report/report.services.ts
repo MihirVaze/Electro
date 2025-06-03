@@ -1,7 +1,7 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { Op, WhereOptions, fn, col, literal, FindOptions } from 'sequelize';
 import { Grievance } from '../grievance/grievance.type';
-import { GrievanceReportOptions } from './report.types';
+import { ERevenueReportOptions, GrievanceReportOptions } from './report.types';
 import grievanceService from '../grievance/grievance.service';
 
 class ReportServices {
@@ -65,6 +65,8 @@ class ReportServices {
             throw e;
         }
     }
+
+    async electroRevenueReport(options: ERevenueReportOptions) {}
 }
 
 export default new ReportServices();

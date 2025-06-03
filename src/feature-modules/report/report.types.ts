@@ -25,3 +25,15 @@ const GrievanceReportQuery = z.object({
 export const ZGrievanceReportQuery = z.object({ query: GrievanceReportQuery });
 
 export type GrievanceReportOptions = z.infer<typeof GrievanceReportQuery>;
+
+const ERevenueReportOptions = z.object({
+    period: z.enum(['month', 'halfYear', 'year']).optional(),
+    from: z.coerce.date().optional(),
+    to: z.coerce.date().optional(),
+});
+
+export const ZERevenueReportOptions = z.object({
+    query: ERevenueReportOptions,
+});
+
+export type ERevenueReportOptions = z.infer<typeof ERevenueReportOptions>;
