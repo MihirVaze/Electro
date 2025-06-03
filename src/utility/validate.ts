@@ -9,6 +9,7 @@ export const validate = (schema: AnyZodObject): RequestHandler => {
                 body: req.body,
                 query: req.query,
                 params: req.params,
+                headers: req.headers,
             });
             if (parsed.query !== undefined) {
                 req.parsedQuery = parsed.query;

@@ -76,7 +76,7 @@ class ClientUIService {
             const counts = await clientUIRepo.updateClientUI(
                 details,
                 {
-                    where: { id: id },
+                    where: { clientId: id },
                 },
                 schema,
             );

@@ -25,10 +25,15 @@ class ClientRepo {
     }
 
     public async delete(
+        client: Partial<Client>,
         options: UpdateOptions<CreateClient>,
         schema: SchemaName,
     ) {
-        return ClientSchema.schema(schema).update({ isDeleted: true }, options);
+        const { deletedAt, deletedBy } = client;
+        return ClientSchema.schema(schema).update(
+            { deletedAt, deletedBy, isDeleted: true },
+            options,
+        );
     }
 }
 

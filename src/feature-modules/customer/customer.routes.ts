@@ -60,7 +60,7 @@ router.post(
             try {
                 const { client } = req.body;
                 const result = await customerService.addCustomer(
-                    req.body,
+                    { ...req.body, createdBy: req.payload.id },
                     client,
                 );
                 res.send(new ResponseHandler(result));
@@ -84,7 +84,7 @@ router.patch(
                 const schema = req.payload.schema;
                 const userId = req.body.userId || req.payload.id;
                 const result = await customerService.updateCustomer(
-                    req.body,
+                    { ...req.body, updatedBy: req.payload.id },
                     userId,
                     schema,
                 );
@@ -114,22 +114,8 @@ router.del(
             try {
                 const userId = req.params.id;
                 const schema = req.payload.schema;
-                const deletorRoleId = req.payload.roleId;
-                const userRoles = (
-                    await userService.getUserRoles({ userId }, schema)
-                )
-                    .map((e) => e.dataValues.id)
-                    .filter((e): e is string => !!e);
-
-                const canUpdate = HasPermission(
-                    deletorRoleId,
-                    userRoles,
-                    schema,
-                );
-                if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
-
                 const result = await customerService.deleteCustomer(
-                    userId,
+                    { userId, deletedBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -189,6 +175,7 @@ router.post(
         validate(ZValidateRegisterCustomerMeter),
         async (req, res, next) => {
             try {
+<<<<<<< HEAD
                 console.log(req.body);
                 if (!req.body.userId) {
                     req.body.userId = req.payload.id;
@@ -197,6 +184,12 @@ router.post(
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
                     { ...req.body, createdBy: req.payload.id },
+=======
+                const userId = req.body.userId || req.payload.id;
+                const schema = req.payload.schema;
+                const result = await customerService.addCustomerMeter(
+                    { ...req.body, createdBy: userId },
+>>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -223,20 +216,6 @@ router.del(
             try {
                 const userId = req.params.id;
                 const schema = req.payload.schema;
-                const deletorRoleId = req.payload.roleId;
-                const userRoles = (
-                    await userService.getUserRoles({ userId }, schema)
-                )
-                    .map((e) => e.dataValues.id)
-                    .filter((e): e is string => !!e);
-
-                const canUpdate = HasPermission(
-                    deletorRoleId,
-                    userRoles,
-                    schema,
-                );
-                if (!canUpdate) throw { status: 403, message: 'FORBIDDEN' };
-
                 const result = await customerService.deleteCustomerMeter(
                     userId,
                     schema,

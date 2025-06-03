@@ -14,11 +14,9 @@ router.post(
         validate(ZCredentials),
         async (req, res, next) => {
             try {
-                const schema = req.headers.schema;
-                if (typeof schema !== 'string' || !schema)
-                    throw Error('Enter Valid Schema');
-
+                const schema = req.headers.schema as string;
                 const body = req.body as Credentials;
+
                 const result = await authService.login(body, schema);
 
                 res.send(new ResponseHandler(result));

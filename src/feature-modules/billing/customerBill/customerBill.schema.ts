@@ -102,10 +102,11 @@ CustomerBillSchema.init(
     },
 );
 
-CustomerMeterSchema.hasMany(CustomerBillSchema, {
-    foreignKey: 'customerMeterId',
-    as: 'bills',
-});
+// CustomerMeterSchema.hasMany(CustomerBillSchema, {
+//     foreignKey: 'customerMeterId',
+//     as: 'customerMeter',
+// });
+
 CustomerBillSchema.belongsTo(CustomerMeterSchema, {
     foreignKey: 'customerMeterId',
     as: 'customerMeter',

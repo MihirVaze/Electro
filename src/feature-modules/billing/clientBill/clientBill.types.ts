@@ -27,7 +27,8 @@ export const ZCreateClientBill = ZClientBill.pick({
     status: true,
 }).merge(ZBaseSchema.partial());
 
-export const ZUpdateClientBill = ZClientBill.pick({
+export const ZUpdateClientBill = ZCreateClientBill.pick({
+    id: true,
     basePrice: true,
     discountValue: true,
     total: true,
@@ -36,6 +37,22 @@ export const ZUpdateClientBill = ZClientBill.pick({
     status: true,
 }).partial();
 
+export const ZFindClientBill = z.object({
+    query: ZClientBill.pick({
+        status: true,
+    })
+        .partial()
+        .extend({
+            limit: z.coerce.number().min(1),
+            page: z.coerce.number().min(1),
+        }),
+});
+
+export const ZValidateUpdateClientBill = z.object({
+    body: ZUpdateClientBill,
+});
+
 export type ClientBill = z.infer<typeof ZClientBill>;
 export type CreateClientBill = z.infer<typeof ZCreateClientBill>;
 export type UpdateClientBill = z.infer<typeof ZUpdateClientBill>;
+export type FindClientBill = z.infer<typeof ZClientBill>;

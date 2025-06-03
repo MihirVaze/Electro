@@ -91,8 +91,11 @@ UserSchema.hasMany(StateUserSchema, {
     as: 'stateUser',
 });
 
-StateSchema.hasMany(StateUserSchema, { foreignKey: 'stateId' });
-StateUserSchema.belongsTo(StateSchema, { foreignKey: 'stateId' });
+StateSchema.hasMany(StateUserSchema, {
+    foreignKey: 'stateId',
+    as: 'stateUser',
+});
+StateUserSchema.belongsTo(StateSchema, { foreignKey: 'stateId', as: 'state' });
 
 export class DistrictUserSchema extends Model<DistrictUser, DistrictUser> {}
 

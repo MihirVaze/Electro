@@ -65,6 +65,7 @@ router.post(
     [
         upload.single('avatar'),
         validate(ZValidateCreateMeter),
+
         async (req, res, next) => {
             try {
                 if (!req.file) {

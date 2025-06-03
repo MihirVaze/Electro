@@ -22,7 +22,7 @@ router.get(
             try {
                 const schema = req.payload.schema;
                 const { limit, page, ...search } = req.query;
-                const result = discountService.getdiscounts(
+                const result = await discountService.getdiscounts(
                     Number(limit),
                     Number(page),
                     search,
@@ -45,7 +45,10 @@ router.get(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = discountService.findOneDiscount({ id }, schema);
+                const result = await discountService.findOneDiscount(
+                    { id },
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -62,7 +65,10 @@ router.post(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const result = discountService.createDiscount(req.body, schema);
+                const result = await discountService.createDiscount(
+                    req.body,
+                    schema,
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -80,7 +86,7 @@ router.patch(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = discountService.updateDiscount(
+                const result = await discountService.updateDiscount(
                     id,
                     req.body,
                     schema,
@@ -102,7 +108,7 @@ router.del(
             try {
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = discountService.deletediscount(id, schema);
+                const result = await discountService.deletediscount(id, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

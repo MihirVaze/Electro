@@ -9,19 +9,12 @@ import { CLIENT_RESPONSES } from './client.responses';
 import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import { ROLE } from '../role/role.data';
+import discountService from '../discount/discount.service';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
         try {
             const { clientName, phoneNo, email, schemaName } = client;
-
-            // const deletedClient = await this.getClient({ clientName, isDeleted: true }, schema);
-            // const { id: clientId, userId } = deletedClient.dataValues;
-            // if (userId && clientId) {
-            //     await this.updateClient({ isDeleted: false }, clientId, schema);
-            //     await userService.updateUser({ id: userId, isDeleted: false }, schema);
-            //     return CLIENT_RESPONSES.CLIENT_RESTORED;
-            // }
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -29,6 +22,7 @@ class ClientServices {
                     phoneNo,
                     email,
                     password: '',
+                    createdBy: client.createdBy,
                 },
                 [{ roleId: ROLE.CLIENT_ADMIN }],
                 schema,
@@ -60,6 +54,15 @@ class ClientServices {
                 client.schemaName,
                 'seeders/common/*js',
                 'seeder',
+            );
+
+            await discountService.createDiscount(
+                {
+                    clientId: id,
+                    type: 'none',
+                    value: 0,
+                },
+                schema,
             );
 
             return CLIENT_RESPONSES.CLIENT_CREATED;
@@ -160,6 +163,17 @@ class ClientServices {
         }
     }
 
+    async getAllClients() {
+        try {
+            const result = await clientRepo.getAll({}, 'public');
+            const clients = result.rows;
+            return clients;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
     async updateClient(
         client: Partial<Client>,
         userId: string,
@@ -181,7 +195,10 @@ class ClientServices {
 
                 updateUser.id = userId;
 
-                await userService.updateUser(updateUser, schema);
+                await userService.updateUser(
+                    { ...updateUser, updatedBy: client.updatedBy },
+                    schema,
+                );
             }
 
             const result = await clientRepo.update(
@@ -200,9 +217,13 @@ class ClientServices {
         }
     }
 
-    async deleteClient(userId: string, schema: SchemaName) {
+    async deleteClient(client: Partial<Client>, schema: SchemaName) {
         try {
+            const { userId, deletedBy } = client;
+            if (!userId) throw CLIENT_RESPONSES.CLIENT_DELETION_FAILED;
+
             const deletedClient = await clientRepo.delete(
+                { deletedBy, deletedAt: new Date() },
                 { where: { userId } },
                 schema,
             );
