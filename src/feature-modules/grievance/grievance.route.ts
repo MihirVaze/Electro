@@ -4,10 +4,7 @@ import { validate } from '../../utility/validate';
 import grievanceService from './grievance.service';
 import {
     ZAssignOrEscalateGrievance,
-<<<<<<< HEAD
-=======
     ZDeleteGrievance,
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
     ZFindGrievance,
     ZRaiseGrievance,
 } from './grievance.type';
@@ -23,15 +20,9 @@ router.get(
         validate(ZFindGrievance),
         async (req, res, next) => {
             try {
-<<<<<<< HEAD
-                const userId = req.payload.id;
-                const schema = req.payload.schema;
-                const roleIds = req.payload.roleId;
-=======
                 const userId = req.body.id || req.payload.id;
                 const schema = req.payload.schema;
                 const roleIds = req.payload.roleIds;
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                 const { limit, page, ...search } = req.query;
                 const result = await grievanceService.getGrievances(
                     userId,
@@ -65,11 +56,7 @@ router.post(
         validate(ZRaiseGrievance),
         async (req, res, next) => {
             try {
-<<<<<<< HEAD
-                const userId = req.payload.id;
-=======
                 const userId = req.body.id || req.payload.id;
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                 const schema = req.payload.schema;
                 const result = await grievanceService.raiseGrievance(
                     userId,
@@ -82,11 +69,8 @@ router.post(
             }
         },
     ],
-<<<<<<< HEAD
-    { is_protected: true, has_Access: [ROLE.CUSTOMER] },
-=======
+
     { is_protected: true, has_Access: [ROLE.CUSTOMER, ROLE.SERVICE_WORKER] },
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
 );
 
 router.patch(
@@ -97,11 +81,7 @@ router.patch(
             try {
                 const id = req.params.id;
                 const userId = req.payload.id;
-<<<<<<< HEAD
-                const roleIds = req.payload.roleId;
-=======
                 const roleIds = req.payload.roleIds;
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                 const schema = req.payload.schema;
                 const result = await grievanceService.assignOrEscalateGrievance(
                     userId,
@@ -127,9 +107,6 @@ router.patch(
         ],
     },
 );
-
-<<<<<<< HEAD
-=======
 router.del(
     '/',
     [
@@ -151,5 +128,4 @@ router.del(
     { is_protected: true, has_Access: [ROLE.CUSTOMER] },
 );
 
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
 export default new Route('/grievance', router.ExpressRouter);

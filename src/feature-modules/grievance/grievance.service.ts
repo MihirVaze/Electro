@@ -4,14 +4,7 @@ import { GRIEVANCE_RESPONSES } from './grievance.responses';
 import { Grievance } from './grievance.type';
 import grievanceRepo from './grievance.repo';
 import { SchemaName } from '../../utility/umzug-migration';
-<<<<<<< HEAD
-import userLocationRepo from '../userLocation/userLocation.repo';
-import roleServices from '../role/role.services';
-import locationRepo from '../location/location.repo';
-import { FindOptions, Op, WhereOptions } from 'sequelize';
-=======
 import { FindOptions, WhereOptions } from 'sequelize';
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
 import {
     CitySchema,
     DistrictSchema,
@@ -83,14 +76,7 @@ class GrievanceService {
             } else if (roleIds.includes(ROLE.STATE_MANAGER)) {
                 return await grievanceRepo.getAll(
                     {
-<<<<<<< HEAD
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
-=======
                         where,
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -105,17 +91,6 @@ class GrievanceService {
                                         where: { isDeleted: false },
                                         include: [
                                             {
-<<<<<<< HEAD
-                                                model: StateUserSchema.schema(
-                                                    schema,
-                                                ),
-                                                as: 'stateUser',
-                                                required: true,
-                                                where: {
-                                                    userId: userId,
-                                                    isDeleted: false,
-                                                },
-=======
                                                 model: StateSchema.schema(
                                                     schema,
                                                 ),
@@ -134,7 +109,6 @@ class GrievanceService {
                                                         },
                                                     },
                                                 ],
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                                             },
                                         ],
                                     },
@@ -149,14 +123,7 @@ class GrievanceService {
             } else if (roleIds.includes(ROLE.DISTRICT_MANAGER)) {
                 return await grievanceRepo.getAll(
                     {
-<<<<<<< HEAD
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
-=======
                         where,
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -196,14 +163,7 @@ class GrievanceService {
             ) {
                 return await grievanceRepo.getAll(
                     {
-<<<<<<< HEAD
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
-=======
                         where,
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -241,11 +201,7 @@ class GrievanceService {
         userId: string,
         roleId: string[],
         id: string,
-<<<<<<< HEAD
-        action: 'pick' | 'escalate',
-=======
         action: 'pick' | 'escalate' | 'resolved',
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
         schema: SchemaName,
     ) {
         const grievance = await grievanceRepo.get({ where: { id } }, schema);
@@ -286,11 +242,7 @@ class GrievanceService {
                 { where: { id } },
                 schema,
             );
-<<<<<<< HEAD
-            if (!escalateTo)
-=======
             if (!escalatedTo)
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                 throw GRIEVANCE_RESPONSES.GRIEVANCE_UPDATION_FAILED;
             return GRIEVANCE_RESPONSES.GRIEVANCE_ESCALATED;
         }
@@ -326,16 +278,6 @@ class GrievanceService {
                 },
                 schema,
             );
-        } catch (e) {
-            console.dir(e);
-            throw e;
-        }
-    }
-
-    async GrievanceReport(schema: SchemaName, options: FindOptions<Grievance>) {
-        try {
-            const results = await grievanceRepo.getAll(options, schema);
-            return results;
         } catch (e) {
             console.dir(e);
             throw e;

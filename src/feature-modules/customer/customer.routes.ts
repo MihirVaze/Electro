@@ -175,21 +175,10 @@ router.post(
         validate(ZValidateRegisterCustomerMeter),
         async (req, res, next) => {
             try {
-<<<<<<< HEAD
-                console.log(req.body);
-                if (!req.body.userId) {
-                    req.body.userId = req.payload.id;
-                    console.log(req.body.userId);
-                }
-                const schema = req.payload.schema;
-                const result = await customerService.addCustomerMeter(
-                    { ...req.body, createdBy: req.payload.id },
-=======
                 const userId = req.body.userId || req.payload.id;
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
                     { ...req.body, createdBy: userId },
->>>>>>> 03cf95e2b2bfcd4bdc2cc59ad1bc2b98aa83bc39
                     schema,
                 );
                 res.send(new ResponseHandler(result));
