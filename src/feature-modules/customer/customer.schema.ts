@@ -1,12 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../connections/pg.connection';
 import { UserSchema } from '../user/user.schema';
-import {
-    Customer,
-    CustomerWorker,
-    CustomerMeter,
-    CreateCustomer,
-} from './customer.type';
+import { CustomerWorker, CustomerMeter, CreateCustomer } from './customer.type';
 import { CitySchema } from '../location/location.schema';
 import { MeterSchema } from '../meter/meter.schema';
 

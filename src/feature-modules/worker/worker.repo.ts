@@ -24,8 +24,16 @@ class WorkerRepo {
         return WorkerSchema.schema(schema).update(worker, options);
     }
 
-    public async delete(options: UpdateOptions<Worker>, schema: SchemaName) {
-        return WorkerSchema.schema(schema).update({ isDeleted: true }, options);
+    public async delete(
+        worker: Partial<Worker>,
+        options: UpdateOptions<Worker>,
+        schema: SchemaName,
+    ) {
+        const { deletedAt, deletedBy } = worker;
+        return WorkerSchema.schema(schema).update(
+            { deletedAt, deletedBy, isDeleted: true },
+            options,
+        );
     }
 }
 

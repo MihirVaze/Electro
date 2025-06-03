@@ -204,7 +204,7 @@ router.del(
                 const userId = req.params.id;
                 const schema = req.payload.schema;
                 const result = await customerService.deleteCustomerMeter(
-                    userId,
+                    { userId, deletedBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -224,6 +224,7 @@ router.del(
     },
 );
 
+//CUSTOMER-WORKER
 router.get(
     '/customer-worker',
     [

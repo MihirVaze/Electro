@@ -410,10 +410,15 @@ class CustomerServices {
         }
     }
 
-    async deleteCustomerMeter(customerMeterId: string, schema: SchemaName) {
+    async deleteCustomerMeter(
+        customerMeter: Partial<CustomerMeter>,
+        schema: SchemaName,
+    ) {
         try {
+            const { userId, deletedBy } = customerMeter;
             const result = await customerRepo.deleteCustomerMeter(
-                { where: { id: customerMeterId } },
+                { deletedBy, deletedAt: new Date() },
+                { where: { id: userId } },
                 schema,
             );
             if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_METER_NOT_FOUND;

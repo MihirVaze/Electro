@@ -12,7 +12,7 @@ import { Worker } from './worker.type';
 class WorkerService {
     async addWorker(worker: Worker, schema: SchemaName) {
         try {
-            const { workerName, phoneNo, email, cityId } = worker;
+            const { workerName, phoneNo, email, cityId, createdBy } = worker;
             if (!phoneNo || !email)
                 throw WORKER_RESPONSES.WORKER_CREATION_FAILED;
 
@@ -31,6 +31,7 @@ class WorkerService {
                     phoneNo,
                     email,
                     password: '',
+                    createdBy,
                 },
                 roles,
                 schema,
@@ -44,6 +45,7 @@ class WorkerService {
                     workerName,
                     userId: id,
                     cityId,
+                    createdBy,
                 },
                 schema,
             );
@@ -174,9 +176,14 @@ class WorkerService {
         }
     }
 
-    async deleteWorker(id: string, schema: SchemaName) {
+    async deleteWorker(worker: Partial<Worker>, schema: SchemaName) {
         try {
-            const result = await workerRepo.delete({ where: { id } }, schema);
+            const { userId, deletedBy } = worker;
+            const result = await workerRepo.delete(
+                { deletedBy, deletedAt: new Date() },
+                { where: { userId } },
+                schema,
+            );
             if (!result[0]) throw WORKER_RESPONSES.WORKER_DELETION_FAILED;
 
             return WORKER_RESPONSES.WORKER_DELETED;

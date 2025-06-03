@@ -51,10 +51,9 @@ router.post(
         validate(ZRegisterWorker),
         async (req, res, next) => {
             try {
-                const result = await workerService.addWorker(
-                    req.body,
-                    'public',
-                );
+                const userId = req.payload.id;
+                const body = { ...req.body, createdBy: userId };
+                const result = await workerService.addWorker(body, 'public');
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
@@ -75,14 +74,15 @@ router.post(
 );
 
 router.patch(
-    '/:userId',
+    '/',
     [
         validate(ZupdateWorker),
         async (req, res, next) => {
             try {
-                const { userId } = req.params;
+                const userId = req.body.userId || req.payload.id;
+                const body = { ...req.body, updatedBy: req.payload.id };
                 const result = await workerService.updateWorker(
-                    req.body,
+                    body,
                     userId,
                     'public',
                 );
@@ -112,7 +112,10 @@ router.del(
         async (req, res, next) => {
             try {
                 const id = req.params.id;
-                const result = workerService.deleteWorker(id, 'public');
+                const result = workerService.deleteWorker(
+                    { id, deletedBy: req.payload.id },
+                    'public',
+                );
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
