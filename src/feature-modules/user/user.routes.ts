@@ -17,8 +17,7 @@ router.post(
         validate(ZregisterUser),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
-                const creatorRoleId = req.payload.roleId;
+                const { schema, roleIds: creatorRoleId } = req.payload;
                 const user = req.body.user as User;
                 const rolesLocations = req.body.roles as UserRoleLocation[];
                 const roles = rolesLocations.map((e) => e.roleId);
@@ -57,19 +56,16 @@ router.patch(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const editorRoleId = req.payload.roleId;
+                const editorRoleId = req.payload.roleIds;
                 const user: User = req.body;
 
                 // if we are taking id from body that means someone else is editing the user so we need to know if they have permition
                 if (user.id) {
-                    const userRoles = (
-                        await userService.getUserRoles(
-                            { userId: user.id },
-                            schema,
-                        )
-                    )
-                        .map((e) => e.dataValues.id)
-                        .filter((e): e is string => !!e);
+                    const userRoles = await userService.getUserRolesIds(
+                        user.id,
+                        schema,
+                    );
+
                     const canUpdate = HasPermission(
                         editorRoleId,
                         userRoles,
@@ -107,12 +103,11 @@ router.del(
             try {
                 const userId = req.params.id;
                 const schema = req.payload.schema;
-                const deletorRoleId = req.payload.roleId;
-                const userRoles = (
-                    await userService.getUserRoles({ userId }, schema)
-                )
-                    .map((e) => e.dataValues.id)
-                    .filter((e): e is string => !!e);
+                const deletorRoleId = req.payload.roleIds;
+                const userRoles = await userService.getUserRolesIds(
+                    userId,
+                    schema,
+                );
 
                 const canUpdate = HasPermission(
                     deletorRoleId,

@@ -22,12 +22,12 @@ export const authorizeR =
     (AuthorizedFor: Has_Access) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { roleId } = req.payload;
+            const { roleIds } = req.payload;
 
             if (
-                Array.isArray(roleId) &&
-                roleId.length > 0 &&
-                AuthorizedFor.some((e) => roleId.includes(e))
+                Array.isArray(roleIds) &&
+                roleIds.length > 0 &&
+                AuthorizedFor.some((e) => roleIds.includes(e))
             ) {
                 next();
             } else {

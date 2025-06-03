@@ -1,5 +1,6 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
+import { ZRole } from '../role/role.types';
 
 export const ZUser = ZBaseSchema.partial().extend({
     name: z.string().trim().nonempty(),
@@ -20,6 +21,7 @@ export type User = z.infer<typeof ZUser>;
 const ZUserRole = ZBaseSchema.partial().extend({
     userId: z.string().trim().uuid(),
     roleId: z.string().trim().uuid(),
+    Role: ZRole.partial().optional(),
 });
 
 export type UserRole = z.infer<typeof ZUserRole>;

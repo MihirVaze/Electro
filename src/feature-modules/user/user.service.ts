@@ -144,6 +144,20 @@ class UserServices {
         }
     }
 
+    async getUserRolesIds(userId: string, schema: SchemaName) {
+        try {
+            const result = await this.getUserRoles({ userId }, schema);
+            return result.reduce<string[]>((acc, e) => {
+                const id = e.dataValues.roleId;
+                if (id) acc.push(id);
+                return acc;
+            }, []);
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
     async getAllRoles(schema: SchemaName) {
         try {
             const result = await userRepo.getAllUserRole(
