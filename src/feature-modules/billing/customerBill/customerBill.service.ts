@@ -14,6 +14,7 @@ class CustomerBillService {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
+            console.dir(consumptionForTheMonth);
             if (consumptionForTheMonth.count === 0)
                 throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
 

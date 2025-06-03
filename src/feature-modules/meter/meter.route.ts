@@ -4,9 +4,6 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import meterService from './meter.service';
 import {
-    ZFilterMeter,
-    Zmeter,
-    ZUpdateMeter,
     ZValidateCreateMeter,
     ZValidateGetPaginatedMeters,
     ZValidateMeterId,
@@ -66,9 +63,9 @@ router.get(
 router.post(
     '/',
     [
-        upload.single('image'),
+        upload.single('avatar'),
         validate(ZValidateCreateMeter),
-        //validate(Zmeter),
+
         async (req, res, next) => {
             try {
                 if (!req.file) {

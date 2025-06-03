@@ -1,12 +1,13 @@
-import { boolean, z } from 'zod';
+import { z } from 'zod';
+
 import { ZBaseSchema } from '../../utility/base-schema';
 
 export const Zmeter = ZBaseSchema.partial().extend({
     name: z.string().trim().min(1, { message: 'Name cannot be blank' }),
     image: z.string().nonempty(),
-    basePrice: z.number().positive(),
-    pricePerUnit: z.number().positive(),
-    requiredPhotos: z.number().positive(),
+    basePrice: z.coerce.number().positive(),
+    pricePerUnit: z.coerce.number().positive(),
+    requiredPhotos: z.coerce.number().positive(),
 });
 
 export type Meter = z.infer<typeof Zmeter>;
@@ -47,8 +48,8 @@ export const ZValidateMeterId = z.object({
 });
 
 export const ZValidateGetPaginatedMeters = z.object({
-    query: Zmeter.extend({
-        limit: z.number().optional(),
-        page: z.number().optional(),
+    query: ZFilterMeter.extend({
+        limit: z.coerce.number().optional(),
+        page: z.coerce.number().optional(),
     }),
 });
