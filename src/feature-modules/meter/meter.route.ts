@@ -4,9 +4,6 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import meterService from './meter.service';
 import {
-    ZFilterMeter,
-    Zmeter,
-    ZUpdateMeter,
     ZValidateCreateMeter,
     ZValidateGetPaginatedMeters,
     ZValidateMeterId,
