@@ -1,5 +1,13 @@
 import { SchemaName } from '../../utility/umzug-migration';
-import { Op, WhereOptions, fn, col, literal, FindOptions } from 'sequelize';
+import {
+    Op,
+    WhereOptions,
+    fn,
+    col,
+    literal,
+    FindOptions,
+    Sequelize,
+} from 'sequelize';
 import { Grievance } from '../grievance/grievance.type';
 import {
     GrievanceReportOptions,
@@ -9,6 +17,7 @@ import {
 import grievanceService from '../grievance/grievance.service';
 import { ClientBillSchema } from '../billing/clientBill/clientBill.schema';
 import { ClientSchema } from '../client/client.schema';
+import clientBillService from '../billing/clientBill/clientBill.service';
 
 class ReportServices {
     async grievanceReport(
@@ -103,54 +112,49 @@ class ReportServices {
                     throw 'Invalid time period specified';
             }
 
-            const bills = await ClientBillSchema.findAll({
-                where: {
-                    billingDate: {
-                        [Op.gte]: startDate,
-                        [Op.lte]: endDate,
+            const where: WhereOptions<ClientBillSchema> = {
+                isDeleted: false,
+                billingDate: {
+                    [Op.between]: [startDate, endDate],
+                },
+            };
+
+            const options: FindOptions<ClientBillSchema> = {
+                attributes: [
+                    'clientId',
+                    [col('Client.clientName'), 'clientName'],
+                    [fn('SUM', col('total')), 'revenue'],
+                    [
+                        literal(`(
+                                    SUM("total") * 100.0 / (
+                                        SELECT SUM("total")
+                                        FROM "ClientBill"
+                                        WHERE "billingDate" 
+                                        BETWEEN 
+                                        '${startDate.toISOString()}' 
+                                        AND 
+                                        '${endDate.toISOString()}'
+                                    )
+                                )`),
+                        'percentage',
+                    ],
+                ],
+                where,
+                include: [
+                    {
+                        model: ClientSchema,
+                        attributes: [],
                     },
-                },
-                attributes: ['clientId', 'total'],
-                include: {
-                    model: ClientSchema,
-                    attributes: ['clientName'],
-                },
-            });
-
-            const { clientRevenueObj, totalRevenue } = bills.reduce(
-                (acc, bill) => {
-                    const clientId = bill.dataValues.clientId;
-                    const clientName = bill.dataValues.Client?.clientName;
-                    const amount = bill.dataValues.total;
-
-                    if (!clientId || !clientName)
-                        throw 'CLIENT ID OR NAME NOT FOUND';
-
-                    if (!acc.clientRevenueObj[clientName]) {
-                        acc.clientRevenueObj[clientName] = {
-                            clientId,
-                            clientName,
-                            revenue: 0,
-                            percentage: 0,
-                        };
-                    }
-                    acc.clientRevenueObj[clientName].revenue += amount;
-                    const revenue = acc.clientRevenueObj[clientName].revenue;
-                    acc.clientRevenueObj[clientName].percentage +=
-                        (revenue / totalRevenue) * 100;
-                    acc.totalRevenue += amount;
-
-                    return acc;
-                },
-                {
-                    clientRevenueObj: {} as Record<string, RevenueReportEntry>,
-                    totalRevenue: 0,
-                },
+                ],
+                group: ['clientId', 'Client.clientName'],
+                raw: true,
+            };
+            const result = await clientBillService.clientBillingReport(
+                options,
+                'public',
             );
 
-            const report: RevenueReportEntry[] =
-                Object.values(clientRevenueObj);
-            return report;
+            return result.rows;
         } catch (e) {
             console.log(e);
             throw e;
