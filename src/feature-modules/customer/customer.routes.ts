@@ -12,8 +12,6 @@ import {
     ZValidateRegisterCustomerMeter,
     ZValidateUpdateCustomer,
 } from './customer.type';
-import userService from '../user/user.service';
-import { HasPermission } from '../../utility/usersPermissions';
 import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
