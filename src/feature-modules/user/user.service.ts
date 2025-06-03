@@ -28,7 +28,6 @@ class UserServices {
                             'restoredAt',
                             'createdBy',
                             'updatedBy',
-                            'password',
                         ],
                     },
                 },
