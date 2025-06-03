@@ -41,7 +41,7 @@ class CustomerServices {
             const { id } = createdUser.result;
             if (!id) throw CUSTOMER_RESPONSES.CUSTOMER_CREATION_FAILED;
 
-            await customerRepo.create(
+            await customerRepo.createCustomer(
                 {
                     userId: id,
                     cityId,
@@ -62,7 +62,7 @@ class CustomerServices {
 
     async getCustomer(customer: Partial<Customer>, schema: SchemaName) {
         try {
-            const result = await customerRepo.get(
+            const result = await customerRepo.getCustomer(
                 {
                     where: customer,
                     attributes: {
@@ -121,7 +121,7 @@ class CustomerServices {
 
             const offset = (page - 1) * limit;
 
-            const result = await customerRepo.getAll(
+            const result = await customerRepo.getAllCustomers(
                 {
                     where: {
                         isDeleted: false,
@@ -164,7 +164,7 @@ class CustomerServices {
 
     async getCustomerCount(schema: SchemaName) {
         try {
-            const result = await customerRepo.getAll({}, schema);
+            const result = await customerRepo.getAllCustomers({}, schema);
             const countOfCustomer = result.count;
             return countOfCustomer;
         } catch (error) {
@@ -197,7 +197,7 @@ class CustomerServices {
                 await userService.updateUser(updateUser, schema);
             }
 
-            const result = await customerRepo.update(
+            const result = await customerRepo.updateCustomer(
                 restOfCustomer,
                 {
                     where: { userId },
@@ -213,10 +213,12 @@ class CustomerServices {
         }
     }
 
-    async deleteCustomer(customerId: string, schema: SchemaName) {
+    async deleteCustomer(customer: Partial<Customer>, schema: SchemaName) {
         try {
-            const result = await customerRepo.delete(
-                { where: { userId: customerId } },
+            const { userId, deletedBy } = customer;
+            const result = await customerRepo.deleteCustomer(
+                { deletedBy, deletedAt: new Date() },
+                { where: { userId } },
                 schema,
             );
             if (!result) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
@@ -441,7 +443,7 @@ class CustomerServices {
         try {
             const offset = (page - 1) * limit;
 
-            const result = await customerRepo.getAll(
+            const result = await customerRepo.getAllCustomers(
                 {
                     where: { isDeleted: false, ...customerWorker },
                     attributes: {

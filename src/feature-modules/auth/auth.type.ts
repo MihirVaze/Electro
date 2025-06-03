@@ -12,6 +12,7 @@ export const ZCredentials = z.object({
         email: true,
         password: true,
     }),
+    headers: z.object({ schema: z.string().nonempty() }),
 });
 
 export type Credentials = z.infer<typeof Credentials>;
@@ -47,6 +48,6 @@ export type ChangePassWord = z.infer<typeof ChangePassWord>;
 
 export type Payload = {
     id: string;
-    roleId: string[];
+    roleIds: string[];
     schema: SchemaName;
 };

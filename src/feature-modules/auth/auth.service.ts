@@ -3,60 +3,55 @@ import { sign } from 'jsonwebtoken';
 import userService from '../user/user.service';
 import { AUTH_RESPONSES } from './auth.responses';
 import { ChangePassWord, Credentials, Payload } from './auth.type';
-import roleServices from '../role/role.services';
 import {
     compareEncryption,
     hashPassword,
 } from '../../utility/password.generator';
 import clientService from '../client/client.service';
 import { ROLE } from '../role/role.data';
+import { RoleEnum } from '../role/role.types';
 
 class AuthenticationServices {
     async login(credentials: Credentials, schema: SchemaName) {
         try {
+            const { email, password } = credentials;
             const user = await userService.findOne(
                 {
-                    email: credentials.email,
+                    email,
                 },
                 schema,
             );
             if (!user) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
             const isValidUser = await compareEncryption(
                 user.password,
-                credentials.password,
+                password,
             );
             if (!isValidUser) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
 
             const { id } = user;
             if (!id) throw new Error('id not found');
-
-            const EmployeeRoles = await userService.getUserRoles(
-                {
-                    userId: id,
-                },
+            const UserRoles = await userService.getUserRoles(
+                { userId: id },
                 schema,
             );
-            const roleId = EmployeeRoles.map((e) => e.dataValues.roleId).filter(
-                (e): e is string => !!e,
-            );
+            const roleIds: string[] = [];
+            const rolesName: RoleEnum[] = [];
 
-            // THIS GIVES THE ARRAY OF ALL THE VALID ROLES FOR THAT PERTICULAR USER
-            const roles = await Promise.all(
-                roleId.map(
-                    async (e) =>
-                        (await roleServices.getRole({ id: e }, schema)).role,
-                ),
-            );
+            for (const userRole of UserRoles) {
+                if (!userRole.dataValues.Role?.role) throw 'Role Not Found';
+                rolesName.push(userRole.dataValues.Role.role);
+                roleIds.push(userRole.dataValues.roleId);
+            }
 
-            const schemaName = roleId.includes(ROLE.CLIENT_ADMIN)
+            const schemaName = roleIds.includes(ROLE.CLIENT_ADMIN)
                 ? (await clientService.getClient({ userId: id }, schema))
                       .dataValues.schemaName
                 : schema;
 
-            const payload: Payload = { id, roleId, schema: schemaName };
+            const payload: Payload = { id, roleIds, schema: schemaName };
             const token = sign(payload, process.env.JWT_SECRET_KEY);
 
-            return { token, roles };
+            return { token, roles: rolesName };
         } catch (e) {
             throw e;
         }
