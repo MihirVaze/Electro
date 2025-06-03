@@ -22,7 +22,7 @@ router.get(
             try {
                 const userId = req.payload.id;
                 const schema = req.payload.schema;
-                const roleIds = req.payload.roleId;
+                const roleIds = req.payload.roleIds;
                 const { limit, page, ...search } = req.query;
                 const result = await grievanceService.getGrievances(
                     userId,
@@ -80,7 +80,7 @@ router.patch(
             try {
                 const id = req.params.id;
                 const userId = req.payload.id;
-                const roleIds = req.payload.roleId;
+                const roleIds = req.payload.roleIds;
                 const schema = req.payload.schema;
                 const result = await grievanceService.assignOrEscalateGrievance(
                     userId,

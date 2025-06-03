@@ -2,7 +2,10 @@ import { SchemaName } from '../../../utility/umzug-migration';
 import { ConsumptionSchema } from '../../consumption/consumption.schema';
 import customerBillRepo from './customerBill.repo';
 import { CustomerBill } from './customerBill.type';
-import { CustomerSchema } from '../../customer/customer.schema';
+import {
+    CustomerMeterSchema,
+    CustomerSchema,
+} from '../../customer/customer.schema';
 import { CUSTOMER_BILL_RESPONSES } from './customerBill.response';
 import consumptionService from '../../consumption/consumption.service';
 import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
@@ -168,12 +171,19 @@ class CustomerBillService {
                     },
                     include: [
                         {
-                            model: ConsumptionSchema,
-                            include: [
-                                {
-                                    model: CustomerSchema,
-                                },
-                            ],
+                            model: CustomerMeterSchema.schema(schema),
+                            as: 'customerMeter',
+                            attributes: {
+                                exclude: [
+                                    'isDeleted',
+                                    'deletedBy',
+                                    'deletedAt',
+                                    'restoredBy',
+                                    'restoredAt',
+                                    'createdBy',
+                                    'updatedBy',
+                                ],
+                            },
                         },
                     ],
                     limit,

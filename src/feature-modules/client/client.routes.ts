@@ -98,7 +98,7 @@ router.patch(
             try {
                 const userId = req.body.userId || req.payload.id;
                 const result = await clientService.updateClient(
-                    { ...req.body, updatedBy: userId },
+                    { ...req.body, updatedBy: req.payload.id },
                     userId,
                     'public',
                 );
@@ -118,7 +118,7 @@ router.del(
             try {
                 const userId = req.params.id;
                 const result = await clientService.deleteClient(
-                    userId,
+                    { userId, deletedBy: req.payload.id },
                     'public',
                 );
                 res.send(new ResponseHandler(result));
