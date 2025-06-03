@@ -6,9 +6,11 @@ import { ROLE } from '../role/role.data';
 import reportsServices from './report.services';
 import {
     GrievanceReportOptions,
+    TimePeriod,
+    ZERevenueReportOptions,
+    ZGrievanceReportQuery,
     MeterReportOptions,
     WorkerReportOptions,
-    ZGrievanceReportQuery,
     ZMeterReportOptions,
     ZworkerReportOption,
 } from './report.types';
@@ -73,7 +75,25 @@ router.get(
                     schema,
                     parsedQuery,
                 );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
+);
 
+router.get(
+    '/revenue',
+    [
+        validate(ZERevenueReportOptions),
+        async (req, res, next) => {
+            try {
+                const timePeriod: TimePeriod = req.parsedQuery.timePeriod;
+
+                const result =
+                    await reportsServices.electroRevenueReport(timePeriod);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);

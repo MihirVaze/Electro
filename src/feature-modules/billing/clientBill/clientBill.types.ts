@@ -1,5 +1,6 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../../utility/base-schema';
+import { ZClient } from '../../client/client.type';
 
 export const ZClientBill = z.object({
     clientId: z.string().trim().uuid(),
@@ -12,6 +13,7 @@ export const ZClientBill = z.object({
     billingDate: z.date(),
     dueDate: z.date(),
     status: z.enum(['paid', 'unpaid']),
+    Client: ZClient.partial().optional(),
 });
 
 export const ZCreateClientBill = ZClientBill.pick({
@@ -25,6 +27,7 @@ export const ZCreateClientBill = ZClientBill.pick({
     billingDate: true,
     dueDate: true,
     status: true,
+    Client: true,
 }).merge(ZBaseSchema.partial());
 
 export const ZUpdateClientBill = ZCreateClientBill.pick({
