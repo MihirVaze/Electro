@@ -4,7 +4,12 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import { ROLE } from '../role/role.data';
 import reportsServices from './report.services';
-import { GrievanceReportOptions, ZGrievanceReportQuery } from './report.types';
+import {
+    GrievanceReportOptions,
+    TimePeriod,
+    ZERevenueReportOptions,
+    ZGrievanceReportQuery,
+} from './report.types';
 
 const router = new CustomRouter();
 
@@ -28,6 +33,25 @@ router.get(
         },
     ],
     { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
+);
+
+router.get(
+    '/revenue',
+    [
+        validate(ZERevenueReportOptions),
+        async (req, res, next) => {
+            try {
+                const timePeriod: TimePeriod = req.parsedQuery.timePeriod;
+
+                const result =
+                    await reportsServices.electroRevenueReport(timePeriod);
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 export default new Route('/report', router.ExpressRouter);
