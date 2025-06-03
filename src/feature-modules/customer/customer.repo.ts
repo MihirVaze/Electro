@@ -14,7 +14,7 @@ import {
 } from './customer.schema';
 
 class CustomerRepo {
-    public async create(
+    public async createCustomer(
         customer: CreateCustomer,
         options: CreateOptions<CreateCustomer>,
         schema: SchemaName,
@@ -22,15 +22,21 @@ class CustomerRepo {
         return CustomerSchema.schema(schema).create(customer, options);
     }
 
-    public async get(options: FindOptions<Customer>, schema: SchemaName) {
+    public async getCustomer(
+        options: FindOptions<Customer>,
+        schema: SchemaName,
+    ) {
         return CustomerSchema.schema(schema).findOne(options);
     }
 
-    public async getAll(options: FindOptions<Customer>, schema: SchemaName) {
+    public async getAllCustomers(
+        options: FindOptions<Customer>,
+        schema: SchemaName,
+    ) {
         return CustomerSchema.schema(schema).findAndCountAll(options);
     }
 
-    public async update(
+    public async updateCustomer(
         customer: Partial<UpdateCustomer>,
         options: UpdateOptions<CreateCustomer>,
         schema: SchemaName,
@@ -38,12 +44,14 @@ class CustomerRepo {
         return CustomerSchema.schema(schema).update(customer, options);
     }
 
-    public async delete(
+    public async deleteCustomer(
+        customer: Partial<Customer>,
         options: UpdateOptions<CreateCustomer>,
         schema: SchemaName,
     ) {
+        const { deletedAt, deletedBy } = customer;
         return CustomerSchema.schema(schema).update(
-            { isDeleted: true },
+            { deletedAt, deletedBy, isDeleted: true },
             options,
         );
     }
