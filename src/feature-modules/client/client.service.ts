@@ -22,6 +22,7 @@ class ClientServices {
                     phoneNo,
                     email,
                     password: '',
+                    createdBy: client.createdBy,
                 },
                 [{ roleId: ROLE.CLIENT_ADMIN }],
                 schema,
@@ -194,7 +195,10 @@ class ClientServices {
 
                 updateUser.id = userId;
 
-                await userService.updateUser(updateUser, schema);
+                await userService.updateUser(
+                    { ...updateUser, updatedBy: client.updatedBy },
+                    schema,
+                );
             }
 
             const result = await clientRepo.update(
@@ -213,9 +217,13 @@ class ClientServices {
         }
     }
 
-    async deleteClient(userId: string, schema: SchemaName) {
+    async deleteClient(client: Partial<Client>, schema: SchemaName) {
         try {
+            const { userId, deletedBy } = client;
+            if (!userId) throw CLIENT_RESPONSES.CLIENT_DELETION_FAILED;
+
             const deletedClient = await clientRepo.delete(
+                { deletedBy, deletedAt: new Date() },
                 { where: { userId } },
                 schema,
             );
