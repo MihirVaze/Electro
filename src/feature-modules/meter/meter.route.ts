@@ -66,8 +66,8 @@ router.get(
 router.post(
     '/',
     [
+        upload.single('image'),
         validate(ZValidateCreateMeter),
-        upload.single('avatar'),
         //validate(Zmeter),
         async (req, res, next) => {
             try {
@@ -79,7 +79,7 @@ router.post(
                 const body = {
                     ...req.body,
                     image: image,
-                    // createdBy: req.payload.id,
+                    createdBy: req.payload.id,
                 };
                 const result = await meterService.createMeter(body, schema);
                 res.send(new ResponseHandler(result));
