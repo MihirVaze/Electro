@@ -44,30 +44,42 @@ module.exports = {
                     deletedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: 'User',
-                            key: 'id',
+                            model: {
+                                tableName: 'User',
+                                schema: 'public'
+                            },
                         },
+                        key: 'id'
                     },
                     restoredBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: 'User',
-                            key: 'id',
+                            model: {
+                                tableName: 'User',
+                                schema: 'public'
+                            },
                         },
+                        key: 'id'
                     },
                     createdBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: 'User',
-                            key: 'id',
+                            model: {
+                                tableName: 'User',
+                                schema: 'public'
+                            },
                         },
+                        key: 'id'
                     },
                     updatedBy: {
                         type: DataTypes.UUID,
                         references: {
-                            model: 'User',
-                            key: 'id',
+                            model: {
+                                tableName: 'User',
+                                schema: 'public'
+                            },
                         },
+                        key: 'id'
                     },
                     deletedAt: {
                         type: DataTypes.DATE,

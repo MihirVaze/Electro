@@ -4,9 +4,6 @@ import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
 import meterService from './meter.service';
 import {
-    ZFilterMeter,
-    Zmeter,
-    ZUpdateMeter,
     ZValidateCreateMeter,
     ZValidateGetPaginatedMeters,
     ZValidateMeterId,
@@ -66,9 +63,9 @@ router.get(
 router.post(
     '/',
     [
-        validate(ZValidateCreateMeter),
         upload.single('avatar'),
-        //validate(Zmeter),
+        validate(ZValidateCreateMeter),
+
         async (req, res, next) => {
             try {
                 if (!req.file) {
@@ -79,7 +76,7 @@ router.post(
                 const body = {
                     ...req.body,
                     image: image,
-                    // createdBy: req.payload.id,
+                    createdBy: req.payload.id,
                 };
                 const result = await meterService.createMeter(body, schema);
                 res.send(new ResponseHandler(result));

@@ -1,26 +1,26 @@
 export const CONSUMPTION_RESPONSES = {
     BAD_REQUEST: {
         status: 400,
-        message: 'Please Fill All The Neccessary Details',
+        message: 'PLEASE FILL ALL THE NECCESSARY DETAILS',
     },
     CREATION_FAILS: {
         status: 500,
-        message: 'Internal Server Error',
+        message: 'INTERNAL SERVER ERROR',
     },
     CONSUMPTION_CREATED: {
         status: 201,
-        message: 'Consumption Successfully Added',
+        message: 'CONSUMPTION SUCCESSFULLY ADDED',
     },
     CONSUMPTION_NOT_FOUND: {
         status: 404,
-        message: 'Consumption Not Found For Given Id',
+        message: 'CONSUMPTION NOT FOUND FOR GIVEN ID',
     },
     CONSUMPTION_UPDATED: {
         status: 200,
-        message: 'Consumption Updated Of The Client',
+        message: 'CONSUMPTION UPDATED OF THE CLIENT',
     },
     CONSUMPTION_DELETED: {
         status: 200,
-        message: 'Consumption deleted Successfully',
+        message: 'CONSUMPTION DELETED SUCCESSFULLY',
     },
 };

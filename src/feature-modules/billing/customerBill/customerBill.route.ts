@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../utility/response-handler';
 import { validate } from '../../../utility/validate';
 import { ROLE } from '../../role/role.data';
 import customerBillService from './customerBill.service';
-import { ZFindBills, ZUpdateBill } from './customerBill.type';
+import { ZDeleteBill, ZFindBills, ZUpdateBill } from './customerBill.type';
 
 const router = new CustomRouter();
 
@@ -105,6 +105,33 @@ router.patch(
             ROLE.SERVICE_WORKER,
             ROLE.CUSTOMER,
         ],
+    },
+);
+
+router.del(
+    '/:billId',
+    [
+        validate(ZDeleteBill),
+        async (req, res, next) => {
+            try {
+                const { billId } = req.params;
+                const schema = req.payload.schema;
+                const userId = req.body.id || req.payload.id;
+                const body = { deletedBy: userId, ...req.body };
+                const result = await customerBillService.deleteBill(
+                    billId,
+                    body,
+                    schema,
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    {
+        is_protected: true,
+        has_Access: [ROLE.CLIENT_MANAGER, ROLE.CUSTOMER],
     },
 );
 

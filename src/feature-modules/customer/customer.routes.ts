@@ -12,8 +12,6 @@ import {
     ZValidateRegisterCustomerMeter,
     ZValidateUpdateCustomer,
 } from './customer.type';
-import userService from '../user/user.service';
-import { HasPermission } from '../../utility/usersPermissions';
 import { ROLE } from '../role/role.data';
 
 const router = new CustomRouter();
@@ -60,7 +58,7 @@ router.post(
             try {
                 const { client } = req.body;
                 const result = await customerService.addCustomer(
-                    { ...req.body, createdBy: req.payload.id },
+                    req.body,
                     client,
                 );
                 res.send(new ResponseHandler(result));
@@ -175,13 +173,10 @@ router.post(
         validate(ZValidateRegisterCustomerMeter),
         async (req, res, next) => {
             try {
-                console.log(req.body);
-                if (!req.body.userId) {
-                    req.body.userId = req.payload.id;
-                }
+                const userId = req.body.userId || req.payload.id;
                 const schema = req.payload.schema;
                 const result = await customerService.addCustomerMeter(
-                    { ...req.body, createdBy: req.payload.id },
+                    { ...req.body, createdBy: userId },
                     schema,
                 );
                 res.send(new ResponseHandler(result));

@@ -20,7 +20,8 @@ class CustomerServices {
     async addCustomer(customer: RegisterCustomer, schema: SchemaName) {
         const transaction = await sequelize.transaction();
         try {
-            const { name, phoneNo, email, cityId, address } = customer;
+            const { name, phoneNo, email, cityId, address, createdBy } =
+                customer;
 
             const createdUser = await userService.onBoardUser(
                 {
@@ -28,6 +29,7 @@ class CustomerServices {
                     phoneNo,
                     email,
                     password: '',
+                    createdBy,
                 },
                 [
                     {
@@ -41,11 +43,18 @@ class CustomerServices {
             const { id } = createdUser.result;
             if (!id) throw CUSTOMER_RESPONSES.CUSTOMER_CREATION_FAILED;
 
+            if (!createdBy)
+                await userService.updateUser(
+                    { createdBy: createdBy || id },
+                    schema,
+                );
+
             await customerRepo.createCustomer(
                 {
                     userId: id,
                     cityId,
                     address,
+                    createdBy: createdBy || id,
                 },
                 { transaction },
                 schema,
@@ -415,6 +424,7 @@ class CustomerServices {
         }
     }
 
+    //CUSTOMER-WORKER
     async getCustomerWorker(
         customerWorker: Partial<CustomerWorker>,
         schema: SchemaName,

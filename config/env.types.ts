@@ -12,11 +12,11 @@ export const ZEnv = z.object({
 
     JWT_SECRET_KEY: z.string().nonempty(),
 
-    EMAIL_HOST: z.string(),
-    EMAIL_PORT: z.string(),
-    EMAIL_AUTH_USER: z.string(),
-    EMAIL_AUTH_PASS: z.string(),
-    EMAIL_SENDMAIL_FROM: z.string(),
+    // EMAIL_HOST: z.string(),
+    // EMAIL_PORT: z.string(),
+    // EMAIL_AUTH_USER: z.string(),
+    // EMAIL_AUTH_PASS: z.string(),
+    // EMAIL_SENDMAIL_FROM: z.string(),
 });
 
 type Env = z.infer<typeof ZEnv>;

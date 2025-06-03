@@ -118,7 +118,6 @@ class ConsumptionService {
         const today = new Date();
         const currentMonth = today.getMonth();
         const currentYear = today.getFullYear();
-        console.log('...h', schema);
         const startDate = new Date(currentYear, currentMonth - 1, 25);
         const endDate = new Date(currentYear, currentMonth, 24, 23, 59, 59);
 

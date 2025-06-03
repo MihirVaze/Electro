@@ -106,6 +106,7 @@ CustomerBillSchema.init(
 //     foreignKey: 'customerMeterId',
 //     as: 'customerMeter',
 // });
+
 CustomerBillSchema.belongsTo(CustomerMeterSchema, {
     foreignKey: 'customerMeterId',
     as: 'customerMeter',
