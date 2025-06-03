@@ -230,3 +230,14 @@ DistrictSchema.hasMany(CitySchema, {
     sourceKey: 'id',
     as: 'city',
 });
+
+DistrictSchema.belongsTo(StateSchema, {
+    foreignKey: 'stateId',
+    targetKey: 'id',
+    as: 'state',
+});
+CitySchema.belongsTo(DistrictSchema, {
+    foreignKey: 'districtId',
+    targetKey: 'id',
+    as: 'district',
+});
