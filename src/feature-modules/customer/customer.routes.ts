@@ -58,7 +58,7 @@ router.post(
             try {
                 const { client } = req.body;
                 const result = await customerService.addCustomer(
-                    { ...req.body, createdBy: req.payload.id },
+                    req.body,
                     client,
                 );
                 res.send(new ResponseHandler(result));

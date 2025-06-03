@@ -59,6 +59,7 @@ class ClientServices {
             await discountService.createDiscount(
                 {
                     clientId: id,
+                    createdBy: id,
                     type: 'none',
                     value: 0,
                 },
