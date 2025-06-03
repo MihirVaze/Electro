@@ -26,14 +26,17 @@ export const ZGrievanceReportQuery = z.object({ query: GrievanceReportQuery });
 
 export type GrievanceReportOptions = z.infer<typeof GrievanceReportQuery>;
 
-const ERevenueReportOptions = z.object({
-    period: z.enum(['month', 'halfYear', 'year']).optional(),
-    from: z.coerce.date().optional(),
-    to: z.coerce.date().optional(),
-});
+const TimePeriod = z.enum(['month', 'halfYear', 'year']).optional();
 
 export const ZERevenueReportOptions = z.object({
-    query: ERevenueReportOptions,
+    query: z.object({ period: TimePeriod }),
 });
 
-export type ERevenueReportOptions = z.infer<typeof ERevenueReportOptions>;
+export type TimePeriod = z.infer<typeof TimePeriod>;
+
+export type RevenueReportEntry = {
+    clientId: string;
+    clientName: string;
+    revenue: number;
+    percentage: number;
+};

@@ -1,8 +1,14 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { Op, WhereOptions, fn, col, literal, FindOptions } from 'sequelize';
 import { Grievance } from '../grievance/grievance.type';
-import { ERevenueReportOptions, GrievanceReportOptions } from './report.types';
+import {
+    GrievanceReportOptions,
+    RevenueReportEntry,
+    TimePeriod,
+} from './report.types';
 import grievanceService from '../grievance/grievance.service';
+import { ClientBillSchema } from '../billing/clientBill/clientBill.schema';
+import { ClientSchema } from '../client/client.schema';
 
 class ReportServices {
     async grievanceReport(
@@ -62,11 +68,94 @@ class ReportServices {
             );
             return results;
         } catch (e) {
+            console.log(e);
             throw e;
         }
     }
 
-    async electroRevenueReport(options: ERevenueReportOptions) {}
+    async electroRevenueReport(timePeriod: TimePeriod = 'month') {
+        try {
+            const endDate = new Date();
+            let startDate: Date;
+            switch (timePeriod) {
+                case 'month':
+                    startDate = new Date(
+                        endDate.getFullYear(),
+                        endDate.getMonth() - 1,
+                        1,
+                    );
+                    break;
+                case 'halfYear':
+                    startDate = new Date(
+                        endDate.getFullYear(),
+                        endDate.getMonth() - 6,
+                        1,
+                    );
+                    break;
+                case 'year':
+                    startDate = new Date(
+                        endDate.getFullYear() - 1,
+                        endDate.getMonth(),
+                        1,
+                    );
+                    break;
+                default:
+                    throw 'Invalid time period specified';
+            }
+
+            const bills = await ClientBillSchema.findAll({
+                where: {
+                    billingDate: {
+                        [Op.gte]: startDate,
+                        [Op.lte]: endDate,
+                    },
+                },
+                attributes: ['clientId', 'total'],
+                include: {
+                    model: ClientSchema,
+                    attributes: ['clientName'],
+                },
+            });
+
+            const { clientRevenueObj, totalRevenue } = bills.reduce(
+                (acc, bill) => {
+                    const clientId = bill.dataValues.clientId;
+                    const clientName = bill.dataValues.Client?.clientName;
+                    const amount = bill.dataValues.total;
+
+                    if (!clientId || !clientName)
+                        throw 'CLIENT ID OR NAME NOT FOUND';
+
+                    if (!acc.clientRevenueObj[clientName]) {
+                        acc.clientRevenueObj[clientName] = {
+                            clientId,
+                            clientName,
+                            revenue: 0,
+                            percentage: 0,
+                        };
+                    }
+                    acc.clientRevenueObj[clientName].revenue += amount;
+                    const revenue = acc.clientRevenueObj[clientName].revenue;
+                    acc.clientRevenueObj[clientName].percentage +=
+                        (revenue / totalRevenue) * 100;
+                    acc.totalRevenue += amount;
+
+                    return acc;
+                },
+                {
+                    clientRevenueObj: {} as Record<string, RevenueReportEntry>,
+                    totalRevenue: 0,
+                },
+            );
+
+            const report: RevenueReportEntry[] =
+                Object.values(clientRevenueObj);
+            return report;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
 }
 
 export default new ReportServices();
