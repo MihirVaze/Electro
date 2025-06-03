@@ -1,18 +1,13 @@
 import { SchemaName } from '../../../utility/umzug-migration';
-import { ConsumptionSchema } from '../../consumption/consumption.schema';
 import customerBillRepo from './customerBill.repo';
-import { CustomerBill } from './customerBill.type';
-import {
-    CustomerMeterSchema,
-    CustomerSchema,
-} from '../../customer/customer.schema';
+import { BillData, CustomerBill } from './customerBill.type';
+import { CustomerMeterSchema } from '../../customer/customer.schema';
 import { CUSTOMER_BILL_RESPONSES } from './customerBill.response';
 import consumptionService from '../../consumption/consumption.service';
 import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
-import customerService from '../../customer/customer.service';
-import meterService from '../../meter/meter.service';
 import { sendEmail } from '../../../utility/sendmail';
-import userService from '../../user/user.service';
+import { UserSchema } from '../../user/user.schema';
+import { Op } from 'sequelize';
 
 class CustomerBillService {
     async generateCustomerBill(userId: string, schema: SchemaName) {
@@ -23,7 +18,7 @@ class CustomerBillService {
                 throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
 
             const newBillEntries: CustomerBill[] = [];
-            const billData: any[] = [];
+            const billData: BillData[] = [];
 
             for (const consumption of consumptionForTheMonth.rows) {
                 const BASE_PRICE =
@@ -50,9 +45,11 @@ class CustomerBillService {
 
                 newBillEntries.push(bill);
                 billData.push({
-                    email: consumption.dataValues.customerMeter?.user?.email,
-                    meter: consumption.dataValues.customerMeter?.meterName,
-                    customerMeter: consumption.dataValues.customerMeter,
+                    email:
+                        consumption.dataValues.customerMeter?.user?.email ?? '',
+                    meter:
+                        consumption.dataValues.customerMeter?.meterName ?? '',
+                    customerMeter: consumption.dataValues.customerMeter!,
                     unitsUsed: consumption.dataValues.unitsUsed,
                     total,
                     billingDate: new Date(),
@@ -128,10 +125,34 @@ class CustomerBillService {
                     },
                     include: [
                         {
-                            model: ConsumptionSchema,
+                            model: CustomerMeterSchema.schema(schema),
+                            as: 'customerMeter',
+                            attributes: {
+                                exclude: [
+                                    'isDeleted',
+                                    'deletedBy',
+                                    'deletedAt',
+                                    'restoredBy',
+                                    'restoredAt',
+                                    'createdBy',
+                                    'updatedBy',
+                                ],
+                            },
                             include: [
                                 {
-                                    model: CustomerSchema,
+                                    model: UserSchema.schema(schema),
+                                    as: 'user',
+                                    attributes: {
+                                        exclude: [
+                                            'isDeleted',
+                                            'deletedBy',
+                                            'deletedAt',
+                                            'restoredBy',
+                                            'restoredAt',
+                                            'createdBy',
+                                            'updatedBy',
+                                        ],
+                                    },
                                 },
                             ],
                         },
@@ -151,10 +172,38 @@ class CustomerBillService {
     async getAllBills(
         customerBill: Partial<CustomerBill>,
         limit: number,
-        offset: number,
+        page: number,
         schema: SchemaName,
     ) {
         try {
+            let where: any = {};
+
+            let customerWhere: any = {};
+
+            const { startDate, endDate, customer } = customerBill;
+
+            if (customer?.name) {
+                customerWhere.name = { [Op.iLike]: `%${customer?.name}%` };
+            }
+
+            if (customer?.email) {
+                customerWhere.email = { [Op.iLike]: `%${customer?.email}%` };
+            }
+
+            if (startDate && endDate) {
+                where.billingDate = { [Op.between]: [startDate, endDate] };
+            }
+
+            if (startDate) {
+                where.billingDate = { [Op.lte]: [startDate] };
+            }
+
+            if (endDate) {
+                where.billingDate = { [Op.gte]: [endDate] };
+            }
+
+            const offset = (page - 1) * limit;
+
             const result = await customerBillRepo.getAll(
                 {
                     where: customerBill,
@@ -172,6 +221,7 @@ class CustomerBillService {
                     include: [
                         {
                             model: CustomerMeterSchema.schema(schema),
+                            where: customerWhere,
                             as: 'customerMeter',
                             attributes: {
                                 exclude: [
@@ -191,8 +241,7 @@ class CustomerBillService {
                 },
                 schema,
             );
-            if (result.count === 0)
-                throw CUSTOMER_BILL_RESPONSES.BILL_NOT_FOUND;
+            if (!result.count) throw CUSTOMER_BILL_RESPONSES.BILL_NOT_FOUND;
 
             return result;
         } catch (e) {
@@ -221,14 +270,22 @@ class CustomerBillService {
         }
     }
 
-    async deleteBill(billId: string, schema: SchemaName) {
+    async deleteBill(
+        billId: string,
+        customerBill: Partial<CustomerBill>,
+        schema: SchemaName,
+    ) {
         try {
             const result = await customerBillRepo.delete(
                 { where: { id: billId } },
                 schema,
             );
             if (!result[0]) throw CUSTOMER_BILL_RESPONSES.BILL_DELETION_FAILED;
-
+            await customerBillRepo.update(
+                customerBill,
+                { where: { id: billId } },
+                schema,
+            );
             return CUSTOMER_BILL_RESPONSES.BILL_DELETED;
         } catch (e) {
             console.dir(e);

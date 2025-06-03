@@ -57,7 +57,6 @@ class ConsumptionService {
 
     async getOneConsumption(id: string, schema: string) {
         try {
-            console.log('here', id);
             const result = await consumptionRepo.getOneConsumption(
                 { where: { id } },
                 schema,

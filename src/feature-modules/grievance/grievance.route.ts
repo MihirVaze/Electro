@@ -20,7 +20,7 @@ router.get(
         validate(ZFindGrievance),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
+                const userId = req.body.id || req.payload.id;
                 const schema = req.payload.schema;
                 const roleIds = req.payload.roleIds;
                 const { limit, page, ...search } = req.query;
