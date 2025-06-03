@@ -45,3 +45,9 @@ export const ZAssignOrEscalateGrievance = z.object({
         action: true,
     }),
 });
+
+export const ZDeleteGrievance = z.object({
+    params: ZGrievance.pick({
+        id: true,
+    }),
+});
