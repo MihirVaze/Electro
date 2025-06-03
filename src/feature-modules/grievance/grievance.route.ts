@@ -4,6 +4,7 @@ import { validate } from '../../utility/validate';
 import grievanceService from './grievance.service';
 import {
     ZAssignOrEscalateGrievance,
+    ZDeleteGrievance,
     ZFindGrievance,
     ZRaiseGrievance,
 } from './grievance.type';
@@ -21,7 +22,7 @@ router.get(
             try {
                 const userId = req.payload.id;
                 const schema = req.payload.schema;
-                const roleIds = req.payload.roleId;
+                const roleIds = req.payload.roleIds;
                 const { limit, page, ...search } = req.query;
                 const result = await grievanceService.getGrievances(
                     userId,
@@ -55,7 +56,7 @@ router.post(
         validate(ZRaiseGrievance),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
+                const userId = req.body.id || req.payload.id;
                 const schema = req.payload.schema;
                 const result = await grievanceService.raiseGrievance(
                     userId,
@@ -68,7 +69,7 @@ router.post(
             }
         },
     ],
-    { is_protected: true, has_Access: [ROLE.CUSTOMER] },
+    { is_protected: true, has_Access: [ROLE.CUSTOMER, ROLE.SERVICE_WORKER] },
 );
 
 router.patch(
@@ -79,7 +80,7 @@ router.patch(
             try {
                 const id = req.params.id;
                 const userId = req.payload.id;
-                const roleIds = req.payload.roleId;
+                const roleIds = req.payload.roleIds;
                 const schema = req.payload.schema;
                 const result = await grievanceService.assignOrEscalateGrievance(
                     userId,
@@ -104,6 +105,27 @@ router.patch(
             ROLE.SERVICE_WORKER,
         ],
     },
+);
+
+router.del(
+    '/',
+    [
+        validate(ZDeleteGrievance),
+        async (req, res, next) => {
+            try {
+                const id = req.params.id;
+                const schema = req.payload.schema;
+                const result = await grievanceService.DeleteGrievance(
+                    id,
+                    schema,
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [ROLE.CUSTOMER] },
 );
 
 export default new Route('/grievance', router.ExpressRouter);

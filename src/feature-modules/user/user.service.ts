@@ -28,6 +28,7 @@ class UserServices {
                             'restoredAt',
                             'createdBy',
                             'updatedBy',
+                            'password',
                         ],
                     },
                 },
@@ -48,17 +49,7 @@ class UserServices {
             const userRecord = await userRepo.getUser(
                 {
                     where: { id, isDeleted: false },
-                    attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
-                    },
+                    attributes: ['password'],
                 },
                 schema,
             );
@@ -138,6 +129,20 @@ class UserServices {
                 schema,
             );
             return result.rows;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
+    async getUserRolesIds(userId: string, schema: SchemaName) {
+        try {
+            const result = await this.getUserRoles({ userId }, schema);
+            return result.reduce<string[]>((acc, e) => {
+                const id = e.dataValues.roleId;
+                if (id) acc.push(id);
+                return acc;
+            }, []);
         } catch (error) {
             console.dir(error);
             throw error;

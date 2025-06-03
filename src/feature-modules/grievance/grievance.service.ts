@@ -41,6 +41,7 @@ class GrievanceService {
                 grievanceTypeId,
                 comments,
                 location,
+                createdBy: userId,
             },
             schema,
         );
@@ -72,10 +73,7 @@ class GrievanceService {
             } else if (roleIds.includes(ROLE.STATE_MANAGER)) {
                 return await grievanceRepo.getAll(
                     {
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
+                        where,
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -122,10 +120,7 @@ class GrievanceService {
             } else if (roleIds.includes(ROLE.DISTRICT_MANAGER)) {
                 return await grievanceRepo.getAll(
                     {
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
+                        where,
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -165,10 +160,7 @@ class GrievanceService {
             ) {
                 return await grievanceRepo.getAll(
                     {
-                        where: {
-                            isDeleted: false,
-                            ...grievance,
-                        },
+                        where,
                         include: [
                             {
                                 model: CitySchema.schema(schema),
@@ -269,6 +261,20 @@ class GrievanceService {
         try {
             const results = await grievanceRepo.getAll(options, schema);
             return results;
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
+    async DeleteGrievance(id: string, schema: SchemaName) {
+        try {
+            await grievanceRepo.delete(
+                {
+                    where: { id },
+                },
+                schema,
+            );
         } catch (e) {
             console.dir(e);
             throw e;
