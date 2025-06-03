@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { CustomRouter } from '../../routes/custom.router';
 import { validate } from '../../utility/validate';
-import { uiData, ZValidateClientUI, ZvalidatePatch } from './clientUIData.type';
+import { ZValidateClientUI, ZvalidatePatch } from './clientUIData.type';
 import clientUIService from './clientUI.service';
 import { ResponseHandler } from '../../utility/response-handler';
 import { Route } from '../../routes/routes.types';
