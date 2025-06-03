@@ -142,11 +142,13 @@ class CustomerRepo {
     }
 
     public async deleteCustomerMeter(
+        customerMeter: Partial<CustomerMeter>,
         options: UpdateOptions<CustomerMeter>,
         schema: SchemaName,
     ) {
+        const { deletedAt, deletedBy } = customerMeter;
         return CustomerMeterSchema.schema(schema).update(
-            { isDeleted: true },
+            { deletedAt, deletedBy, isDeleted: true },
             options,
         );
     }

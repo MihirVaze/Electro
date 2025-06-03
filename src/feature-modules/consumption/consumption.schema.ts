@@ -50,21 +50,30 @@ ConsumptionSchema.init(
         restoredBy: {
             type: DataTypes.UUID,
             references: {
-                model: 'User',
+                model: {
+                    tableName: 'User',
+                    schema: 'public',
+                },
                 key: 'id',
             },
         },
         createdBy: {
             type: DataTypes.UUID,
             references: {
-                model: 'User',
+                model: {
+                    tableName: 'User',
+                    schema: 'public',
+                },
                 key: 'id',
             },
         },
         updatedBy: {
             type: DataTypes.UUID,
             references: {
-                model: 'User',
+                model: {
+                    tableName: 'User',
+                    schema: 'public',
+                },
                 key: 'id',
             },
         },
