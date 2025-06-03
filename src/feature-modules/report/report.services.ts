@@ -8,7 +8,6 @@ import {
 } from './report.types';
 import grievanceService from '../grievance/grievance.service';
 import customerRepo from '../customer/customer.repo';
-import { Meter } from '../meter/meter.type';
 import { CustomerMeter } from '../customer/customer.type';
 import { MeterSchema } from '../meter/meter.schema';
 import { Worker } from '../worker/worker.type';
