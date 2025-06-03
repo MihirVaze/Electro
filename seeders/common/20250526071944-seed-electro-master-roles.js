@@ -41,7 +41,7 @@ module.exports = {
                     {
                         id: 'ad769c24-0da3-40cf-b7e9-ea85e0123878',
                         role: 'customer',
-                    }, 
+                    },
                     {
                         id: '56ec84bd-829a-4e61-b4bf-92a789d12a94',
                         role: 'service_worker',

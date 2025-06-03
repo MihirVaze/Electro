@@ -29,3 +29,30 @@ export const uiData = ZClientUIData.pick({
 });
 
 export type UIData = z.infer<typeof uiData>;
+
+export const Zupdate = z.object({
+    baseColor: z
+        .string()
+        .trim()
+        .length(7, 'enter a valid hexadecimal colorcode')
+        .optional(),
+    accentColor: z
+        .string()
+        .trim()
+        .length(7, 'enter a valid hexadecimal colorcode')
+        .optional(),
+    fontColor: z.string().trim().nonempty().optional(),
+    baseFont: z.string().trim().url('enter a valid font URL').optional(),
+    accentFont: z.string().trim().url('enter a valid font URL').optional(),
+    logo: z.string().trim().optional(),
+});
+
+export const ZValidateClientUI = z.object({
+    body: uiData,
+    params: ZBaseSchema.pick({ id: true }),
+});
+
+export const ZvalidatePatch = z.object({
+    body: Zupdate,
+    params: ZBaseSchema.pick({ id: true }),
+});

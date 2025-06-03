@@ -1,23 +1,22 @@
 import { SchemaName } from '../../utility/umzug-migration';
-import {
-    Op,
-    WhereOptions,
-    fn,
-    col,
-    literal,
-    FindOptions,
-    Sequelize,
-} from 'sequelize';
+import { Op, WhereOptions, fn, col, literal, FindOptions } from 'sequelize';
 import { Grievance } from '../grievance/grievance.type';
 import {
     GrievanceReportOptions,
-    RevenueReportEntry,
+    MeterReportOptions,
     TimePeriod,
+    WorkerReportOptions,
 } from './report.types';
 import grievanceService from '../grievance/grievance.service';
-import { ClientBillSchema } from '../billing/clientBill/clientBill.schema';
+import { CustomerMeter } from '../customer/customer.type';
+import { MeterSchema } from '../meter/meter.schema';
+import customerRepo from '../customer/customer.repo';
+import { CitySchema } from '../location/location.schema';
+import workerRepo from '../worker/worker.repo';
 import { ClientSchema } from '../client/client.schema';
 import clientBillService from '../billing/clientBill/clientBill.service';
+import { CreateClientBill } from '../billing/clientBill/clientBill.types';
+import { Worker } from '../worker/worker.type';
 
 class ReportServices {
     async grievanceReport(
@@ -68,6 +67,7 @@ class ReportServices {
                     [literal(`"periodLabel"`), 'ASC'],
                     [literal('count'), 'DESC'],
                 ],
+
                 raw: true,
             };
 
@@ -80,6 +80,101 @@ class ReportServices {
             console.log(e);
             throw e;
         }
+    }
+
+    async meterUsageReport(
+        schema: SchemaName,
+        options: MeterReportOptions = {
+            limit: 10,
+            page: 1,
+        },
+    ) {
+        const where: WhereOptions<CustomerMeter> = {
+            isDeleted: false,
+        };
+
+        if (options.meterIds && options.meterIds.length > 0) {
+            where.meterId = {
+                [Op.in]: options.meterIds,
+            };
+        }
+        const limit = options.limit;
+        const offset = (options.page - 1) * options.limit;
+
+        const findOptions: FindOptions<CustomerMeter> = {
+            attributes: ['meterId', [fn('COUNT', col('id')), 'usageCount']],
+            where,
+            include: [
+                {
+                    model: MeterSchema.schema(schema),
+                    attributes: ['name', 'pricePerUnit'],
+                },
+            ],
+            group: ['meterId'],
+            raw: true,
+            limit,
+            offset,
+        };
+
+        if (options.sortBy === 'usageCountAsc') {
+            findOptions.order = [[fn('COUNT', col('id')), 'ASC']];
+        } else if (options.sortBy === 'usageCountDesc') {
+            findOptions.order = [[fn('COUNT', col('id')), 'DESC']];
+        }
+
+        const result = await customerRepo.getAllCustomerMeter(
+            findOptions,
+            schema,
+        );
+        return result;
+    }
+
+    async workerReport(
+        schema: SchemaName,
+        options: WorkerReportOptions = {
+            limit: 10,
+            page: 1,
+        },
+    ) {
+        const where: WhereOptions<Worker> = {
+            isDeleted: false,
+        };
+
+        if (options.cityIds && options.cityIds.length > 0) {
+            where.cityId = {
+                [Op.in]: options.cityIds,
+            };
+        }
+
+        const limit = options.limit;
+        const offset = (options.page - 1) * options.limit;
+
+        const findOptions: FindOptions<Worker> = {
+            attributes: [
+                [fn('COUNT', col('Worker.id')), 'workerCount'],
+                [col('City.name'), 'cityName'],
+            ],
+            where,
+            include: [
+                {
+                    model: CitySchema.schema(schema),
+                    attributes: ['name'],
+                },
+            ],
+            group: ['City.id'],
+            raw: true,
+            limit,
+            offset,
+        };
+
+        if (options.sortBy === 'workerCountAsc') {
+            findOptions.order = [[fn('COUNT', col('Worker.id')), 'ASC']];
+        } else if (options.sortBy === 'workerCountDesc') {
+            findOptions.order = [[fn('COUNT', col('Worker.id')), 'DESC']];
+        }
+
+        const result = await workerRepo.getAll(findOptions, schema);
+        return result;
     }
 
     async electroRevenueReport(timePeriod: TimePeriod = 'month') {
@@ -112,14 +207,14 @@ class ReportServices {
                     throw 'Invalid time period specified';
             }
 
-            const where: WhereOptions<ClientBillSchema> = {
+            const where: WhereOptions<CreateClientBill> = {
                 isDeleted: false,
                 billingDate: {
                     [Op.between]: [startDate, endDate],
                 },
             };
 
-            const options: FindOptions<ClientBillSchema> = {
+            const options: FindOptions<CreateClientBill> = {
                 attributes: [
                     'clientId',
                     [col('Client.clientName'), 'clientName'],

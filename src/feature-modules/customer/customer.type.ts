@@ -54,7 +54,7 @@ export const ZUpdateCustomer = ZCustomer.pick({
     phoneNo: true,
 });
 export const ZValidateUpdateCustomer = z.object({
-    body: ZUpdateCustomer,
+    body: ZUpdateCustomer.partial(),
 });
 
 export const ZCustomerMeter = z

@@ -9,6 +9,10 @@ import {
     TimePeriod,
     ZERevenueReportOptions,
     ZGrievanceReportQuery,
+    MeterReportOptions,
+    WorkerReportOptions,
+    ZMeterReportOptions,
+    ZworkerReportOption,
 } from './report.types';
 
 const router = new CustomRouter();
@@ -33,6 +37,51 @@ router.get(
         },
     ],
     { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
+);
+
+router.get(
+    '/meter',
+    [
+        validate(ZMeterReportOptions),
+        async (req, res, next) => {
+            try {
+                const schema = req.payload.schema;
+                const parsedQuery: MeterReportOptions = req.parsedQuery;
+
+                const result = await reportsServices.meterUsageReport(
+                    schema,
+                    parsedQuery,
+                );
+
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [ROLE.CLIENT_ADMIN] },
+);
+
+router.get(
+    '/worker',
+    [
+        validate(ZworkerReportOption),
+        async (req, res, next) => {
+            try {
+                const schema = req.payload.schema;
+                const parsedQuery: WorkerReportOptions = req.parsedQuery;
+
+                const result = await reportsServices.workerReport(
+                    schema,
+                    parsedQuery,
+                );
+                res.send(new ResponseHandler(result));
+            } catch (e) {
+                next(e);
+            }
+        },
+    ],
+    { is_protected: true, has_Access: [ROLE.SUPER_ADMIN] },
 );
 
 router.get(

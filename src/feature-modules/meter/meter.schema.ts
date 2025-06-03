@@ -74,6 +74,7 @@ MeterSchema.init(
                     tableName: 'User',
                     schema: 'public',
                 },
+
                 key: 'id',
             },
         },

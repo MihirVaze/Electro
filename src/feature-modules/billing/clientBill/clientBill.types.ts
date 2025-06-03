@@ -31,7 +31,6 @@ export const ZCreateClientBill = ZClientBill.pick({
 }).merge(ZBaseSchema.partial());
 
 export const ZUpdateClientBill = ZCreateClientBill.pick({
-    id: true,
     basePrice: true,
     discountValue: true,
     total: true,
@@ -52,6 +51,9 @@ export const ZFindClientBill = z.object({
 });
 
 export const ZValidateUpdateClientBill = z.object({
+    params: z.object({
+        id: z.string().trim().uuid(),
+    }),
     body: ZUpdateClientBill,
 });
 

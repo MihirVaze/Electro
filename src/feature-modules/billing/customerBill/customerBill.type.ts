@@ -30,6 +30,9 @@ export const ZFindBills = z.object({
 });
 
 export const ZUpdateBill = z.object({
+    params: z.object({
+        billId: z.string().trim().uuid(),
+    }),
     body: ZCustomerBill.pick({
         status: true,
     }),
