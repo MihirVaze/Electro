@@ -28,6 +28,7 @@ class UserServices {
                             'restoredAt',
                             'createdBy',
                             'updatedBy',
+                            'password',
                         ],
                     },
                 },
@@ -48,17 +49,7 @@ class UserServices {
             const userRecord = await userRepo.getUser(
                 {
                     where: { id, isDeleted: false },
-                    attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
-                    },
+                    attributes: ['password'],
                 },
                 schema,
             );

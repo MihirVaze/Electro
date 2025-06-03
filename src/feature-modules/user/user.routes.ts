@@ -55,8 +55,7 @@ router.patch(
         validate(ZEditUser),
         async (req, res, next) => {
             try {
-                const schema = req.payload.schema;
-                const editorRoleId = req.payload.roleIds;
+                const { schema, roleIds: editorRoleId } = req.payload;
                 const user: User = req.body;
 
                 // if we are taking id from body that means someone else is editing the user so we need to know if they have permition
@@ -102,8 +101,7 @@ router.del(
         async (req, res, next) => {
             try {
                 const userId = req.params.id;
-                const schema = req.payload.schema;
-                const deletorRoleId = req.payload.roleIds;
+                const { schema, roleIds: deletorRoleId } = req.payload;
                 const userRoles = await userService.getUserRolesIds(
                     userId,
                     schema,
