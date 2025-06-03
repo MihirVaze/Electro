@@ -36,9 +36,7 @@ class CustomerBillService {
                     consumptionId: consumption.dataValues.id,
                     total,
                     billingDate: new Date(),
-                    dueDate: new Date(
-                        new Date().setDate(new Date().getDate() + 15),
-                    ),
+                    dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
                     status: 'unpaid',
                     createdBy: userId,
                 };
@@ -53,9 +51,7 @@ class CustomerBillService {
                     unitsUsed: consumption.dataValues.unitsUsed,
                     total,
                     billingDate: new Date(),
-                    dueDate: new Date(
-                        new Date().setDate(new Date().getDate() + 15),
-                    ),
+                    dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
                 });
             }
 
@@ -144,6 +140,7 @@ class CustomerBillService {
                                     as: 'user',
                                     attributes: {
                                         exclude: [
+                                            'password',
                                             'isDeleted',
                                             'deletedBy',
                                             'deletedAt',
