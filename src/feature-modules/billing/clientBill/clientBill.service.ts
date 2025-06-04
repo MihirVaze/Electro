@@ -8,7 +8,6 @@ import clientBillRepo from './clientBill.repo';
 import { CLIENT_BILL_RESPONSES } from './clientBill.responses';
 import { ClientBill, FindClientBill } from './clientBill.types';
 import { ClientBillSchema } from './clientBill.schema';
-import { ClientSchema } from '../../client/client.schema';
 
 class ClientBillService {
     async generateClientBill() {
@@ -135,29 +134,6 @@ class ClientBillService {
     ) {
         try {
             const result = await clientBillRepo.getAll(options, schema);
-            return result;
-        } catch (error) {
-            console.dir(error);
-            throw error;
-        }
-    }
-
-    async findAllUnpaidClientBills() {
-        try {
-            const schema = 'public';
-            const result = await clientBillRepo.getAll(
-                {
-                    where: {
-                        status: 'unpaid',
-                    },
-                    include: [
-                        {
-                            model: ClientSchema,
-                        },
-                    ],
-                },
-                schema,
-            );
             return result;
         } catch (error) {
             console.dir(error);
