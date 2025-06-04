@@ -180,8 +180,14 @@ UserSchema.hasMany(DistrictUserSchema, {
     as: 'districtUser',
 });
 
-DistrictSchema.hasMany(DistrictUserSchema, { foreignKey: 'districtId' });
-DistrictUserSchema.belongsTo(DistrictSchema, { foreignKey: 'districtId' });
+DistrictSchema.hasMany(DistrictUserSchema, {
+    as: 'districtUser',
+    foreignKey: 'districtId',
+});
+DistrictUserSchema.belongsTo(DistrictSchema, {
+    as: 'district',
+    foreignKey: 'districtId',
+});
 
 export class CityUserSchema extends Model<CityUser, CityUser> {}
 

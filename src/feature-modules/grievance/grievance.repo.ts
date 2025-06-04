@@ -24,9 +24,13 @@ class GrievanceRepo {
         return GrievanceSchema.schema(schema).update(grievanceType, options);
     }
 
-    public async delete(options: UpdateOptions<Grievance>, schema: SchemaName) {
+    public async delete(
+        userId: string,
+        options: UpdateOptions<Grievance>,
+        schema: SchemaName,
+    ) {
         return GrievanceSchema.schema(schema).update(
-            { isDeleted: true },
+            { isDeleted: true, deletedBy: userId },
             options,
         );
     }

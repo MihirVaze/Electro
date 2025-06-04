@@ -1,10 +1,10 @@
 import customerRepo from '../customer/customer.repo';
 import { CUSTOMER_RESPONSES } from '../customer/customer.responses';
 import { GRIEVANCE_RESPONSES } from './grievance.responses';
-import { Grievance } from './grievance.type';
+import { GetGrievance, Grievance } from './grievance.type';
 import grievanceRepo from './grievance.repo';
 import { SchemaName } from '../../utility/umzug-migration';
-import { FindOptions, WhereOptions } from 'sequelize';
+import { FindOptions, Op, WhereOptions } from 'sequelize';
 import {
     CitySchema,
     DistrictSchema,
@@ -16,6 +16,10 @@ import {
     StateUserSchema,
 } from '../userLocation/userLocation.schema';
 import { ROLE } from '../role/role.data';
+import userLocationRepo from '../userLocation/userLocation.repo';
+import { Payload } from '../auth/auth.type';
+import { City, District, State } from '../location/location.type';
+import userLocationService from '../userLocation/userLocation.service';
 
 class GrievanceService {
     async raiseGrievance(
@@ -52,95 +56,40 @@ class GrievanceService {
         return GRIEVANCE_RESPONSES.GRIEVANCE_CREATED;
     }
 
-    async getGrievances(
+    async searchStateGrievances(
         userId: string,
-        roleIds: string[],
+        stateWhere: WhereOptions<State>,
         limit: number,
-        page: number,
-        grievance: Partial<Grievance>,
+        offset: number,
         schema: SchemaName,
     ) {
-        try {
-            const offset = (page - 1) * limit;
-
-            const where: WhereOptions<Grievance> = {
-                isDeleted: false,
-                ...grievance,
-            };
-
-            if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
-                return await grievanceRepo.getAll(
-                    { where, limit, offset },
-                    schema,
-                );
-            } else if (roleIds.includes(ROLE.STATE_MANAGER)) {
-                return await grievanceRepo.getAll(
+        return await grievanceRepo.getAll(
+            {
+                where: { isDeleted: false },
+                include: [
                     {
-                        where,
+                        model: CitySchema.schema(schema),
+                        as: 'city',
+                        required: true,
+                        where: { isDeleted: false },
                         include: [
                             {
-                                model: CitySchema.schema(schema),
-                                as: 'city',
+                                model: DistrictSchema.schema(schema),
+                                as: 'district',
                                 required: true,
                                 where: { isDeleted: false },
                                 include: [
                                     {
-                                        model: DistrictSchema.schema(schema),
-                                        as: 'district',
+                                        model: StateSchema.schema(schema),
+                                        as: 'state',
                                         required: true,
-                                        where: { isDeleted: false },
+                                        where: stateWhere,
                                         include: [
                                             {
-                                                model: StateSchema.schema(
+                                                model: StateUserSchema.schema(
                                                     schema,
                                                 ),
-                                                as: 'state',
-                                                required: true,
-                                                include: [
-                                                    {
-                                                        model: StateUserSchema.schema(
-                                                            schema,
-                                                        ),
-                                                        as: 'stateUser',
-                                                        required: true,
-                                                        where: {
-                                                            userId: userId,
-                                                            isDeleted: false,
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                        limit,
-                        offset,
-                    },
-                    schema,
-                );
-            } else if (roleIds.includes(ROLE.DISTRICT_MANAGER)) {
-                return await grievanceRepo.getAll(
-                    {
-                        where,
-                        include: [
-                            {
-                                model: CitySchema.schema(schema),
-                                as: 'city',
-                                where: { isDeleted: false },
-                                include: [
-                                    {
-                                        model: DistrictSchema.schema(schema),
-                                        as: 'district',
-                                        required: true,
-                                        where: { isDeleted: false },
-                                        include: [
-                                            {
-                                                model: DistrictUserSchema.schema(
-                                                    schema,
-                                                ),
-                                                as: 'districtUser',
+                                                as: 'stateUser',
                                                 required: true,
                                                 where: {
                                                     userId: userId,
@@ -152,30 +101,42 @@ class GrievanceService {
                                 ],
                             },
                         ],
-                        limit,
-                        offset,
                     },
-                    schema,
-                );
-            } else if (
-                roleIds.includes(ROLE.CITY_MANAGER) ||
-                roleIds.includes(ROLE.SERVICE_WORKER)
-            ) {
-                return await grievanceRepo.getAll(
+                ],
+                limit,
+                offset,
+            },
+            schema,
+        );
+    }
+
+    async searchDistrictGrievances(
+        userId: string,
+        districtWhere: WhereOptions<District>,
+        limit: number,
+        offset: number,
+        schema: SchemaName,
+    ) {
+        return await grievanceRepo.getAll(
+            {
+                where: { isDeleted: false },
+                include: [
                     {
-                        where,
+                        model: CitySchema.schema(schema),
+                        as: 'city',
+                        where: { isDeleted: false },
                         include: [
                             {
-                                model: CitySchema.schema(schema),
-                                as: 'city',
+                                model: DistrictSchema.schema(schema),
+                                as: 'district',
                                 required: true,
-                                where: {
-                                    isDeleted: false,
-                                },
+                                where: districtWhere,
                                 include: [
                                     {
-                                        model: CityUserSchema.schema(schema),
-                                        as: 'cityUser',
+                                        model: DistrictUserSchema.schema(
+                                            schema,
+                                        ),
+                                        as: 'districtUser',
                                         required: true,
                                         where: {
                                             userId: userId,
@@ -185,11 +146,165 @@ class GrievanceService {
                                 ],
                             },
                         ],
+                    },
+                ],
+                limit,
+                offset,
+            },
+            schema,
+        );
+    }
+
+    async searchCityGrievances(
+        userId: string,
+        cityWhere: WhereOptions<City>,
+        limit: number,
+        offset: number,
+        schema: SchemaName,
+    ) {
+        return await grievanceRepo.getAll(
+            {
+                where: { isDeleted: false },
+                include: [
+                    {
+                        model: CitySchema.schema(schema),
+                        as: 'city',
+                        required: true,
+                        where: cityWhere,
+                        include: [
+                            {
+                                model: CityUserSchema.schema(schema),
+                                as: 'cityUser',
+                                required: true,
+                                where: {
+                                    userId: userId,
+                                    isDeleted: false,
+                                },
+                            },
+                        ],
+                    },
+                ],
+                limit,
+                offset,
+            },
+            schema,
+        );
+    }
+
+    async getGrievances(payload: Payload, options: GetGrievance) {
+        try {
+            const { schema, id: userId, roleIds } = payload;
+            const {
+                limit,
+                page,
+                locationType: GetLocType,
+                searchTerm,
+            } = options;
+
+            const offset = (page - 1) * limit;
+
+            let stateWhere: WhereOptions<State> = { isDeleted: false };
+            let districtWhere: WhereOptions<District> = { isDeleted: false };
+            let cityWhere: WhereOptions<City> = { isDeleted: false };
+
+            switch (GetLocType) {
+                case 'state':
+                    if (
+                        roleIds.some((e) =>
+                            [ROLE.CLIENT_ADMIN, ROLE.STATE_MANAGER].includes(e),
+                        )
+                    ) {
+                        stateWhere.id = {
+                            [Op.in]:
+                                await userLocationService.GetUserLocationIds(
+                                    schema,
+                                    userId,
+                                    'state',
+                                    GetLocType,
+                                ),
+                        };
+                        if (searchTerm)
+                            stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
+                    } else throw "CAN'T SEARCH BY STATE";
+
+                    return await this.searchStateGrievances(
+                        userId,
+                        stateWhere,
                         limit,
                         offset,
-                    },
-                    schema,
-                );
+                        schema,
+                    );
+
+                case 'district':
+                    if (
+                        roleIds.some((e) =>
+                            [
+                                ROLE.CLIENT_ADMIN,
+                                ROLE.STATE_MANAGER,
+                                ROLE.DISTRICT_MANAGER,
+                            ].includes(e),
+                        )
+                    ) {
+                        districtWhere.id = {
+                            [Op.in]:
+                                await userLocationService.GetUserLocationIds(
+                                    schema,
+                                    userId,
+                                    'district',
+                                    GetLocType,
+                                ),
+                        };
+                        if (searchTerm)
+                            districtWhere.name = {
+                                [Op.iLike]: `%${searchTerm}%`,
+                            };
+                    } else throw "CAN'T SEARCH BY DISTRICT";
+
+                    return await this.searchDistrictGrievances(
+                        userId,
+                        districtWhere,
+                        limit,
+                        offset,
+                        schema,
+                    );
+
+                case 'city':
+                    if (
+                        roleIds.some((e) =>
+                            [
+                                ROLE.CLIENT_ADMIN,
+                                ROLE.STATE_MANAGER,
+                                ROLE.DISTRICT_MANAGER,
+                                ROLE.CITY_MANAGER,
+                                ROLE.SERVICE_WORKER,
+                            ].includes(e),
+                        )
+                    ) {
+                        const cityIds =
+                            await userLocationService.GetUserLocationIds(
+                                schema,
+                                userId,
+                                'city',
+                                GetLocType,
+                            );
+                        console.log(cityIds);
+                        cityWhere.id = {
+                            [Op.in]: cityIds,
+                        };
+                        if (searchTerm)
+                            cityWhere.name = { [Op.iLike]: `%${searchTerm}%` };
+                    } else throw "CAN'T SEARCH BY CITY";
+
+                    return await this.searchCityGrievances(
+                        userId,
+                        cityWhere,
+                        limit,
+                        offset,
+                        schema,
+                    );
+
+                default:
+                    throw 'INVALID LOCATION TYPE';
             }
         } catch (e) {
             console.dir(e);
@@ -212,6 +327,7 @@ class GrievanceService {
                 {
                     assignedTo: userId,
                     status: 'in-progress',
+                    updatedBy: userId,
                 },
                 { where: { id } },
                 schema,
@@ -238,6 +354,7 @@ class GrievanceService {
                 {
                     escalatedTo: escalateTo,
                     status: 'pending',
+                    updatedBy: userId,
                 },
                 { where: { id } },
                 schema,
@@ -251,6 +368,7 @@ class GrievanceService {
             const resolved = await grievanceRepo.update(
                 {
                     status: 'resolved',
+                    updatedBy: userId,
                 },
                 { where: { id } },
                 schema,
@@ -270,9 +388,10 @@ class GrievanceService {
         }
     }
 
-    async DeleteGrievance(id: string, schema: SchemaName) {
+    async DeleteGrievance(userId: string, id: string, schema: SchemaName) {
         try {
             await grievanceRepo.delete(
+                userId,
                 {
                     where: { id },
                 },

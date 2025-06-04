@@ -1,9 +1,11 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
+import { ZState } from '../location/location.type';
 
 export const ZStateUser = ZBaseSchema.partial().extend({
     userId: z.string().trim().uuid(),
     stateId: z.string().trim().uuid(),
+    state: ZState.partial().optional(),
 });
 
 export type StateUser = z.infer<typeof ZStateUser>;
@@ -22,4 +24,6 @@ export const ZCityUser = ZBaseSchema.partial().extend({
 
 export type CityUser = z.infer<typeof ZCityUser>;
 
-export type LocationType = 'city' | 'state' | 'district';
+export const ZLocationType = z.enum(['city', 'district', 'state']);
+
+export type LocationType = z.infer<typeof ZLocationType>;

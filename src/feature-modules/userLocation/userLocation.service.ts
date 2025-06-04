@@ -416,6 +416,158 @@ class UserLocationService {
             throw error;
         }
     }
+
+    async StateToCity(userId: string, schema: SchemaName) {
+        const result = await userLocationRepo.getAllUserState(
+            {
+                where: { userId, isDeleted: false },
+                attributes: [],
+                include: [
+                    {
+                        model: StateSchema,
+                        as: 'state',
+                        attributes: [],
+                        include: [
+                            {
+                                model: DistrictSchema,
+                                as: 'districts',
+                                attributes: [],
+                                include: [
+                                    {
+                                        model: CitySchema,
+                                        as: 'cities',
+                                        attributes: ['id'],
+                                        where: { isDeleted: false },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            schema,
+        );
+        return result.rows.reduce((acc: string[], e: any) => {
+            const id = e?.dataValues?.state?.district?.city?.id;
+            if (id) acc.push(id);
+            return acc;
+        }, []);
+    }
+
+    async StateToDistrict(userId: string, schema: SchemaName) {
+        const result = await userLocationRepo.getAllUserState(
+            {
+                where: { userId, isDeleted: false },
+                attributes: [],
+                include: [
+                    {
+                        model: StateSchema,
+                        as: 'state',
+                        attributes: [],
+                        include: [
+                            {
+                                model: DistrictSchema,
+                                as: 'districts',
+                                attributes: ['id'],
+                                where: { isDeleted: false },
+                            },
+                        ],
+                    },
+                ],
+            },
+            schema,
+        );
+        return result.rows.reduce((acc: string[], e: any) => {
+            const id = e?.dataValues?.state?.district?.id;
+            if (id) acc.push(id);
+            return acc;
+        }, []);
+    }
+
+    async DistrictToCity(userId: string, schema: SchemaName) {
+        const result = await userLocationRepo.getAllUserDistrict(
+            {
+                where: { userId, isDeleted: false },
+                attributes: [],
+                include: [
+                    {
+                        model: DistrictSchema,
+                        as: 'districts',
+                        attributes: ['id'],
+                        where: { isDeleted: false },
+                        include: [
+                            {
+                                model: CitySchema,
+                                as: 'cities',
+                                attributes: ['id'],
+                                where: { isDeleted: false },
+                            },
+                        ],
+                    },
+                ],
+            },
+            schema,
+        );
+        return result.rows.reduce((acc: string[], e: any) => {
+            const id = e?.dataValues?.state?.district?.id;
+            if (id) acc.push(id);
+            return acc;
+        }, []);
+    }
+
+    // Get All Location IDS
+    async GetUserLocationIds(
+        schema: SchemaName,
+        userId: string,
+        locationType: LocationType,
+        returnLocatinType: LocationType,
+    ) {
+        try {
+            let result: string[] = [];
+            switch (locationType) {
+                case 'state':
+                    if (returnLocatinType === 'city')
+                        return await this.StateToCity(userId, schema);
+                    else if (returnLocatinType === 'district')
+                        return await this.StateToDistrict(userId, schema);
+                    else if (returnLocatinType === 'state') {
+                        const result = await this.getAllUserState(
+                            { userId, isDeleted: false },
+                            schema,
+                        );
+                        return result.map((e) => e.dataValues.stateId);
+                    }
+                    break;
+
+                case 'district':
+                    if (returnLocatinType === 'city')
+                        return await this.DistrictToCity(userId, schema);
+                    else if (returnLocatinType === 'district') {
+                        const result = await this.getAllUserDistrict(
+                            { userId, isDeleted: false },
+                            schema,
+                        );
+                        return result.map((e) => e.dataValues.districtId);
+                    }
+
+                    break;
+
+                case 'city':
+                    if (returnLocatinType === 'city') {
+                        const result = await this.getAllUserCity(
+                            { userId, isDeleted: false },
+                            schema,
+                        );
+                        return result.map((e) => e.dataValues.cityId);
+                    }
+                    break;
+            }
+            return result;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 }
 
 export default new UserLocationService();
