@@ -53,7 +53,8 @@ export const ZDeleteBill = z.object({
 
 export const ZBillData = z.object({
     email: z.string(),
-    customerMeter: ZCustomerMeter,
+    name: z.string(),
+    customerMeter: z.string(),
     unitsUsed: z.coerce.number().positive(),
     meter: z.string(),
     total: z.coerce.number(),
