@@ -30,13 +30,11 @@ export const ZFindDiscount = z.object({
 
 export type FindDiscount = z.infer<typeof ZFindDiscount>;
 
-export const ZCreateDiscount = z.object({
-    body: ZDiscount.pick({
-        minValue: true,
-        maxValue: true,
-        value: true,
-    }),
-});
+export const ZCreateDiscount = ZDiscount.pick({
+    clientId: true,
+    type: true,
+    value: true,
+}).merge(ZBaseSchema.partial());
 
 export type CreateDiscount = z.infer<typeof ZCreateDiscount>;
 

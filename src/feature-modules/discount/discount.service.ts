@@ -79,7 +79,7 @@ class DiscountServices {
 
     async createDiscount(discount: Discount, schema: SchemaName) {
         try {
-            const result = await discountRepo.create(discount, schema);
+            await discountRepo.create(discount, schema);
             return DISCOUNT_RESPONSES.DISCOUNT_CREATED;
         } catch (e) {
             console.dir(e);
@@ -88,6 +88,7 @@ class DiscountServices {
     }
 
     async updateDiscount(
+        userId: string,
         id: string,
         discount: Partial<Discount>,
         schema: SchemaName,
@@ -107,9 +108,13 @@ class DiscountServices {
         }
     }
 
-    async deletediscount(id: string, schema: SchemaName) {
+    async deletediscount(userId: string, id: string, schema: SchemaName) {
         try {
-            const result = await discountRepo.delete({ where: { id } }, schema);
+            const result = await discountRepo.delete(
+                userId,
+                { where: { id } },
+                schema,
+            );
             if (!result[0]) throw DISCOUNT_RESPONSES.DISCOUNT_DELETION_FAILED;
             return DISCOUNT_RESPONSES.DISCOUNT_DELETED;
         } catch (e) {
