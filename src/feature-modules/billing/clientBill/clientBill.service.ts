@@ -1,3 +1,4 @@
+import { FindOptions } from 'sequelize';
 import { SchemaName } from '../../../utility/umzug-migration';
 import clientService from '../../client/client.service';
 import customerService from '../../customer/customer.service';
@@ -6,6 +7,8 @@ import planService from '../../plan/plan.service';
 import clientBillRepo from './clientBill.repo';
 import { CLIENT_BILL_RESPONSES } from './clientBill.responses';
 import { ClientBill, FindClientBill } from './clientBill.types';
+import { ClientBillSchema } from './clientBill.schema';
+import { ClientSchema } from '../../client/client.schema';
 
 class ClientBillService {
     async generateClientBill() {
@@ -120,6 +123,42 @@ class ClientBillService {
             if (!result[0])
                 throw CLIENT_BILL_RESPONSES.CLIENT_BILL_CANT_BE_UPDATED;
             return CLIENT_BILL_RESPONSES.CLIENT_BILL_UPDATED;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
+    async clientBillingReport(
+        options: FindOptions<ClientBillSchema>,
+        schema: SchemaName,
+    ) {
+        try {
+            const result = await clientBillRepo.getAll(options, schema);
+            return result;
+        } catch (error) {
+            console.dir(error);
+            throw error;
+        }
+    }
+
+    async findAllUnpaidClientBills() {
+        try {
+            const schema = 'public';
+            const result = await clientBillRepo.getAll(
+                {
+                    where: {
+                        status: 'unpaid',
+                    },
+                    include: [
+                        {
+                            model: ClientSchema,
+                        },
+                    ],
+                },
+                schema,
+            );
+            return result;
         } catch (error) {
             console.dir(error);
             throw error;

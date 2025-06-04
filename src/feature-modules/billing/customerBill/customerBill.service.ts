@@ -10,7 +10,7 @@ import { UserSchema } from '../../user/user.schema';
 import { Op } from 'sequelize';
 
 class CustomerBillService {
-    async generateCustomerBill(userId: string, schema: SchemaName) {
+    async generateCustomerBill(schema: SchemaName) {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
@@ -39,7 +39,6 @@ class CustomerBillService {
                     billingDate: new Date(),
                     dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
                     status: 'unpaid',
-                    createdBy: userId,
                 };
 
                 newBillEntries.push(bill);
@@ -190,13 +189,9 @@ class CustomerBillService {
 
             if (startDate && endDate) {
                 where.billingDate = { [Op.between]: [startDate, endDate] };
-            }
-
-            if (startDate) {
+            } else if (startDate) {
                 where.billingDate = { [Op.lte]: [startDate] };
-            }
-
-            if (endDate) {
+            } else {
                 where.billingDate = { [Op.gte]: [endDate] };
             }
 
@@ -204,7 +199,7 @@ class CustomerBillService {
 
             const result = await customerBillRepo.getAll(
                 {
-                    where: customerBill,
+                    where,
                     attributes: {
                         exclude: [
                             'isDeleted',
@@ -239,7 +234,8 @@ class CustomerBillService {
                 },
                 schema,
             );
-            if (!result.count) throw CUSTOMER_BILL_RESPONSES.BILL_NOT_FOUND;
+            if (!result || !result.count)
+                throw CUSTOMER_BILL_RESPONSES.BILL_NOT_FOUND;
 
             return result;
         } catch (e) {
@@ -268,22 +264,17 @@ class CustomerBillService {
         }
     }
 
-    async deleteBill(
-        billId: string,
-        customerBill: Partial<CustomerBill>,
-        schema: SchemaName,
-    ) {
+    async deleteBill(customerBill: Partial<CustomerBill>, schema: SchemaName) {
         try {
+            const { id, deletedBy } = customerBill;
+            if (!id) throw CUSTOMER_BILL_RESPONSES.BILL_NOT_FOUND;
+
             const result = await customerBillRepo.delete(
-                { where: { id: billId } },
+                { deletedBy, deletedAt: new Date() },
+                { where: { id } },
                 schema,
             );
             if (!result[0]) throw CUSTOMER_BILL_RESPONSES.BILL_DELETION_FAILED;
-            await customerBillRepo.update(
-                customerBill,
-                { where: { id: billId } },
-                schema,
-            );
             return CUSTOMER_BILL_RESPONSES.BILL_DELETED;
         } catch (e) {
             console.dir(e);

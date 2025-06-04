@@ -14,11 +14,8 @@ router.post(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const userId = req.payload.id;
-                const result = await customerBillService.generateCustomerBill(
-                    userId,
-                    schema,
-                );
+                const result =
+                    await customerBillService.generateCustomerBill(schema);
                 res.send(result);
             } catch (e) {
                 next(e);
@@ -117,9 +114,8 @@ router.del(
                 const { billId } = req.params;
                 const schema = req.payload.schema;
                 const userId = req.body.id || req.payload.id;
-                const body = { deletedBy: userId, ...req.body };
+                const body = { id: billId, deletedBy: userId, ...req.body };
                 const result = await customerBillService.deleteBill(
-                    billId,
                     body,
                     schema,
                 );

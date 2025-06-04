@@ -18,7 +18,7 @@ class ConsumptionService {
             const payload = {
                 ...data,
                 id: uuidv4(),
-                //createdBy: userId,
+                createdBy: userId,
             };
             const result = await consumptionRepo.createConsumption(
                 payload,
@@ -123,11 +123,11 @@ class ConsumptionService {
 
         return await consumptionRepo.getAllConsumptions(
             {
-                // where: {
-                //     updatedAt: {
-                //         [Op.between]: [startDate, endDate],
-                //     },
-                // },
+                where: {
+                    updatedAt: {
+                        [Op.between]: [startDate, endDate],
+                    },
+                },
                 include: [
                     {
                         model: CustomerMeterSchema.schema(schema),
@@ -138,16 +138,25 @@ class ConsumptionService {
                                 model: UserSchema.schema(schema),
                                 as: 'user',
                                 required: true,
+                                attributes: {
+                                    include: ['name', 'email', 'phoneNo'],
+                                },
                             },
                             {
                                 model: MeterSchema.schema(schema),
                                 as: 'meter',
                                 required: true,
+                                attributes: {
+                                    include: [
+                                        'name',
+                                        'basePrice',
+                                        'pricePerUnit',
+                                    ],
+                                },
                             },
                         ],
                     },
                 ],
-                //raw: true,
             },
             schema,
         );

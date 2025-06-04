@@ -4,15 +4,19 @@ import { Grievance } from '../grievance/grievance.type';
 import {
     GrievanceReportOptions,
     MeterReportOptions,
+    TimePeriod,
     WorkerReportOptions,
 } from './report.types';
 import grievanceService from '../grievance/grievance.service';
-import customerRepo from '../customer/customer.repo';
 import { CustomerMeter } from '../customer/customer.type';
 import { MeterSchema } from '../meter/meter.schema';
-import { Worker } from '../worker/worker.type';
+import customerRepo from '../customer/customer.repo';
 import { CitySchema } from '../location/location.schema';
 import workerRepo from '../worker/worker.repo';
+import { ClientSchema } from '../client/client.schema';
+import clientBillService from '../billing/clientBill/clientBill.service';
+import { CreateClientBill } from '../billing/clientBill/clientBill.types';
+import { Worker } from '../worker/worker.type';
 
 class ReportServices {
     async grievanceReport(
@@ -73,6 +77,7 @@ class ReportServices {
             );
             return results;
         } catch (e) {
+            console.log(e);
             throw e;
         }
     }
@@ -170,6 +175,89 @@ class ReportServices {
 
         const result = await workerRepo.getAll(findOptions, schema);
         return result;
+    }
+
+    async electroRevenueReport(
+        timePeriod: TimePeriod = 'month',
+        schema: SchemaName = 'public',
+    ) {
+        try {
+            const endDate = new Date();
+            let startDate: Date;
+            switch (timePeriod) {
+                case 'month':
+                    startDate = new Date(
+                        endDate.getFullYear(),
+                        endDate.getMonth() - 1,
+                        1,
+                    );
+                    break;
+                case 'halfYear':
+                    startDate = new Date(
+                        endDate.getFullYear(),
+                        endDate.getMonth() - 6,
+                        1,
+                    );
+                    break;
+                case 'year':
+                    startDate = new Date(
+                        endDate.getFullYear() - 1,
+                        endDate.getMonth(),
+                        1,
+                    );
+                    break;
+                default:
+                    throw 'Invalid time period specified';
+            }
+
+            const where: WhereOptions<CreateClientBill> = {
+                isDeleted: false,
+                billingDate: {
+                    [Op.between]: [startDate, endDate],
+                },
+            };
+
+            const options: FindOptions<CreateClientBill> = {
+                attributes: [
+                    'clientId',
+                    [col('Client.clientName'), 'clientName'],
+                    [fn('SUM', col('total')), 'revenue'],
+                    [
+                        literal(`(
+                                    SUM("total") * 100.0 / 
+                                    (
+                                        SELECT SUM("total")
+                                        FROM "ClientBill"
+                                        WHERE "billingDate" 
+                                        BETWEEN 
+                                        '${startDate.toISOString()}' 
+                                        AND 
+                                        '${endDate.toISOString()}'
+                                    )
+                                )`),
+                        'percentage',
+                    ],
+                ],
+                where,
+                include: [
+                    {
+                        model: ClientSchema,
+                        attributes: [],
+                    },
+                ],
+                group: ['clientId', 'Client.clientName'],
+                raw: true,
+            };
+            const result = await clientBillService.clientBillingReport(
+                options,
+                schema,
+            );
+
+            return result.rows;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
     }
 }
 

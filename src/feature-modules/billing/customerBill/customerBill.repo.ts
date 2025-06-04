@@ -31,11 +31,13 @@ class CustomerBillRepo {
     }
 
     public async delete(
+        customerBill: Partial<CustomerBill>,
         options: UpdateOptions<CustomerBill>,
         schema: SchemaName,
     ) {
+        const { deletedAt, deletedBy } = customerBill;
         return CustomerBillSchema.schema(schema).update(
-            { isDeleted: true },
+            { deletedAt, deletedBy, isDeleted: true },
             options,
         );
     }

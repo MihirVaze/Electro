@@ -1,9 +1,11 @@
 import { scheduleJob } from 'node-schedule';
 
-export const createJob = (cron: string, job: Function) => {
+export const createJob = (cron: string, jobs: Function[]) => {
     return scheduleJob(cron, async function () {
         try {
-            job();
+            for (const job of jobs) {
+                job();
+            }
         } catch (error) {
             console.error(error);
             throw error;
