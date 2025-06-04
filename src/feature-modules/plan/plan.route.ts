@@ -61,8 +61,12 @@ router.post(
         validate(ZCreatePlan),
         async (req, res, next) => {
             try {
+                const userId = req.payload.id;
                 const schema = req.payload.schema;
-                const result = await planService.createPlan(req.body, schema);
+                const result = await planService.createPlan(
+                    { ...req.body, createdBy: userId },
+                    schema,
+                );
                 console.log(result);
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -79,11 +83,12 @@ router.patch(
         validate(ZUpdatePlan),
         async (req, res, next) => {
             try {
+                const userId = req.payload.id;
                 const schema = req.payload.schema;
                 const id = req.params.id;
                 const result = await planService.updatePlan(
                     id,
-                    req.body,
+                    { ...req.body, updatedBy: userId },
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -101,9 +106,10 @@ router.del(
         validate(ZDeletePlan),
         async (req, res, next) => {
             try {
+                const userId = req.payload.id;
                 const schema = req.payload.schema;
                 const id = req.params.id;
-                const result = await planService.deleteplan(id, schema);
+                const result = await planService.deleteplan(userId, id, schema);
                 res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
