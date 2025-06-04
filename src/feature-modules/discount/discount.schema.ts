@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { Discount } from './discount.type';
 import { UserSchema } from '../user/user.schema';
 import { sequelize } from '../../connections/pg.connection';
+import { ClientSchema } from '../client/client.schema';
 
 export class DiscountSchema extends Model<Discount, Discount> {}
 

@@ -24,15 +24,8 @@ class PlanRepo {
         return PlanSchema.schema(schema).update(plan, options);
     }
 
-    public async delete(
-        userId: string,
-        options: UpdateOptions<Plan>,
-        schema: SchemaName,
-    ) {
-        return PlanSchema.schema(schema).update(
-            { isDeleted: true, deletedBy: userId },
-            options,
-        );
+    public async delete(options: UpdateOptions<Plan>, schema: SchemaName) {
+        return PlanSchema.schema(schema).update({ isDeleted: true }, options);
     }
 }
 

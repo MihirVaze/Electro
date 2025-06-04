@@ -3,10 +3,9 @@ import { CustomRouter } from '../../routes/custom.router';
 import { validate } from '../../utility/validate';
 import grievanceService from './grievance.service';
 import {
-    GetGrievance,
     ZAssignOrEscalateGrievance,
     ZDeleteGrievance,
-    ZGetGrievance,
+    ZFindGrievance,
     ZRaiseGrievance,
 } from './grievance.type';
 import { ResponseHandler } from '../../utility/response-handler';
@@ -18,13 +17,20 @@ const router = new CustomRouter();
 router.get(
     '/',
     [
-        validate(ZGetGrievance),
+        validate(ZFindGrievance),
         async (req, res, next) => {
             try {
-                const parsedQuery: GetGrievance = req.parsedQuery;
+                const userId = req.body.id || req.payload.id;
+                const schema = req.payload.schema;
+                const roleIds = req.payload.roleIds;
+                const { limit, page, ...filter } = req.query;
                 const result = await grievanceService.getGrievances(
-                    req.payload,
-                    parsedQuery,
+                    userId,
+                    roleIds,
+                    Number(limit),
+                    Number(page),
+                    filter,
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -107,11 +113,9 @@ router.del(
         validate(ZDeleteGrievance),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
                 const id = req.params.id;
                 const schema = req.payload.schema;
                 const result = await grievanceService.DeleteGrievance(
-                    userId,
                     id,
                     schema,
                 );
