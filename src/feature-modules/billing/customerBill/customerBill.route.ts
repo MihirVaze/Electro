@@ -8,15 +8,22 @@ import { ZDeleteBill, ZFindBills, ZUpdateBill } from './customerBill.type';
 
 const router = new CustomRouter();
 
-router.post(
+router.get(
     '/',
     [
+        validate(ZFindBills),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const result =
-                    await customerBillService.generateCustomerBill(schema);
-                res.send(result);
+                const { limit, page, ...remainingQuery } = req.query;
+
+                const result = await customerBillService.getAllBills(
+                    remainingQuery,
+                    Number(limit),
+                    Number(page),
+                    schema,
+                );
+                res.send(new ResponseHandler(result));
             } catch (e) {
                 next(e);
             }
@@ -35,21 +42,15 @@ router.post(
     },
 );
 
-router.get(
+router.post(
     '/',
     [
-        validate(ZFindBills),
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                const { limit, page, ...remainingQuery } = req.query;
-                const result = await customerBillService.getAllBills(
-                    remainingQuery,
-                    Number(limit),
-                    Number(page),
-                    schema,
-                );
-                res.send(new ResponseHandler(result));
+                const result =
+                    await customerBillService.generateCustomerBill(schema);
+                res.send(result);
             } catch (e) {
                 next(e);
             }
@@ -58,7 +59,7 @@ router.get(
     {
         is_protected: true,
         has_Access: [
-            ROLE.SUPER_ADMIN,
+            ROLE.CLIENT_ADMIN,
             ROLE.CLIENT_MANAGER,
             ROLE.STATE_MANAGER,
             ROLE.DISTRICT_MANAGER,

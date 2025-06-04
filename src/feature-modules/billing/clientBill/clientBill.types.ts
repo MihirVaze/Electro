@@ -39,15 +39,21 @@ export const ZUpdateClientBill = ZCreateClientBill.pick({
     status: true,
 }).partial();
 
-export const ZFindClientBill = z.object({
-    query: ZClientBill.pick({
-        status: true,
-    })
-        .partial()
-        .extend({
-            limit: z.coerce.number().min(1),
-            page: z.coerce.number().min(1),
-        }),
+export const ZFindClientBill = ZClientBill.pick({
+    status: true,
+})
+    .partial()
+    .extend({
+        limit: z.coerce.number().min(1),
+        page: z.coerce.number().min(1),
+        startDate: z.coerce.date().optional(),
+        endDate: z.coerce.date().optional(),
+        minTotal: z.coerce.number().optional(),
+        maxTotal: z.coerce.number().optional(),
+    });
+
+export const ZValidateFindClientBill = z.object({
+    query: ZFindClientBill,
 });
 
 export const ZValidateUpdateClientBill = z.object({
@@ -60,4 +66,4 @@ export const ZValidateUpdateClientBill = z.object({
 export type ClientBill = z.infer<typeof ZClientBill>;
 export type CreateClientBill = z.infer<typeof ZCreateClientBill>;
 export type UpdateClientBill = z.infer<typeof ZUpdateClientBill>;
-export type FindClientBill = z.infer<typeof ZClientBill>;
+export type FindClientBill = z.infer<typeof ZFindClientBill>;

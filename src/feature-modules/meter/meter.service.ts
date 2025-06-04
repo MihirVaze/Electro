@@ -49,7 +49,27 @@ class MeterService {
             where.requiredPhotos = { [Op.gte]: filter.requiredPhotos };
         }
 
-        return meterRepo.getAll({ where, limit, offset }, schema);
+        return meterRepo.getAll(
+            {
+                where,
+                attributes: {
+                    exclude: [
+                        'isDeleted',
+                        'deletedBy',
+                        'deletedAt',
+                        'restoredBy',
+                        'restoredAt',
+                        'createdBy',
+                        'updatedBy',
+                        'createdAt',
+                        'updatedAt',
+                    ],
+                },
+                limit,
+                offset,
+            },
+            schema,
+        );
     }
 
     async createMeter(meter: Meter, schema: string) {
