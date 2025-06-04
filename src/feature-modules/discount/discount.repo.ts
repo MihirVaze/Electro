@@ -24,13 +24,9 @@ class DiscountRepo {
         return DiscountSchema.schema(schema).update(discount, options);
     }
 
-    public async delete(
-        userId: string,
-        options: UpdateOptions<Discount>,
-        schema: SchemaName,
-    ) {
+    public async delete(options: UpdateOptions<Discount>, schema: SchemaName) {
         return DiscountSchema.schema(schema).update(
-            { isDeleted: true, deletedBy: userId },
+            { isDeleted: true },
             options,
         );
     }

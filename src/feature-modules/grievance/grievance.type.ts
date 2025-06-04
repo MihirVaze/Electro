@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
-import { ZLocationType } from '../userLocation/userLocation.type';
 
 export const ZGrievance = ZBaseSchema.partial().extend({
     userId: z.string().trim().uuid(),
@@ -27,23 +26,16 @@ export const ZRaiseGrievance = z.object({
 
 export type RaiseGrievance = z.infer<typeof ZRaiseGrievance>;
 
-const GetGrievance = ZGrievance.pick({
-    status: true,
-})
-    .partial()
-    .extend({
-        limit: z.coerce.number().default(10),
-        page: z.coerce.number().default(1),
-
-        locationType: ZLocationType.default('city'),
-        searchTerm: z.string().optional(),
-    });
-
-export const ZGetGrievance = z.object({
-    query: GetGrievance,
+export const ZFindGrievance = z.object({
+    query: ZGrievance.pick({
+        status: true,
+    })
+        .partial()
+        .extend({
+            limit: z.coerce.number().default(10).optional(),
+            page: z.coerce.number().default(1).optional(),
+        }),
 });
-
-export type GetGrievance = z.infer<typeof GetGrievance>;
 
 export const ZAssignOrEscalateGrievance = z.object({
     params: ZGrievance.pick({
