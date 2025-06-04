@@ -29,7 +29,7 @@ ClientBillSchema.init(
         billingDate: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: DataTypes.NOW(),
+            defaultValue: Date.now(),
         },
         dueDate: {
             type: DataTypes.DATE,

@@ -97,6 +97,19 @@ class WorkerService {
             const result = await workerRepo.getAll(
                 {
                     where: { isDeleted: false, ...workerWhere },
+                    attributes: {
+                        exclude: [
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                            'createdAt',
+                            'updatedAt',
+                        ],
+                    },
                     include: [
                         {
                             model: UserSchema,
@@ -171,6 +184,7 @@ class WorkerService {
             if (!result[0]) throw WORKER_RESPONSES.WORKER_UPDATION_FAILED;
             return WORKER_RESPONSES.WORKER_UPDATED;
         } catch (error) {
+            transaction?.rollback();
             console.dir(error);
             throw error;
         }

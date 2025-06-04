@@ -14,6 +14,7 @@ export type Consumption = z.infer<typeof ZConsumption>;
 
 export const Zcreate = z.object({
     body: ZConsumption.pick({
+        customerMeterId: true,
         unitsUsed: true,
         description: true,
     }),
