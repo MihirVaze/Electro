@@ -1,9 +1,11 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../utility/base-schema';
+import { ZState } from '../location/location.type';
 
 export const ZStateUser = ZBaseSchema.partial().extend({
     userId: z.string().trim().uuid(),
     stateId: z.string().trim().uuid(),
+    state: ZState.partial().optional(),
 });
 
 export type StateUser = z.infer<typeof ZStateUser>;

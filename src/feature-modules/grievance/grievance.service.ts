@@ -56,13 +56,6 @@ class GrievanceService {
         return GRIEVANCE_RESPONSES.GRIEVANCE_CREATED;
     }
 
-    // async getClientAdminGrievances(where: WhereOptions<Grievance>, limit: number, offset: number, schema: SchemaName) {
-    //     return await grievanceRepo.getAll(
-    //         { where, limit, offset },
-    //         schema,
-    //     );
-    // };
-
     async searchStateGrievances(
         userId: string,
         stateWhere: WhereOptions<State>,
@@ -198,53 +191,15 @@ class GrievanceService {
         );
     }
 
-    // async getGrievances1(
-    //     userId: string,
-    //     roleIds: string[],
-    //     limit: number,
-    //     page: number,
-    //     filter: Partial<Grievance>,
-    //     schema: SchemaName,
-    // ) {
-    //     try {
-    //         const offset = (page - 1) * limit;
-
-    //         const where: WhereOptions<Grievance> = {
-    //             isDeleted: false,
-    //             ...filter,
-    //         };
-
-    //         const stateWhere: WhereOptions<State> = { isDeleted: false };
-
-    //         const districtWhere: WhereOptions<District> = { isDeleted: false };
-
-    //         const cityWhere: WhereOptions<City> = { isDeleted: false };
-
-    //         if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
-    //             return await this.getClientAdminGrievances(where, limit, offset, schema);
-    //         }
-    //         else if (roleIds.includes(ROLE.STATE_MANAGER)) {
-    //             return await this.getStateManagerGrievances(userId, where, limit, offset, schema);
-    //         }
-    //         else if (roleIds.includes(ROLE.DISTRICT_MANAGER)) {
-    //             return await this.getDistrictManagerGrievances(userId, where, limit, offset, schema);
-    //         }
-    //         else if (
-    //             roleIds.includes(ROLE.CITY_MANAGER) ||
-    //             roleIds.includes(ROLE.SERVICE_WORKER)
-    //         ) {
-    //             this.getCityManagerGrievances(userId, where, limit, offset, schema);
-    //         }
-    //     } catch (e) {
-    //         console.dir(e);
-    //         throw e;
-    //     }
-    // }
-
     async getGrievances(payload: Payload, options: GetGrievance) {
         try {
             const { schema, id: userId, roleIds } = payload;
-            const { limit, page, locationType, searchTerm } = options;
+            const {
+                limit,
+                page,
+                locationType: GetLocType,
+                searchTerm,
+            } = options;
 
             const offset = (page - 1) * limit;
 
@@ -252,7 +207,7 @@ class GrievanceService {
             let districtWhere: WhereOptions<District> = { isDeleted: false };
             let cityWhere: WhereOptions<City> = { isDeleted: false };
 
-            switch (locationType) {
+            switch (GetLocType) {
                 case 'state':
                     if (
                         roleIds.some((e) =>
@@ -264,12 +219,14 @@ class GrievanceService {
                                 await userLocationService.GetUserLocationIds(
                                     schema,
                                     userId,
-                                    locationType,
+                                    'state',
+                                    GetLocType,
                                 ),
                         };
                         if (searchTerm)
                             stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
                     } else throw "CAN'T SEARCH BY STATE";
+
                     return await this.searchStateGrievances(
                         userId,
                         stateWhere,
@@ -293,7 +250,8 @@ class GrievanceService {
                                 await userLocationService.GetUserLocationIds(
                                     schema,
                                     userId,
-                                    locationType,
+                                    'district',
+                                    GetLocType,
                                 ),
                         };
                         if (searchTerm)
@@ -301,6 +259,7 @@ class GrievanceService {
                                 [Op.iLike]: `%${searchTerm}%`,
                             };
                     } else throw "CAN'T SEARCH BY DISTRICT";
+
                     return await this.searchDistrictGrievances(
                         userId,
                         districtWhere,
@@ -325,7 +284,8 @@ class GrievanceService {
                             await userLocationService.GetUserLocationIds(
                                 schema,
                                 userId,
-                                locationType,
+                                'city',
+                                GetLocType,
                             );
                         console.log(cityIds);
                         cityWhere.id = {
@@ -334,7 +294,7 @@ class GrievanceService {
                         if (searchTerm)
                             cityWhere.name = { [Op.iLike]: `%${searchTerm}%` };
                     } else throw "CAN'T SEARCH BY CITY";
-                    console.log(cityWhere);
+
                     return await this.searchCityGrievances(
                         userId,
                         cityWhere,
@@ -351,6 +311,7 @@ class GrievanceService {
             throw e;
         }
     }
+
     async assignOrEscalateGrievance(
         userId: string,
         roleId: string[],
