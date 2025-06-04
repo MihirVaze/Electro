@@ -9,6 +9,7 @@ import { CLIENT_BILL_RESPONSES } from './clientBill.responses';
 import { ClientBill, FindClientBill } from './clientBill.types';
 import { ClientBillSchema } from './clientBill.schema';
 import { ClientSchema } from '../../client/client.schema';
+import { UserSchema } from '../../user/user.schema';
 
 class ClientBillService {
     async generateClientBill() {
@@ -92,6 +93,24 @@ class ClientBillService {
                     where: clientBill,
                     limit,
                     offset,
+                    include: [
+                        {
+                            model: UserSchema,
+                            attributes: {
+                                exclude: [
+                                    'password',
+                                    'isDeleted',
+                                    'deletedBy',
+                                    'deletedAt',
+                                    'restoredBy',
+                                    'restoredAt',
+                                    'createdBy',
+                                    'updatedBy',
+                                ],
+                            },
+                            include: [ClientSchema],
+                        },
+                    ],
                 },
                 schema,
             );
@@ -152,7 +171,20 @@ class ClientBillService {
                     },
                     include: [
                         {
-                            model: ClientSchema,
+                            model: UserSchema,
+                            attributes: {
+                                exclude: [
+                                    'password',
+                                    'isDeleted',
+                                    'deletedBy',
+                                    'deletedAt',
+                                    'restoredBy',
+                                    'restoredAt',
+                                    'createdBy',
+                                    'updatedBy',
+                                ],
+                            },
+                            include: [ClientSchema],
                         },
                     ],
                 },

@@ -2,6 +2,7 @@ import express from 'express';
 import connection, { sequelize } from './connections/pg.connection';
 import { registerMiddlewares } from './routes/router';
 import { generateAllBills } from './utility/generate-bill';
+import { checkClinetBillPayment } from './utility/check-bill-due';
 
 export const startServer = async () => {
     try {
@@ -11,7 +12,7 @@ export const startServer = async () => {
         registerMiddlewares(app);
 
         generateAllBills();
-
+        checkClinetBillPayment();
         const { PORT } = process.env;
         app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
     } catch (e) {
