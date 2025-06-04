@@ -45,7 +45,7 @@ class CustomerServices {
 
             if (!createdBy)
                 await userService.updateUser(
-                    { createdBy: createdBy || id },
+                    { id, createdBy: createdBy || id },
                     schema,
                 );
 
