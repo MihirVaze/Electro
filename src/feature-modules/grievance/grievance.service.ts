@@ -20,6 +20,7 @@ import userLocationRepo from '../userLocation/userLocation.repo';
 import { Payload } from '../auth/auth.type';
 import { City, District, State } from '../location/location.type';
 import userLocationService from '../userLocation/userLocation.service';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class GrievanceService {
     async raiseGrievance(
@@ -66,24 +67,51 @@ class GrievanceService {
         return await grievanceRepo.getAll(
             {
                 where: { isDeleted: false },
+                attributes: {
+                    exclude: EXCLUDED_KEYS,
+                },
                 include: [
                     {
                         model: CitySchema.schema(schema),
                         as: 'city',
                         required: true,
                         where: { isDeleted: false },
+                        attributes: {
+                            exclude: [
+                                ...EXCLUDED_KEYS,
+                                'name',
+                                'createdAt',
+                                'updatedAt',
+                            ],
+                        },
                         include: [
                             {
                                 model: DistrictSchema.schema(schema),
                                 as: 'district',
                                 required: true,
                                 where: { isDeleted: false },
+                                attributes: {
+                                    exclude: [
+                                        ...EXCLUDED_KEYS,
+                                        'name',
+                                        'createdAt',
+                                        'updatedAt',
+                                    ],
+                                },
                                 include: [
                                     {
                                         model: StateSchema.schema(schema),
                                         as: 'state',
                                         required: true,
                                         where: stateWhere,
+                                        attributes: {
+                                            exclude: [
+                                                ...EXCLUDED_KEYS,
+                                                'name',
+                                                'createdAt',
+                                                'updatedAt',
+                                            ],
+                                        },
                                         include: [
                                             {
                                                 model: StateUserSchema.schema(
@@ -91,6 +119,14 @@ class GrievanceService {
                                                 ),
                                                 as: 'stateUser',
                                                 required: true,
+                                                attributes: {
+                                                    exclude: [
+                                                        ...EXCLUDED_KEYS,
+                                                        'name',
+                                                        'createdAt',
+                                                        'updatedAt',
+                                                    ],
+                                                },
                                                 where: {
                                                     userId: userId,
                                                     isDeleted: false,
@@ -120,17 +156,36 @@ class GrievanceService {
         return await grievanceRepo.getAll(
             {
                 where: { isDeleted: false },
+                attributes: {
+                    exclude: EXCLUDED_KEYS,
+                },
                 include: [
                     {
                         model: CitySchema.schema(schema),
                         as: 'city',
                         where: { isDeleted: false },
+                        attributes: {
+                            exclude: [
+                                ...EXCLUDED_KEYS,
+                                'name',
+                                'createdAt',
+                                'updatedAt',
+                            ],
+                        },
                         include: [
                             {
                                 model: DistrictSchema.schema(schema),
                                 as: 'district',
                                 required: true,
                                 where: districtWhere,
+                                attributes: {
+                                    exclude: [
+                                        ...EXCLUDED_KEYS,
+                                        'name',
+                                        'createdAt',
+                                        'updatedAt',
+                                    ],
+                                },
                                 include: [
                                     {
                                         model: DistrictUserSchema.schema(
@@ -138,6 +193,14 @@ class GrievanceService {
                                         ),
                                         as: 'districtUser',
                                         required: true,
+                                        attributes: {
+                                            exclude: [
+                                                ...EXCLUDED_KEYS,
+                                                'name',
+                                                'createdAt',
+                                                'updatedAt',
+                                            ],
+                                        },
                                         where: {
                                             userId: userId,
                                             isDeleted: false,
@@ -165,17 +228,36 @@ class GrievanceService {
         return await grievanceRepo.getAll(
             {
                 where: { isDeleted: false },
+                attributes: {
+                    exclude: EXCLUDED_KEYS,
+                },
                 include: [
                     {
                         model: CitySchema.schema(schema),
                         as: 'city',
                         required: true,
+                        attributes: {
+                            exclude: [
+                                ...EXCLUDED_KEYS,
+                                'name',
+                                'createdAt',
+                                'updatedAt',
+                            ],
+                        },
                         where: cityWhere,
                         include: [
                             {
                                 model: CityUserSchema.schema(schema),
                                 as: 'cityUser',
                                 required: true,
+                                attributes: {
+                                    exclude: [
+                                        ...EXCLUDED_KEYS,
+                                        'name',
+                                        'createdAt',
+                                        'updatedAt',
+                                    ],
+                                },
                                 where: {
                                     userId: userId,
                                     isDeleted: false,
