@@ -120,9 +120,13 @@ class planServices {
         }
     }
 
-    async deleteplan(id: string, schema: SchemaName) {
+    async deleteplan(userId: string, id: string, schema: SchemaName) {
         try {
-            const result = await planRepo.delete({ where: { id } }, schema);
+            const result = await planRepo.delete(
+                userId,
+                { where: { id } },
+                schema,
+            );
             if (!result[0]) throw PLAN_RESPONSES.PLAN_DELETION_FAILED;
             return PLAN_RESPONSES.PLAN_DELETED;
         } catch (e) {

@@ -378,6 +378,34 @@ class UserLocationService {
         }
     }
 
+    async GetUserLocationIds(
+        schema: SchemaName,
+        userId: string,
+        locationType: LocationType,
+    ) {
+        try {
+            let result: string[] = [];
+            switch (locationType) {
+                case 'state':
+                    result = (
+                        await this.getAllUserState({ userId }, schema)
+                    ).map((e) => e.dataValues.stateId);
+                case 'district':
+                    result = (
+                        await this.getAllUserDistrict({ userId }, schema)
+                    ).map((e) => e.dataValues.districtId);
+                case 'city':
+                    result = (
+                        await this.getAllUserCity({ userId }, schema)
+                    ).map((e) => e.dataValues.cityId);
+            }
+            return result;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
     async updateUserCity(
         cityUser: Partial<CityUser>,
         userId: string,

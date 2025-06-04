@@ -108,9 +108,13 @@ class DiscountServices {
         }
     }
 
-    async deletediscount(id: string, schema: SchemaName) {
+    async deletediscount(userId: string, id: string, schema: SchemaName) {
         try {
-            const result = await discountRepo.delete({ where: { id } }, schema);
+            const result = await discountRepo.delete(
+                userId,
+                { where: { id } },
+                schema,
+            );
             if (!result[0]) throw DISCOUNT_RESPONSES.DISCOUNT_DELETION_FAILED;
             return DISCOUNT_RESPONSES.DISCOUNT_DELETED;
         } catch (e) {
