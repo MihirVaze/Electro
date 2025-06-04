@@ -63,7 +63,7 @@ router.get(
 router.post(
     '/',
     [
-        upload.single('avatar'),
+        upload.single('image'),
         validate(ZValidateCreateMeter),
 
         async (req, res, next) => {

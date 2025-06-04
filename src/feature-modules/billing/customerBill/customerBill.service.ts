@@ -8,6 +8,7 @@ import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
 import { sendEmail } from '../../../utility/sendmail';
 import { UserSchema } from '../../user/user.schema';
 import { Op } from 'sequelize';
+import { MeterSchema } from '../../meter/meter.schema';
 
 class CustomerBillService {
     async generateCustomerBill(schema: SchemaName) {
@@ -177,7 +178,15 @@ class CustomerBillService {
 
             let customerWhere: any = {};
 
-            const { startDate, endDate, customer } = customerBill;
+            const {
+                startDate,
+                endDate,
+                customer,
+                status,
+                total,
+                minTotal,
+                maxTotal,
+            } = customerBill;
 
             if (customer?.name) {
                 customerWhere.name = { [Op.iLike]: `%${customer?.name}%` };
@@ -187,14 +196,36 @@ class CustomerBillService {
                 customerWhere.email = { [Op.iLike]: `%${customer?.email}%` };
             }
 
-            if (startDate && endDate) {
-                where.billingDate = { [Op.between]: [startDate, endDate] };
-            } else if (startDate) {
-                where.billingDate = { [Op.lte]: [startDate] };
-            } else {
-                where.billingDate = { [Op.gte]: [endDate] };
+            if (endDate) {
+                where.billingDate = { [Op.lte]: new Date(endDate).getTime() };
+            }
+            if (startDate) {
+                where.billingDate = { [Op.gte]: new Date(startDate).getTime() };
             }
 
+            if (startDate && endDate) {
+                where.billingDate = {
+                    [Op.between]: [
+                        new Date(startDate).getTime(),
+                        new Date(endDate).getTime(),
+                    ],
+                };
+            }
+            if (status) {
+                where.status = { [Op.eq]: status };
+            }
+
+            if (minTotal) {
+                where.total = { [Op.gte]: minTotal };
+            }
+
+            if (maxTotal) {
+                where.total = { [Op.lte]: minTotal };
+            }
+
+            if (minTotal && maxTotal) {
+                where.total = { [Op.between]: [minTotal, maxTotal] };
+            }
             const offset = (page - 1) * limit;
 
             const result = await customerBillRepo.getAll(
@@ -202,6 +233,7 @@ class CustomerBillService {
                     where,
                     attributes: {
                         exclude: [
+                            'consumptionId',
                             'isDeleted',
                             'deletedBy',
                             'deletedAt',
@@ -209,13 +241,16 @@ class CustomerBillService {
                             'restoredAt',
                             'createdBy',
                             'updatedBy',
+                            'createdAt',
+                            'updatedAt',
+                            'customer',
                         ],
                     },
                     include: [
                         {
                             model: CustomerMeterSchema.schema(schema),
-                            where: customerWhere,
                             as: 'customerMeter',
+
                             attributes: {
                                 exclude: [
                                     'isDeleted',
@@ -225,8 +260,53 @@ class CustomerBillService {
                                     'restoredAt',
                                     'createdBy',
                                     'updatedBy',
+                                    'createdAt',
+                                    'updatedAt',
+                                    'userId',
+                                    'id',
                                 ],
                             },
+                            include: [
+                                {
+                                    model: UserSchema.schema(schema),
+                                    as: 'user',
+                                    where: customerWhere,
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'isDeleted',
+                                            'deletedBy',
+                                            'deletedAt',
+                                            'restoredBy',
+                                            'restoredAt',
+                                            'createdBy',
+                                            'updatedBy',
+                                            'createdAt',
+                                            'updatedAt',
+                                            'password',
+                                        ],
+                                    },
+                                },
+                                {
+                                    model: MeterSchema.schema(schema),
+                                    as: 'meter',
+                                    // required: true,
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'isDeleted',
+                                            'deletedBy',
+                                            'deletedAt',
+                                            'restoredBy',
+                                            'restoredAt',
+                                            'createdBy',
+                                            'updatedBy',
+                                            'createdAt',
+                                            'updatedAt',
+                                        ],
+                                    },
+                                },
+                            ],
                         },
                     ],
                     limit,
