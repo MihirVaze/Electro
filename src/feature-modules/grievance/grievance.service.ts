@@ -321,17 +321,20 @@ class GrievanceService {
                             ].includes(e),
                         )
                     ) {
+                        const cityIds =
+                            await userLocationService.GetUserLocationIds(
+                                schema,
+                                userId,
+                                locationType,
+                            );
+                        console.log(cityIds);
                         cityWhere.id = {
-                            [Op.in]:
-                                await userLocationService.GetUserLocationIds(
-                                    schema,
-                                    userId,
-                                    locationType,
-                                ),
+                            [Op.in]: cityIds,
                         };
                         if (searchTerm)
                             cityWhere.name = { [Op.iLike]: `%${searchTerm}%` };
                     } else throw "CAN'T SEARCH BY CITY";
+                    console.log(cityWhere);
                     return await this.searchCityGrievances(
                         userId,
                         cityWhere,
