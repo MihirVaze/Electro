@@ -44,11 +44,14 @@ class CustomerBillService {
 
                 newBillEntries.push(bill);
                 billData.push({
+                    name:
+                        consumption.dataValues.customerMeter?.user?.name ?? '',
                     email:
                         consumption.dataValues.customerMeter?.user?.email ?? '',
                     meter:
-                        consumption.dataValues.customerMeter?.meterName ?? '',
-                    customerMeter: consumption.dataValues.customerMeter!,
+                        consumption.dataValues.customerMeter?.meter?.name ?? '',
+                    customerMeter:
+                        consumption.dataValues.customerMeter?.id ?? '',
                     unitsUsed: consumption.dataValues.unitsUsed,
                     total,
                     billingDate: new Date(),
@@ -63,6 +66,7 @@ class CustomerBillService {
             if (!result) throw CUSTOMER_BILL_RESPONSES.BILL_CREATION_FAILED;
 
             for (const {
+                name,
                 email,
                 total,
                 meter,
@@ -82,8 +86,9 @@ class CustomerBillService {
                     </head>
 
                     <body>
+                        <p><strong>Dear ${name},</strong></p>
                         <p>Here is your electricity bill for this month:</p>
-                        <p><strong>CustomerMeter:</strong> ${customerMeter}</p>
+                        <p><strong>CustomerMeterId:</strong> ${customerMeter}</p>
                         <p><strong>Meter:</strong> ${meter}</p>
                         <p><strong>Units Used:</strong> ${unitsUsed}</p>
                         <p><strong>Total Amount:</strong> ${total}</p>
