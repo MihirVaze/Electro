@@ -177,7 +177,10 @@ class ReportServices {
         return result;
     }
 
-    async electroRevenueReport(timePeriod: TimePeriod = 'month') {
+    async electroRevenueReport(
+        timePeriod: TimePeriod = 'month',
+        schema: SchemaName = 'public',
+    ) {
         try {
             const endDate = new Date();
             let startDate: Date;
@@ -221,7 +224,8 @@ class ReportServices {
                     [fn('SUM', col('total')), 'revenue'],
                     [
                         literal(`(
-                                    SUM("total") * 100.0 / (
+                                    SUM("total") * 100.0 / 
+                                    (
                                         SELECT SUM("total")
                                         FROM "ClientBill"
                                         WHERE "billingDate" 
@@ -246,7 +250,7 @@ class ReportServices {
             };
             const result = await clientBillService.clientBillingReport(
                 options,
-                'public',
+                schema,
             );
 
             return result.rows;
