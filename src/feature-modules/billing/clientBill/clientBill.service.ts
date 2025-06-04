@@ -1,4 +1,4 @@
-import { FindOptions } from 'sequelize';
+import { FindOptions, Op } from 'sequelize';
 import { SchemaName } from '../../../utility/umzug-migration';
 import clientService from '../../client/client.service';
 import customerService from '../../customer/customer.service';
@@ -86,13 +86,55 @@ class ClientBillService {
         schema: SchemaName,
     ) {
         try {
+            const where: any = {};
             const offset = (page - 1) * limit;
 
+            const { startDate, endDate, minTotal, maxTotal, status } =
+                clientBill;
+
+            if (status) {
+                where.status = { [Op.eq]: status };
+            }
+            if (minTotal) {
+                where.total = { [Op.gte]: minTotal };
+            }
+            if (maxTotal) {
+                where.total = { [Op.lte]: maxTotal };
+            }
+            if (minTotal && maxTotal) {
+                where.billingDate = { [Op.between]: [minTotal, maxTotal] };
+            }
+            if (startDate) {
+                where.billingDate = { [Op.gte]: new Date(startDate).getTime() };
+            }
+            if (endDate) {
+                where.billingDate = { [Op.lte]: new Date(endDate).getTime() };
+            }
+            if (startDate && endDate) {
+                where.billingDate = {
+                    [Op.between]: [
+                        new Date(startDate).getTime(),
+                        new Date(endDate).getTime(),
+                    ],
+                };
+            }
             const result = await clientBillRepo.getAll(
                 {
-                    where: clientBill,
+                    where,
                     limit,
                     offset,
+                    attributes: {
+                        exclude: [
+                            'password',
+                            'isDeleted',
+                            'deletedBy',
+                            'deletedAt',
+                            'restoredBy',
+                            'restoredAt',
+                            'createdBy',
+                            'updatedBy',
+                        ],
+                    },
                     include: [
                         {
                             model: UserSchema,
@@ -108,7 +150,24 @@ class ClientBillService {
                                     'updatedBy',
                                 ],
                             },
-                            include: [ClientSchema],
+                            include: [
+                                {
+                                    model: ClientSchema,
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'password',
+                                            'isDeleted',
+                                            'deletedBy',
+                                            'deletedAt',
+                                            'restoredBy',
+                                            'restoredAt',
+                                            'createdBy',
+                                            'updatedBy',
+                                        ],
+                                    },
+                                },
+                            ],
                         },
                     ],
                 },
