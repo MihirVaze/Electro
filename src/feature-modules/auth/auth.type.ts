@@ -8,10 +8,7 @@ export const Credentials = ZUser.pick({
 });
 
 export const ZCredentials = z.object({
-    body: Credentials.pick({
-        email: true,
-        password: true,
-    }),
+    body: Credentials,
     headers: z.object({ schema: z.string().nonempty() }),
 });
 
