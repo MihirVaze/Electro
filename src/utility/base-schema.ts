@@ -12,3 +12,13 @@ export const ZBaseSchema = z.object({
     createdAt: z.date(),
     updatedAt: z.date(),
 });
+
+export const EXCLUDED_KEYS = [
+    'isDeleted',
+    'deletedBy',
+    'deletedAt',
+    'restoredBy',
+    'restoredAt',
+    'createdBy',
+    'updatedBy',
+];
