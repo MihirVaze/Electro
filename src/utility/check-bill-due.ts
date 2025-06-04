@@ -2,7 +2,7 @@ import clientBillService from '../feature-modules/billing/clientBill/clientBill.
 import { sendEmail } from './sendmail';
 import { createJob } from './scheduler';
 
-export const checkClientBillDueDaily = async () => {
+export const checkClientBillPaymentDaily = async () => {
     const clientBills = await clientBillService.findAllUnpaidClientBills();
     const currentTime = Date.now();
 
@@ -33,6 +33,6 @@ export const checkClientBillDueDaily = async () => {
     }
 };
 
-export const checkClinetBillDue = () => {
-    createJob('0 0 * * *', [checkClientBillDueDaily]);
+export const checkClinetBillPayment = () => {
+    createJob('0 0 * * *', [checkClientBillPaymentDaily]);
 };
