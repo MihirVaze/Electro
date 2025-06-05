@@ -1,4 +1,5 @@
 import { SchemaName } from '../../utility/umzug-migration';
+import { LocationType } from '../userLocation/userLocation.type';
 import locationRepo from './location.repo';
 import { LOCATION_RESPONSES } from './location.responses';
 import { City, District, State } from './location.type';
@@ -43,6 +44,22 @@ class LocationServices {
                 schema,
             );
             return result;
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
+    async getAllStateIds(schema: SchemaName) {
+        try {
+            return (await this.getAllStates(schema)).rows.reduce(
+                (acc: string[], e) => {
+                    const id = e.dataValues.id;
+                    if (id) acc.push(id);
+                    return acc;
+                },
+                [],
+            );
         } catch (e) {
             console.dir(e);
             throw e;
@@ -133,6 +150,22 @@ class LocationServices {
         }
     }
 
+    async getAllDistrictIds(schema: SchemaName) {
+        try {
+            return (await this.getAllDistricts(schema)).rows.reduce(
+                (acc: string[], e) => {
+                    const id = e.dataValues.id;
+                    if (id) acc.push(id);
+                    return acc;
+                },
+                [],
+            );
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
     async updateDistrict(
         districtId: string,
         districtField: Partial<District>,
@@ -217,6 +250,22 @@ class LocationServices {
         }
     }
 
+    async getAllCityIds(schema: SchemaName) {
+        try {
+            return (await this.getAllCitys(schema)).rows.reduce(
+                (acc: string[], e) => {
+                    const id = e.dataValues.id;
+                    if (id) acc.push(id);
+                    return acc;
+                },
+                [],
+            );
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
     async updateCity(
         cityId: string,
         cityField: Partial<City>,
@@ -250,6 +299,24 @@ class LocationServices {
             );
             if (!result[0]) throw LOCATION_RESPONSES.CITY_DELETION_FAILED;
             return LOCATION_RESPONSES.CITY_DELETED;
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
+    async getAllLocationIds(schema: SchemaName, locationType: LocationType) {
+        try {
+            switch (locationType) {
+                case 'state':
+                    return await this.getAllStateIds(schema);
+
+                case 'district':
+                    return await this.getAllDistrictIds(schema);
+
+                case 'city':
+                    return await this.getAllCityIds(schema);
+            }
         } catch (e) {
             console.dir(e);
             throw e;

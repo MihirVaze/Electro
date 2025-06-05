@@ -418,101 +418,116 @@ class UserLocationService {
     }
 
     async StateToCity(userId: string, schema: SchemaName) {
-        const result = await userLocationRepo.getAllUserState(
-            {
-                where: { userId, isDeleted: false },
-                attributes: [],
-                include: [
-                    {
-                        model: StateSchema,
-                        as: 'state',
-                        attributes: [],
-                        include: [
-                            {
-                                model: DistrictSchema,
-                                as: 'districts',
-                                attributes: [],
-                                include: [
-                                    {
-                                        model: CitySchema,
-                                        as: 'cities',
-                                        attributes: ['id'],
-                                        where: { isDeleted: false },
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            schema,
-        );
-        return result.rows.reduce((acc: string[], e: any) => {
-            const id = e?.dataValues?.state?.district?.city?.id;
-            if (id) acc.push(id);
-            return acc;
-        }, []);
+        try {
+            const result = await userLocationRepo.getAllUserState(
+                {
+                    where: { userId, isDeleted: false },
+                    attributes: [],
+                    include: [
+                        {
+                            model: StateSchema,
+                            as: 'state',
+                            attributes: [],
+                            include: [
+                                {
+                                    model: DistrictSchema,
+                                    as: 'districts',
+                                    attributes: [],
+                                    include: [
+                                        {
+                                            model: CitySchema,
+                                            as: 'cities',
+                                            attributes: ['id'],
+                                            where: { isDeleted: false },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                schema,
+            );
+            return result.rows.reduce((acc: string[], e: any) => {
+                const id = e?.dataValues?.state?.district?.city?.id;
+                if (id) acc.push(id);
+                return acc;
+            }, []);
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
     }
 
     async StateToDistrict(userId: string, schema: SchemaName) {
-        const result = await userLocationRepo.getAllUserState(
-            {
-                where: { userId, isDeleted: false },
-                attributes: [],
-                include: [
-                    {
-                        model: StateSchema,
-                        as: 'state',
-                        attributes: [],
-                        include: [
-                            {
-                                model: DistrictSchema,
-                                as: 'districts',
-                                attributes: ['id'],
-                                where: { isDeleted: false },
-                            },
-                        ],
-                    },
-                ],
-            },
-            schema,
-        );
-        return result.rows.reduce((acc: string[], e: any) => {
-            const id = e?.dataValues?.state?.district?.id;
-            if (id) acc.push(id);
-            return acc;
-        }, []);
+        try {
+            const result = await userLocationRepo.getAllUserState(
+                {
+                    where: { userId, isDeleted: false },
+                    attributes: [],
+                    include: [
+                        {
+                            model: StateSchema,
+                            as: 'state',
+                            attributes: [],
+                            include: [
+                                {
+                                    model: DistrictSchema,
+                                    as: 'districts',
+                                    attributes: ['id'],
+                                    where: { isDeleted: false },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                schema,
+            );
+            return result.rows.reduce((acc: string[], e: any) => {
+                const id = e?.dataValues?.state?.district?.id;
+                if (id) acc.push(id);
+                return acc;
+            }, []);
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
     }
 
     async DistrictToCity(userId: string, schema: SchemaName) {
-        const result = await userLocationRepo.getAllUserDistrict(
-            {
-                where: { userId, isDeleted: false },
-                attributes: [],
-                include: [
-                    {
-                        model: DistrictSchema,
-                        as: 'districts',
-                        attributes: ['id'],
-                        where: { isDeleted: false },
-                        include: [
-                            {
-                                model: CitySchema,
-                                as: 'cities',
-                                attributes: ['id'],
-                                where: { isDeleted: false },
-                            },
-                        ],
-                    },
-                ],
-            },
-            schema,
-        );
-        return result.rows.reduce((acc: string[], e: any) => {
-            const id = e?.dataValues?.state?.district?.id;
-            if (id) acc.push(id);
-            return acc;
-        }, []);
+        try {
+            const result = await userLocationRepo.getAllUserDistrict(
+                {
+                    where: { userId, isDeleted: false },
+                    attributes: [],
+                    include: [
+                        {
+                            model: DistrictSchema,
+                            as: 'districts',
+                            attributes: ['id'],
+                            where: { isDeleted: false },
+                            include: [
+                                {
+                                    model: CitySchema,
+                                    as: 'cities',
+                                    attributes: ['id'],
+                                    where: { isDeleted: false },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                schema,
+            );
+            return result.rows.reduce((acc: string[], e: any) => {
+                const id = e?.dataValues?.state?.district?.id;
+                if (id) acc.push(id);
+                return acc;
+            }, []);
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
     }
 
     // Get All Location IDS
