@@ -1,6 +1,6 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../../utility/base-schema';
-import { ZCustomer } from '../../customer/customer.type';
+import { ZCustomer, ZCustomerMeter } from '../../customer/customer.type';
 
 export const ZCustomerBill = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),
@@ -14,7 +14,7 @@ export const ZCustomerBill = ZBaseSchema.partial().extend({
 
     limit: z.coerce.number().default(10).optional(),
     page: z.coerce.number().default(1).optional(),
-
+    customerMeter: ZCustomerMeter.optional(),
     customer: ZCustomer.optional(),
     startDate: z.coerce.date().optional(),
     endDate: z.coerce.date().optional(),

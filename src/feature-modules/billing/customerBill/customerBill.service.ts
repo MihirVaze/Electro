@@ -4,7 +4,6 @@ import { BillData, CustomerBill } from './customerBill.type';
 import { CustomerMeterSchema } from '../../customer/customer.schema';
 import { CUSTOMER_BILL_RESPONSES } from './customerBill.response';
 import consumptionService from '../../consumption/consumption.service';
-import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
 import { sendEmail } from '../../../utility/sendmail';
 import { UserSchema } from '../../user/user.schema';
 import { Op } from 'sequelize';
@@ -16,10 +15,6 @@ class CustomerBillService {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
-            console.dir(consumptionForTheMonth);
-            // if (consumptionForTheMonth.count === 0)
-            //     throw CONSUMPTION_RESPONSES.CONSUMPTION_NOT_FOUND;
-
             const newBillEntries: CustomerBill[] = [];
             const billData: BillData[] = [];
 
@@ -247,13 +242,7 @@ class CustomerBillService {
                                     attributes: {
                                         exclude: [
                                             'id',
-                                            'isDeleted',
-                                            'deletedBy',
-                                            'deletedAt',
-                                            'restoredBy',
-                                            'restoredAt',
-                                            'createdBy',
-                                            'updatedBy',
+                                            ...EXCLUDED_KEYS,
                                             'createdAt',
                                             'updatedAt',
                                         ],
@@ -309,6 +298,55 @@ class CustomerBillService {
             );
             if (!result[0]) throw CUSTOMER_BILL_RESPONSES.BILL_DELETION_FAILED;
             return CUSTOMER_BILL_RESPONSES.BILL_DELETED;
+        } catch (e) {
+            console.dir(e);
+            throw e;
+        }
+    }
+
+    async findAllUnpaidBillsForTheMonth(schema: SchemaName) {
+        try {
+            const billsOfMonth = await customerBillRepo.getAll(
+                {
+                    where: { status: 'unpaid' },
+                    include: [
+                        {
+                            model: CustomerMeterSchema.schema(schema),
+                            as: 'customerMeter',
+                            attributes: {
+                                exclude: ['userId', 'id', ...EXCLUDED_KEYS],
+                            },
+                            include: [
+                                {
+                                    model: UserSchema.schema(schema),
+                                    as: 'user',
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'password',
+                                            ...EXCLUDED_KEYS,
+                                        ],
+                                    },
+                                },
+                                {
+                                    model: MeterSchema.schema(schema),
+                                    as: 'meter',
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            ...EXCLUDED_KEYS,
+                                            'createdAt',
+                                            'updatedAt',
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                schema,
+            );
+            return billsOfMonth;
         } catch (e) {
             console.dir(e);
             throw e;
