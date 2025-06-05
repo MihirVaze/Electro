@@ -73,15 +73,10 @@ router.patch(
         async (req, res, next) => {
             try {
                 const id = req.params.id;
-                const userId = req.payload.id;
-                const roleIds = req.payload.roleIds;
-                const schema = req.payload.schema;
                 const result = await grievanceService.assignOrEscalateGrievance(
-                    userId,
-                    roleIds,
                     id,
                     req.body.action,
-                    schema,
+                    req.payload,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
@@ -106,13 +101,10 @@ router.del(
         validate(ZDeleteGrievance),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
                 const id = req.params.id;
-                const schema = req.payload.schema;
                 const result = await grievanceService.DeleteGrievance(
-                    userId,
                     id,
-                    schema,
+                    req.payload,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {
