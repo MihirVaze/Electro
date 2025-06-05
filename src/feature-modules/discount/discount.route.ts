@@ -5,7 +5,6 @@ import { validate } from '../../utility/validate';
 import { ROLE } from '../role/role.data';
 import discountService from './discount.service';
 import {
-    ZCreateDiscount,
     ZDeleteDiscount,
     ZFindDiscount,
     ZFindDiscounts,

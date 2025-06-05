@@ -16,7 +16,6 @@ import {
     StateUserSchema,
 } from '../userLocation/userLocation.schema';
 import { ROLE } from '../role/role.data';
-import userLocationRepo from '../userLocation/userLocation.repo';
 import { Payload } from '../auth/auth.type';
 import { City, District, State } from '../location/location.type';
 import userLocationService from '../userLocation/userLocation.service';
