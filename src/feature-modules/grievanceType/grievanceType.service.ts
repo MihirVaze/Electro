@@ -40,6 +40,9 @@ class GrievanceTypeService {
             const result = await grievanceTypeRepo.getAll(
                 {
                     where,
+                    attributes: {
+                        exclude: EXCLUDED_KEYS,
+                    },
                     limit,
                     offset,
                 },
