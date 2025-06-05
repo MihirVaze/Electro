@@ -20,7 +20,6 @@ import { Payload } from '../auth/auth.type';
 import { City, District, State } from '../location/location.type';
 import userLocationService from '../userLocation/userLocation.service';
 import { EXCLUDED_KEYS } from '../../utility/base-schema';
-import locationService from '../location/location.service';
 
 class GrievanceService {
     async raiseGrievance(
@@ -63,7 +62,6 @@ class GrievanceService {
     }
 
     async searchStateGrievances(
-        userId: string,
         stateWhere: WhereOptions<State>,
         limit: number,
         offset: number,
@@ -156,7 +154,6 @@ class GrievanceService {
     }
 
     async searchDistrictGrievances(
-        userId: string,
         districtWhere: WhereOptions<District>,
         limit: number,
         offset: number,
@@ -232,7 +229,6 @@ class GrievanceService {
     }
 
     async searchCityGrievances(
-        userId: string,
         cityWhere: WhereOptions<City>,
         limit: number,
         offset: number,
@@ -330,10 +326,8 @@ class GrievanceService {
                         if (searchTerm)
                             stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
                     }
-                    console.log(stateWhere);
 
                     return await this.searchStateGrievances(
-                        userId,
                         stateWhere,
                         limit,
                         offset,
@@ -376,10 +370,8 @@ class GrievanceService {
                                 [Op.iLike]: `%${searchTerm}%`,
                             };
                     }
-                    console.log(districtWhere);
 
                     return await this.searchDistrictGrievances(
-                        userId,
                         districtWhere,
                         limit,
                         offset,
@@ -433,10 +425,8 @@ class GrievanceService {
                                 [Op.iLike]: `%${searchTerm}%`,
                             };
                     }
-                    console.log(cityWhere);
 
                     return await this.searchCityGrievances(
-                        userId,
                         cityWhere,
                         limit,
                         offset,
@@ -453,13 +443,13 @@ class GrievanceService {
     }
 
     async assignOrEscalateGrievance(
-        userId: string,
-        roleId: string[],
         id: string,
         action: 'pick' | 'escalate' | 'resolved',
-        schema: SchemaName,
+        payload: Payload,
     ) {
         try {
+            const { id: userId, schema, roleIds: roleId } = payload;
+
             const grievance = await grievanceRepo.get(
                 { where: { id } },
                 schema,
@@ -537,8 +527,9 @@ class GrievanceService {
         }
     }
 
-    async DeleteGrievance(userId: string, id: string, schema: SchemaName) {
+    async DeleteGrievance(id: string, payload: Payload) {
         try {
+            const { id: userId, schema } = payload;
             await grievanceRepo.delete(
                 userId,
                 {

@@ -4,6 +4,7 @@ import { Discount } from './discount.type';
 import discountRepo from './discount.repo';
 import { DISCOUNT_RESPONSES } from './discount.responses';
 import { EXCLUDED_KEYS } from '../../utility/base-schema';
+import { Payload } from '../auth/auth.type';
 
 class DiscountServices {
     async findOneDiscount(discount: Partial<Discount>, schema: SchemaName) {
@@ -84,7 +85,6 @@ class DiscountServices {
     }
 
     async updateDiscount(
-        userId: string,
         id: string,
         discount: Partial<Discount>,
         schema: SchemaName,
@@ -104,8 +104,9 @@ class DiscountServices {
         }
     }
 
-    async deletediscount(userId: string, id: string, schema: SchemaName) {
+    async deletediscount(id: string, payload: Payload) {
         try {
+            const { id: userId, schema } = payload;
             const result = await discountRepo.delete(
                 userId,
                 { where: { id } },
