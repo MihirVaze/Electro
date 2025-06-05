@@ -4,6 +4,7 @@ import meterRepo from './meter.repo';
 import { Meter } from './meter.type';
 import { METER_RESPONSES } from './meter.response';
 import { v4 } from 'uuid';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class MeterService {
     async findOneMeter(meter: Partial<Meter>, schema: string) {
@@ -49,7 +50,17 @@ class MeterService {
             where.requiredPhotos = { [Op.gte]: filter.requiredPhotos };
         }
 
-        return meterRepo.getAll({ where, limit, offset }, schema);
+        return meterRepo.getAll(
+            {
+                where,
+                attributes: {
+                    exclude: EXCLUDED_KEYS,
+                },
+                limit,
+                offset,
+            },
+            schema,
+        );
     }
 
     async createMeter(meter: Meter, schema: string) {

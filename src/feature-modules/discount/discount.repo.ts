@@ -1,10 +1,10 @@
 import { SchemaName } from '../../utility/umzug-migration';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import { Discount } from './discount.type';
+import { CreateDiscount, Discount } from './discount.type';
 import { DiscountSchema } from './discount.schema';
 
 class DiscountRepo {
-    public async create(discount: Discount, schema: SchemaName) {
+    public async create(discount: CreateDiscount, schema: SchemaName) {
         return DiscountSchema.schema(schema).create(discount);
     }
 
@@ -24,9 +24,13 @@ class DiscountRepo {
         return DiscountSchema.schema(schema).update(discount, options);
     }
 
-    public async delete(options: UpdateOptions<Discount>, schema: SchemaName) {
+    public async delete(
+        userId: string,
+        options: UpdateOptions<Discount>,
+        schema: SchemaName,
+    ) {
         return DiscountSchema.schema(schema).update(
-            { isDeleted: true },
+            { isDeleted: true, deletedBy: userId },
             options,
         );
     }

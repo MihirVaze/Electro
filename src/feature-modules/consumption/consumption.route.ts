@@ -20,17 +20,16 @@ router.post(
         validate(Zcreate),
         async (req, res, next) => {
             try {
-                const schema = req.headers.schema;
-                console.log(schema);
+                const schema = req.headers.schema as string;
                 const workerId = req.payload.id;
                 const body = {
                     ...req.body,
+                    workerId,
                     createdBy: req.payload.id,
                 };
                 const result = await consumptionService.createConsumption(
                     body,
-                    workerId,
-                    'adani',
+                    schema,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {

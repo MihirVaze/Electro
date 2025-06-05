@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import planRepo from './plan.repo';
 import { PLAN_RESPONSES } from './plan.responses';
 import { Plan } from './plan.type';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class planServices {
     async findOnePlan(plan: Partial<Plan>, schema: SchemaName) {
@@ -11,15 +12,7 @@ class planServices {
                 {
                     where: { id: plan.id, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -79,6 +72,9 @@ class planServices {
             const result = await planRepo.getAll(
                 {
                     where: { isDeleted: false, ...where },
+                    attributes: {
+                        exclude: EXCLUDED_KEYS,
+                    },
                     limit,
                     offset,
                 },
@@ -120,9 +116,13 @@ class planServices {
         }
     }
 
-    async deleteplan(id: string, schema: SchemaName) {
+    async deleteplan(userId: string, id: string, schema: SchemaName) {
         try {
-            const result = await planRepo.delete({ where: { id } }, schema);
+            const result = await planRepo.delete(
+                userId,
+                { where: { id } },
+                schema,
+            );
             if (!result[0]) throw PLAN_RESPONSES.PLAN_DELETION_FAILED;
             return PLAN_RESPONSES.PLAN_DELETED;
         } catch (e) {

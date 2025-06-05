@@ -1,4 +1,4 @@
-import { FindOptions } from 'sequelize';
+import { FindOptions, Op } from 'sequelize';
 import { SchemaName } from '../../../utility/umzug-migration';
 import clientService from '../../client/client.service';
 import customerService from '../../customer/customer.service';
@@ -10,6 +10,7 @@ import { ClientBill, FindClientBill } from './clientBill.types';
 import { ClientBillSchema } from './clientBill.schema';
 import { ClientSchema } from '../../client/client.schema';
 import { UserSchema } from '../../user/user.schema';
+import { EXCLUDED_KEYS } from '../../../utility/base-schema';
 
 class ClientBillService {
     async generateClientBill() {
@@ -26,15 +27,12 @@ class ClientBillService {
                     { clientId: userId },
                     schema,
                 );
-                console.log('discount', discount);
                 const countOfCustomer =
                     await customerService.getCustomerCount(schemaName);
-                console.log('countOfCustomer', countOfCustomer);
                 const plan = await planService.getBasePrice(
                     countOfCustomer,
                     schema,
                 );
-                console.log('plan', plan);
 
                 const { id: planId, basePrice } = plan;
                 const {
@@ -86,29 +84,60 @@ class ClientBillService {
         schema: SchemaName,
     ) {
         try {
+            const where: any = {};
             const offset = (page - 1) * limit;
 
+            const { startDate, endDate, minTotal, maxTotal, status } =
+                clientBill;
+
+            if (status) {
+                where.status = { [Op.eq]: status };
+            }
+            if (minTotal) {
+                where.total = { [Op.gte]: minTotal };
+            }
+            if (maxTotal) {
+                where.total = { [Op.lte]: maxTotal };
+            }
+            if (minTotal && maxTotal) {
+                where.billingDate = { [Op.between]: [minTotal, maxTotal] };
+            }
+            if (startDate) {
+                where.billingDate = { [Op.gte]: new Date(startDate).getTime() };
+            }
+            if (endDate) {
+                where.billingDate = { [Op.lte]: new Date(endDate).getTime() };
+            }
+            if (startDate && endDate) {
+                where.billingDate = {
+                    [Op.between]: [
+                        new Date(startDate).getTime(),
+                        new Date(endDate).getTime(),
+                    ],
+                };
+            }
             const result = await clientBillRepo.getAll(
                 {
-                    where: clientBill,
+                    where,
                     limit,
                     offset,
+                    attributes: {
+                        exclude: ['password', ...EXCLUDED_KEYS],
+                    },
                     include: [
                         {
                             model: UserSchema,
                             attributes: {
-                                exclude: [
-                                    'password',
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: ['password', ...EXCLUDED_KEYS],
                             },
-                            include: [ClientSchema],
+                            include: [
+                                {
+                                    model: ClientSchema,
+                                    attributes: {
+                                        exclude: ['id', ...EXCLUDED_KEYS],
+                                    },
+                                },
+                            ],
                         },
                     ],
                 },
@@ -173,16 +202,7 @@ class ClientBillService {
                         {
                             model: UserSchema,
                             attributes: {
-                                exclude: [
-                                    'password',
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: ['password', ...EXCLUDED_KEYS],
                             },
                             include: [ClientSchema],
                         },

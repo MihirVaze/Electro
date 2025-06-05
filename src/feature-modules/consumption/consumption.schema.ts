@@ -24,7 +24,10 @@ ConsumptionSchema.init(
         workerId: {
             type: DataTypes.UUID,
             references: {
-                model: 'Worker',
+                model: {
+                    tableName: 'User',
+                    schema: 'public',
+                },
                 key: 'id',
             },
         },

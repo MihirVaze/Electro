@@ -1,24 +1,19 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Consumption, Filter, Update } from './conumption.type';
 import consumptionRepo from './consumption.repo';
 import { CONSUMPTION_RESPONSES } from './consumption.response';
-// import { partialUtil } from 'zod/dist/types/v3/helpers/partialUtil';
 import { Op, WhereOptions } from 'sequelize';
 import { SchemaName } from '../../utility/umzug-migration';
-import {
-    CustomerMeterSchema,
-    CustomerSchema,
-} from '../customer/customer.schema';
+import { CustomerMeterSchema } from '../customer/customer.schema';
 import { MeterSchema } from '../meter/meter.schema';
 import { UserSchema } from '../user/user.schema';
 
 class ConsumptionService {
-    async createConsumption(data: Consumption, userId: string, schema: string) {
+    async createConsumption(data: Consumption, schema: string) {
         try {
+            const { workerId } = data;
             const payload = {
                 ...data,
-                id: uuidv4(),
-                createdBy: userId,
+                createdBy: workerId,
             };
             const result = await consumptionRepo.createConsumption(
                 payload,
@@ -55,9 +50,8 @@ class ConsumptionService {
         );
     }
 
-    async getOneConsumption(id: string, schema: string) {
+    async getOneConsumption(id: string, schema: SchemaName) {
         try {
-            console.log('here', id);
             const result = await consumptionRepo.getOneConsumption(
                 { where: { id } },
                 schema,
@@ -75,7 +69,7 @@ class ConsumptionService {
         update: Update,
         id: string,
         userId: string,
-        schema: string,
+        schema: SchemaName,
     ) {
         try {
             const result = await consumptionRepo.updateConsumption(
@@ -95,7 +89,7 @@ class ConsumptionService {
         }
     }
 
-    async deleteConsumption(id: string, userId: string, schema: string) {
+    async deleteConsumption(id: string, userId: string, schema: SchemaName) {
         try {
             const result = await consumptionRepo.updateConsumption(
                 {
@@ -123,11 +117,11 @@ class ConsumptionService {
 
         return await consumptionRepo.getAllConsumptions(
             {
-                where: {
-                    updatedAt: {
-                        [Op.between]: [startDate, endDate],
-                    },
-                },
+                // where: {
+                //     updatedAt: {
+                //         [Op.between]: [startDate, endDate],
+                //     },
+                // },
                 include: [
                     {
                         model: CustomerMeterSchema.schema(schema),

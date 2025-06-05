@@ -1,3 +1,4 @@
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 import { SchemaName } from '../../utility/umzug-migration';
 import roleRepo from './role.repo';
 import { ROLE_RESPONSES } from './role.responses';
@@ -10,15 +11,7 @@ class RoleServices {
                 {
                     where: { ...role, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -37,15 +30,7 @@ class RoleServices {
                 {
                     where: { isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,

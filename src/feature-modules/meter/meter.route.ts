@@ -1,4 +1,3 @@
-import multer from 'multer';
 import { CustomRouter } from '../../routes/custom.router';
 import { ResponseHandler } from '../../utility/response-handler';
 import { validate } from '../../utility/validate';
@@ -63,7 +62,7 @@ router.get(
 router.post(
     '/',
     [
-        upload.single('avatar'),
+        upload.single('image'),
         validate(ZValidateCreateMeter),
 
         async (req, res, next) => {

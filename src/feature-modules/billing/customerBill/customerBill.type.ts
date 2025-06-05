@@ -1,6 +1,6 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../../utility/base-schema';
-import { ZCustomer, ZCustomerMeter } from '../../customer/customer.type';
+import { ZCustomer } from '../../customer/customer.type';
 
 export const ZCustomerBill = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),
@@ -16,8 +16,10 @@ export const ZCustomerBill = ZBaseSchema.partial().extend({
     page: z.coerce.number().default(1).optional(),
 
     customer: ZCustomer.optional(),
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    minTotal: z.coerce.number().positive().optional(),
+    maxTotal: z.coerce.number().positive().optional(),
 });
 
 export type CustomerBill = z.infer<typeof ZCustomerBill>;
@@ -26,7 +28,12 @@ export const ZFindBills = z.object({
     query: ZCustomerBill.pick({
         limit: true,
         page: true,
-    }),
+        status: true,
+        startDate: true,
+        endDate: true,
+        minTotal: true,
+        maxTotal: true,
+    }).partial(),
 });
 
 export const ZUpdateBill = z.object({
@@ -46,7 +53,8 @@ export const ZDeleteBill = z.object({
 
 export const ZBillData = z.object({
     email: z.string(),
-    customerMeter: ZCustomerMeter,
+    name: z.string(),
+    customerMeter: z.string(),
     unitsUsed: z.coerce.number().positive(),
     meter: z.string(),
     total: z.coerce.number(),

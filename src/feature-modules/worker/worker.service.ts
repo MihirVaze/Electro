@@ -8,6 +8,7 @@ import { UserRoleLocation } from '../user/user.types';
 import workerRepo from './worker.repo';
 import { WORKER_RESPONSES } from './worker.responses';
 import { Worker } from './worker.type';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class WorkerService {
     async addWorker(worker: Worker, schema: SchemaName) {
@@ -97,6 +98,9 @@ class WorkerService {
             const result = await workerRepo.getAll(
                 {
                     where: { isDeleted: false, ...workerWhere },
+                    attributes: {
+                        exclude: EXCLUDED_KEYS,
+                    },
                     include: [
                         {
                             model: UserSchema,
@@ -171,6 +175,7 @@ class WorkerService {
             if (!result[0]) throw WORKER_RESPONSES.WORKER_UPDATION_FAILED;
             return WORKER_RESPONSES.WORKER_UPDATED;
         } catch (error) {
+            transaction?.rollback();
             console.dir(error);
             throw error;
         }

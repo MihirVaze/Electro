@@ -1,4 +1,5 @@
 import { SchemaName } from '../../utility/umzug-migration';
+import { LocationType } from '../userLocation/userLocation.type';
 import locationRepo from './location.repo';
 import { LOCATION_RESPONSES } from './location.responses';
 import { City, District, State } from './location.type';

@@ -1,6 +1,7 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../../utility/base-schema';
 import { ZClient } from '../../client/client.type';
+import { ZUser } from '../../user/user.types';
 
 export const ZClientBill = z.object({
     clientId: z.string().trim().uuid(),
@@ -14,6 +15,7 @@ export const ZClientBill = z.object({
     dueDate: z.date(),
     status: z.enum(['paid', 'unpaid']),
     Client: ZClient.partial().optional(),
+    User: ZUser.partial().optional(),
 });
 
 export const ZCreateClientBill = ZClientBill.pick({
@@ -28,6 +30,7 @@ export const ZCreateClientBill = ZClientBill.pick({
     dueDate: true,
     status: true,
     Client: true,
+    User: true,
 }).merge(ZBaseSchema.partial());
 
 export const ZUpdateClientBill = ZCreateClientBill.pick({
@@ -39,15 +42,21 @@ export const ZUpdateClientBill = ZCreateClientBill.pick({
     status: true,
 }).partial();
 
-export const ZFindClientBill = z.object({
-    query: ZClientBill.pick({
-        status: true,
-    })
-        .partial()
-        .extend({
-            limit: z.coerce.number().min(1),
-            page: z.coerce.number().min(1),
-        }),
+export const ZFindClientBill = ZClientBill.pick({
+    status: true,
+})
+    .partial()
+    .extend({
+        limit: z.coerce.number().min(1),
+        page: z.coerce.number().min(1),
+        startDate: z.coerce.date().optional(),
+        endDate: z.coerce.date().optional(),
+        minTotal: z.coerce.number().optional(),
+        maxTotal: z.coerce.number().optional(),
+    });
+
+export const ZValidateFindClientBill = z.object({
+    query: ZFindClientBill,
 });
 
 export const ZValidateUpdateClientBill = z.object({
@@ -60,4 +69,4 @@ export const ZValidateUpdateClientBill = z.object({
 export type ClientBill = z.infer<typeof ZClientBill>;
 export type CreateClientBill = z.infer<typeof ZCreateClientBill>;
 export type UpdateClientBill = z.infer<typeof ZUpdateClientBill>;
-export type FindClientBill = z.infer<typeof ZClientBill>;
+export type FindClientBill = z.infer<typeof ZFindClientBill>;

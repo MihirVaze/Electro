@@ -8,6 +8,8 @@ import { CONSUMPTION_RESPONSES } from '../../consumption/consumption.response';
 import { sendEmail } from '../../../utility/sendmail';
 import { UserSchema } from '../../user/user.schema';
 import { Op } from 'sequelize';
+import { MeterSchema } from '../../meter/meter.schema';
+import { EXCLUDED_KEYS } from '../../../utility/base-schema';
 
 class CustomerBillService {
     async generateCustomerBill(schema: SchemaName) {
@@ -43,11 +45,14 @@ class CustomerBillService {
 
                 newBillEntries.push(bill);
                 billData.push({
+                    name:
+                        consumption.dataValues.customerMeter?.user?.name ?? '',
                     email:
                         consumption.dataValues.customerMeter?.user?.email ?? '',
                     meter:
-                        consumption.dataValues.customerMeter?.meterName ?? '',
-                    customerMeter: consumption.dataValues.customerMeter!,
+                        consumption.dataValues.customerMeter?.meter?.name ?? '',
+                    customerMeter:
+                        consumption.dataValues.customerMeter?.id ?? '',
                     unitsUsed: consumption.dataValues.unitsUsed,
                     total,
                     billingDate: new Date(),
@@ -62,6 +67,7 @@ class CustomerBillService {
             if (!result) throw CUSTOMER_BILL_RESPONSES.BILL_CREATION_FAILED;
 
             for (const {
+                name,
                 email,
                 total,
                 meter,
@@ -81,8 +87,9 @@ class CustomerBillService {
                     </head>
 
                     <body>
+                        <p><strong>Dear ${name},</strong></p>
                         <p>Here is your electricity bill for this month:</p>
-                        <p><strong>CustomerMeter:</strong> ${customerMeter}</p>
+                        <p><strong>CustomerMeterId:</strong> ${customerMeter}</p>
                         <p><strong>Meter:</strong> ${meter}</p>
                         <p><strong>Units Used:</strong> ${unitsUsed}</p>
                         <p><strong>Total Amount:</strong> ${total}</p>
@@ -109,46 +116,21 @@ class CustomerBillService {
                 {
                     where: customerBill,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
                             model: CustomerMeterSchema.schema(schema),
                             as: 'customerMeter',
                             attributes: {
-                                exclude: [
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: EXCLUDED_KEYS,
                             },
                             include: [
                                 {
                                     model: UserSchema.schema(schema),
                                     as: 'user',
                                     attributes: {
-                                        exclude: [
-                                            'password',
-                                            'isDeleted',
-                                            'deletedBy',
-                                            'deletedAt',
-                                            'restoredBy',
-                                            'restoredAt',
-                                            'createdBy',
-                                            'updatedBy',
-                                        ],
+                                        exclude: ['password', ...EXCLUDED_KEYS],
                                     },
                                 },
                             ],
@@ -177,7 +159,15 @@ class CustomerBillService {
 
             let customerWhere: any = {};
 
-            const { startDate, endDate, customer } = customerBill;
+            const {
+                startDate,
+                endDate,
+                customer,
+                status,
+                total,
+                minTotal,
+                maxTotal,
+            } = customerBill;
 
             if (customer?.name) {
                 customerWhere.name = { [Op.iLike]: `%${customer?.name}%` };
@@ -187,14 +177,36 @@ class CustomerBillService {
                 customerWhere.email = { [Op.iLike]: `%${customer?.email}%` };
             }
 
-            if (startDate && endDate) {
-                where.billingDate = { [Op.between]: [startDate, endDate] };
-            } else if (startDate) {
-                where.billingDate = { [Op.lte]: [startDate] };
-            } else {
-                where.billingDate = { [Op.gte]: [endDate] };
+            if (endDate) {
+                where.billingDate = { [Op.lte]: new Date(endDate).getTime() };
+            }
+            if (startDate) {
+                where.billingDate = { [Op.gte]: new Date(startDate).getTime() };
             }
 
+            if (startDate && endDate) {
+                where.billingDate = {
+                    [Op.between]: [
+                        new Date(startDate).getTime(),
+                        new Date(endDate).getTime(),
+                    ],
+                };
+            }
+            if (status) {
+                where.status = { [Op.eq]: status };
+            }
+
+            if (minTotal) {
+                where.total = { [Op.gte]: minTotal };
+            }
+
+            if (maxTotal) {
+                where.total = { [Op.lte]: minTotal };
+            }
+
+            if (minTotal && maxTotal) {
+                where.total = { [Op.between]: [minTotal, maxTotal] };
+            }
             const offset = (page - 1) * limit;
 
             const result = await customerBillRepo.getAll(
@@ -202,31 +214,52 @@ class CustomerBillService {
                     where,
                     attributes: {
                         exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
+                            'consumptionId',
+                            'customer',
+                            ...EXCLUDED_KEYS,
                         ],
                     },
                     include: [
                         {
                             model: CustomerMeterSchema.schema(schema),
-                            where: customerWhere,
                             as: 'customerMeter',
+
                             attributes: {
-                                exclude: [
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: ['userId', 'id', ...EXCLUDED_KEYS],
                             },
+                            include: [
+                                {
+                                    model: UserSchema.schema(schema),
+                                    as: 'user',
+                                    where: customerWhere,
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'password',
+                                            ...EXCLUDED_KEYS,
+                                        ],
+                                    },
+                                },
+                                {
+                                    model: MeterSchema.schema(schema),
+                                    as: 'meter',
+                                    // required: true,
+                                    attributes: {
+                                        exclude: [
+                                            'id',
+                                            'isDeleted',
+                                            'deletedBy',
+                                            'deletedAt',
+                                            'restoredBy',
+                                            'restoredAt',
+                                            'createdBy',
+                                            'updatedBy',
+                                            'createdAt',
+                                            'updatedAt',
+                                        ],
+                                    },
+                                },
+                            ],
                         },
                     ],
                     limit,

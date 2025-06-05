@@ -15,6 +15,8 @@ import { MeterSchema } from '../meter/meter.schema';
 import { ROLE } from '../role/role.data';
 import { sequelize } from '../../connections/pg.connection';
 import workerService from '../worker/worker.service';
+import userRepo from '../user/user.repo';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class CustomerServices {
     async addCustomer(customer: RegisterCustomer, schema: SchemaName) {
@@ -75,15 +77,7 @@ class CustomerServices {
                 {
                     where: customer,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -138,17 +132,7 @@ class CustomerServices {
                         ...remainingCustomer,
                     },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                            'createdAt',
-                            'updatedAt',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -213,6 +197,14 @@ class CustomerServices {
                 },
                 schema,
             );
+
+            const updateUser = await userRepo.updateUser(
+                restOfCustomer,
+                {
+                    where: { id: userId },
+                },
+                schema,
+            );
             if (!result[0]) throw CUSTOMER_RESPONSES.CUSTOMER_NOT_FOUND;
 
             return CUSTOMER_RESPONSES.CUSTOMER_UPDATED;
@@ -255,15 +247,15 @@ class CustomerServices {
             const { cityId, userId } = customer.dataValues;
 
             const limit = 1;
-            const workers = await workerService.getWorkersSortedByCustomerCount(
+            const worker = await workerService.getWorkersSortedByCustomerCount(
                 { cityId },
                 limit,
                 'public',
             );
 
-            if (!workers.count)
+            if (!worker.count)
                 throw CUSTOMER_RESPONSES.NO_WORKER_AVAILABLE_IN_THIS_AREA;
-            const workerToBeAssigned = workers.rows[0];
+            const workerToBeAssigned = worker.rows[0];
 
             const { customerCount, userId: workerId } =
                 workerToBeAssigned.dataValues;
@@ -302,15 +294,7 @@ class CustomerServices {
                 {
                     where: customerMeter,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -370,15 +354,7 @@ class CustomerServices {
                 {
                     where: { isDeleted: false, ...remainingCustomerMeter },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -461,15 +437,7 @@ class CustomerServices {
                 {
                     where: { isDeleted: false, ...customerWorker },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -508,7 +476,6 @@ class CustomerServices {
                 { transaction },
                 schema,
             );
-            transaction.commit();
             return CUSTOMER_RESPONSES.WORKER_ASSIGNED_TO_CUSTOMER;
         } catch (e) {
             transaction.rollback();

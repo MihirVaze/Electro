@@ -4,7 +4,10 @@ import { ResponseHandler } from '../../../utility/response-handler';
 import { validate } from '../../../utility/validate';
 import { ROLE } from '../../role/role.data';
 import clientBillService from './clientBill.service';
-import { ZFindClientBill, ZValidateUpdateClientBill } from './clientBill.types';
+import {
+    ZValidateFindClientBill,
+    ZValidateUpdateClientBill,
+} from './clientBill.types';
 
 const router = new CustomRouter();
 
@@ -29,7 +32,7 @@ router.post(
 router.get(
     '/',
     [
-        validate(ZFindClientBill),
+        validate(ZValidateFindClientBill),
         async (req, res, next) => {
             try {
                 const { limit, page, ...remainingQuery } = req.query;
