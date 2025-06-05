@@ -12,6 +12,7 @@ import {
     hashPassword,
 } from '../../utility/password.generator';
 import { sendEmail } from '../../utility/sendmail';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class UserServices {
     async findOne(user: Partial<Credentials>, schema: SchemaName) {
@@ -20,15 +21,7 @@ class UserServices {
                 {
                     where: { email: user.email, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -107,15 +100,7 @@ class UserServices {
                 {
                     where: { ...UserRole, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -154,15 +139,7 @@ class UserServices {
                 {
                     where: { isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,

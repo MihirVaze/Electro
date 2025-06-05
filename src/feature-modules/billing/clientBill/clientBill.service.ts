@@ -10,6 +10,7 @@ import { ClientBill, FindClientBill } from './clientBill.types';
 import { ClientBillSchema } from './clientBill.schema';
 import { ClientSchema } from '../../client/client.schema';
 import { UserSchema } from '../../user/user.schema';
+import { EXCLUDED_KEYS } from '../../../utility/base-schema';
 
 class ClientBillService {
     async generateClientBill() {
@@ -121,47 +122,19 @@ class ClientBillService {
                     limit,
                     offset,
                     attributes: {
-                        exclude: [
-                            'password',
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: ['password', ...EXCLUDED_KEYS],
                     },
                     include: [
                         {
                             model: UserSchema,
                             attributes: {
-                                exclude: [
-                                    'password',
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: ['password', ...EXCLUDED_KEYS],
                             },
                             include: [
                                 {
                                     model: ClientSchema,
                                     attributes: {
-                                        exclude: [
-                                            'id',
-                                            'password',
-                                            'isDeleted',
-                                            'deletedBy',
-                                            'deletedAt',
-                                            'restoredBy',
-                                            'restoredAt',
-                                            'createdBy',
-                                            'updatedBy',
-                                        ],
+                                        exclude: ['id', ...EXCLUDED_KEYS],
                                     },
                                 },
                             ],
@@ -229,16 +202,7 @@ class ClientBillService {
                         {
                             model: UserSchema,
                             attributes: {
-                                exclude: [
-                                    'password',
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: ['password', ...EXCLUDED_KEYS],
                             },
                             include: [ClientSchema],
                         },
