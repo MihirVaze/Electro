@@ -1,7 +1,6 @@
 import clientBillService from '../feature-modules/billing/clientBill/clientBill.service';
 import { sendEmail } from './sendmail';
 import { createJob } from './scheduler';
-import customerBillService from '../feature-modules/billing/customerBill/customerBill.service';
 
 export const checkClientBillPaymentDaily = async () => {
     const clientBills = await clientBillService.findAllUnpaidClientBills();
