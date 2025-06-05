@@ -312,30 +312,28 @@ class GrievanceService {
 
             switch (GetLocType) {
                 case 'state':
-                    if (
-                        roleIds.some((e) =>
-                            [ROLE.CLIENT_ADMIN, ROLE.STATE_MANAGER].includes(e),
-                        )
-                    ) {
-                        let stateIds: string[];
-                        if (roleIds.includes(ROLE.STATE_MANAGER))
-                            stateIds =
-                                await userLocationService.GetUserLocationIds(
-                                    schema,
-                                    userId,
-                                    'city',
-                                    GetLocType,
-                                );
-                        else
-                            stateIds =
-                                await locationService.getAllStateIds(schema);
+                    let stateIds: string[];
 
-                        stateWhere.id = {
-                            [Op.in]: stateIds,
-                        };
-                        if (searchTerm)
-                            stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
-                    } else throw "CAN'T SEARCH BY STATE";
+                    if (roleIds.includes(ROLE.STATE_MANAGER))
+                        stateIds = await userLocationService.GetUserLocationIds(
+                            schema,
+                            userId,
+                            'state',
+                            GetLocType,
+                        );
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
+                        stateIds = await locationService.getAllLocationIds(
+                            schema,
+                            'state',
+                        );
+                    else throw "CAN'T SEARCH BY STATE";
+
+                    stateWhere.id = {
+                        [Op.in]: stateIds,
+                    };
+
+                    if (searchTerm)
+                        stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
 
                     return await this.searchStateGrievances(
                         userId,
@@ -346,29 +344,39 @@ class GrievanceService {
                     );
 
                 case 'district':
-                    if (
-                        roleIds.some((e) =>
-                            [
-                                ROLE.CLIENT_ADMIN,
-                                ROLE.STATE_MANAGER,
-                                ROLE.DISTRICT_MANAGER,
-                            ].includes(e),
-                        )
-                    ) {
-                        districtWhere.id = {
-                            [Op.in]:
-                                await userLocationService.GetUserLocationIds(
-                                    schema,
-                                    userId,
-                                    'district',
-                                    GetLocType,
-                                ),
+                    let districtIds: string[];
+
+                    if (roleIds.includes(ROLE.DISTRICT_MANAGER))
+                        districtIds =
+                            await userLocationService.GetUserLocationIds(
+                                schema,
+                                userId,
+                                'district',
+                                GetLocType,
+                            );
+                    else if (roleIds.includes(ROLE.STATE_MANAGER))
+                        districtIds =
+                            await userLocationService.GetUserLocationIds(
+                                schema,
+                                userId,
+                                'state',
+                                GetLocType,
+                            );
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
+                        districtIds = await locationService.getAllLocationIds(
+                            schema,
+                            'district',
+                        );
+                    else throw "CAN'T SEARCH BY DISTRICT";
+
+                    districtWhere.id = {
+                        [Op.in]: districtIds,
+                    };
+
+                    if (searchTerm)
+                        districtWhere.name = {
+                            [Op.iLike]: `%${searchTerm}%`,
                         };
-                        if (searchTerm)
-                            districtWhere.name = {
-                                [Op.iLike]: `%${searchTerm}%`,
-                            };
-                    } else throw "CAN'T SEARCH BY DISTRICT";
 
                     return await this.searchDistrictGrievances(
                         userId,
@@ -379,31 +387,50 @@ class GrievanceService {
                     );
 
                 case 'city':
+                    let cityIds: string[];
+
                     if (
                         roleIds.some((e) =>
-                            [
-                                ROLE.CLIENT_ADMIN,
-                                ROLE.STATE_MANAGER,
-                                ROLE.DISTRICT_MANAGER,
-                                ROLE.CITY_MANAGER,
-                                ROLE.SERVICE_WORKER,
-                            ].includes(e),
+                            [ROLE.CITY_MANAGER, ROLE.SERVICE_WORKER].includes(
+                                e,
+                            ),
                         )
-                    ) {
-                        const cityIds =
-                            await userLocationService.GetUserLocationIds(
-                                schema,
-                                userId,
-                                'city',
-                                GetLocType,
-                            );
+                    )
+                        cityIds = await userLocationService.GetUserLocationIds(
+                            schema,
+                            userId,
+                            'city',
+                            GetLocType,
+                        );
+                    else if (roleIds.includes(ROLE.DISTRICT_MANAGER))
+                        cityIds = await userLocationService.GetUserLocationIds(
+                            schema,
+                            userId,
+                            'district',
+                            GetLocType,
+                        );
+                    else if (roleIds.includes(ROLE.STATE_MANAGER))
+                        cityIds = await userLocationService.GetUserLocationIds(
+                            schema,
+                            userId,
+                            'state',
+                            GetLocType,
+                        );
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
+                        cityIds = await locationService.getAllLocationIds(
+                            schema,
+                            'city',
+                        );
+                    else throw "CAN'T SEARCH BY CITY";
 
-                        cityWhere.id = {
-                            [Op.in]: cityIds,
+                    cityWhere.id = {
+                        [Op.in]: cityIds,
+                    };
+
+                    if (searchTerm)
+                        cityWhere.name = {
+                            [Op.iLike]: `%${searchTerm}%`,
                         };
-                        if (searchTerm)
-                            cityWhere.name = { [Op.iLike]: `%${searchTerm}%` };
-                    } else throw "CAN'T SEARCH BY CITY";
 
                     return await this.searchCityGrievances(
                         userId,
