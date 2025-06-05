@@ -9,6 +9,7 @@ import { sendEmail } from '../../../utility/sendmail';
 import { UserSchema } from '../../user/user.schema';
 import { Op } from 'sequelize';
 import { MeterSchema } from '../../meter/meter.schema';
+import { EXCLUDED_KEYS } from '../../../utility/base-schema';
 
 class CustomerBillService {
     async generateCustomerBill(schema: SchemaName) {
@@ -115,46 +116,21 @@ class CustomerBillService {
                 {
                     where: customerBill,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
                             model: CustomerMeterSchema.schema(schema),
                             as: 'customerMeter',
                             attributes: {
-                                exclude: [
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                ],
+                                exclude: EXCLUDED_KEYS,
                             },
                             include: [
                                 {
                                     model: UserSchema.schema(schema),
                                     as: 'user',
                                     attributes: {
-                                        exclude: [
-                                            'password',
-                                            'isDeleted',
-                                            'deletedBy',
-                                            'deletedAt',
-                                            'restoredBy',
-                                            'restoredAt',
-                                            'createdBy',
-                                            'updatedBy',
-                                        ],
+                                        exclude: ['password', ...EXCLUDED_KEYS],
                                     },
                                 },
                             ],
@@ -239,16 +215,8 @@ class CustomerBillService {
                     attributes: {
                         exclude: [
                             'consumptionId',
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                            'createdAt',
-                            'updatedAt',
                             'customer',
+                            ...EXCLUDED_KEYS,
                         ],
                     },
                     include: [
@@ -257,19 +225,7 @@ class CustomerBillService {
                             as: 'customerMeter',
 
                             attributes: {
-                                exclude: [
-                                    'isDeleted',
-                                    'deletedBy',
-                                    'deletedAt',
-                                    'restoredBy',
-                                    'restoredAt',
-                                    'createdBy',
-                                    'updatedBy',
-                                    'createdAt',
-                                    'updatedAt',
-                                    'userId',
-                                    'id',
-                                ],
+                                exclude: ['userId', 'id', ...EXCLUDED_KEYS],
                             },
                             include: [
                                 {
@@ -279,16 +235,8 @@ class CustomerBillService {
                                     attributes: {
                                         exclude: [
                                             'id',
-                                            'isDeleted',
-                                            'deletedBy',
-                                            'deletedAt',
-                                            'restoredBy',
-                                            'restoredAt',
-                                            'createdBy',
-                                            'updatedBy',
-                                            'createdAt',
-                                            'updatedAt',
                                             'password',
+                                            ...EXCLUDED_KEYS,
                                         ],
                                     },
                                 },

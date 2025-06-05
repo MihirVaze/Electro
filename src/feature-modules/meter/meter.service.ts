@@ -4,6 +4,7 @@ import meterRepo from './meter.repo';
 import { Meter } from './meter.type';
 import { METER_RESPONSES } from './meter.response';
 import { v4 } from 'uuid';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class MeterService {
     async findOneMeter(meter: Partial<Meter>, schema: string) {
@@ -53,17 +54,7 @@ class MeterService {
             {
                 where,
                 attributes: {
-                    exclude: [
-                        'isDeleted',
-                        'deletedBy',
-                        'deletedAt',
-                        'restoredBy',
-                        'restoredAt',
-                        'createdBy',
-                        'updatedBy',
-                        'createdAt',
-                        'updatedAt',
-                    ],
+                    exclude: EXCLUDED_KEYS,
                 },
                 limit,
                 offset,
