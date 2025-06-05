@@ -7,7 +7,6 @@ import {
     ZFindCustomerMeters,
     ZFindCustomers,
     ZFindCustomerWorker,
-    ZRegisterCustomerMeter,
     ZValidateRegisterCustomer,
     ZValidateRegisterCustomerMeter,
     ZValidateUpdateCustomer,

@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../connections/pg.connection';
-import { Client, CreateClient } from './client.type';
+import { CreateClient } from './client.type';
 import { UserSchema } from '../user/user.schema';
 
 export class ClientSchema extends Model<CreateClient, CreateClient> {}

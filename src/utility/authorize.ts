@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { Has_Access } from '../routes/routes.types';
 import { Payload } from '../feature-modules/auth/auth.type';
-import roleServices from '../feature-modules/role/role.services';
-import { ROLE } from '../feature-modules/role/role.data';
 
 export const authorizeT = (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,5 +1,5 @@
 import express from 'express';
-import connection, { sequelize } from './connections/pg.connection';
+import connection from './connections/pg.connection';
 import { registerMiddlewares } from './routes/router';
 import { generateAllBills } from './utility/generate-bill';
 import { checkClinetBillPayment } from './utility/check-bill-due';

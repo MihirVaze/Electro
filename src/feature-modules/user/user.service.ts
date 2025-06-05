@@ -1,4 +1,3 @@
-import { HasPermission } from '../../utility/usersPermissions';
 import { SchemaName } from '../../utility/umzug-migration';
 import { Credentials } from '../auth/auth.type';
 import { RoleSchema } from '../role/role.schema';
@@ -7,10 +6,7 @@ import userLocationService from '../userLocation/userLocation.service';
 import userRepo from './user.repo';
 import { USER_RESPONSES } from './user.responses';
 import { User, UserRole, UserRoleLocation } from './user.types';
-import {
-    generatePassword,
-    hashPassword,
-} from '../../utility/password.generator';
+import { hashPassword } from '../../utility/password.generator';
 import { sendEmail } from '../../utility/sendmail';
 import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
