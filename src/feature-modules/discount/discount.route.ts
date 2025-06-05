@@ -63,13 +63,11 @@ router.patch(
         validate(ZUpdateDiscount),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
                 const schema = req.payload.schema;
                 const id = req.params.id;
                 const result = await discountService.updateDiscount(
-                    userId,
                     id,
-                    { ...req.body, updatedBy: userId },
+                    { ...req.body, updatedBy: req.payload.id },
                     schema,
                 );
                 res.send(new ResponseHandler(result));
@@ -87,13 +85,10 @@ router.del(
         validate(ZDeleteDiscount),
         async (req, res, next) => {
             try {
-                const userId = req.payload.id;
-                const schema = req.payload.schema;
                 const id = req.params.id;
                 const result = await discountService.deletediscount(
-                    userId,
                     id,
-                    schema,
+                    req.payload,
                 );
                 res.send(new ResponseHandler(result));
             } catch (e) {

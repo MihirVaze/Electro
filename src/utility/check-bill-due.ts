@@ -12,7 +12,7 @@ export const checkClientBillPaymentDaily = async () => {
         const clientEmail = clientBill.dataValues.User?.email;
         const clientName = clientBill.dataValues.User?.name?.toUpperCase();
 
-        if (clientEmail) {
+        if (clientEmail && dueDate < new Date()) {
             if (currentTime > dueDate.getTime()) {
                 sendEmail(
                     clientEmail,
