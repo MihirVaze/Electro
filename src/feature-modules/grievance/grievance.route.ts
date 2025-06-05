@@ -1,4 +1,3 @@
-import { ResponseError } from '@sendgrid/mail';
 import { CustomRouter } from '../../routes/custom.router';
 import { validate } from '../../utility/validate';
 import grievanceService from './grievance.service';

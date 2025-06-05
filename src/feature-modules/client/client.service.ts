@@ -10,6 +10,7 @@ import { Op } from 'sequelize';
 import { UserSchema } from '../user/user.schema';
 import { ROLE } from '../role/role.data';
 import discountService from '../discount/discount.service';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class ClientServices {
     async addClient(client: Client, schema: SchemaName) {
@@ -79,15 +80,7 @@ class ClientServices {
                 {
                     where: client,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -134,15 +127,7 @@ class ClientServices {
                 {
                     where: { isDeleted: false, ...clientWhere },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {

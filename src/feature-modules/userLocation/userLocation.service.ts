@@ -1,3 +1,4 @@
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 import { SchemaName } from '../../utility/umzug-migration';
 import {
     CitySchema,
@@ -21,15 +22,7 @@ class UserLocationService {
                 {
                     where: { ...stateUser, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -55,15 +48,7 @@ class UserLocationService {
                 {
                     where: { isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -141,15 +126,7 @@ class UserLocationService {
                 {
                     where: { ...districtUser, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -175,15 +152,7 @@ class UserLocationService {
                 {
                     where: { isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -256,15 +225,7 @@ class UserLocationService {
                 {
                     where: { ...cityUser, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -290,15 +251,7 @@ class UserLocationService {
                 {
                     where: { isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,

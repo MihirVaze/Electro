@@ -8,6 +8,7 @@ import { UserRoleLocation } from '../user/user.types';
 import workerRepo from './worker.repo';
 import { WORKER_RESPONSES } from './worker.responses';
 import { Worker } from './worker.type';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class WorkerService {
     async addWorker(worker: Worker, schema: SchemaName) {
@@ -98,17 +99,7 @@ class WorkerService {
                 {
                     where: { isDeleted: false, ...workerWhere },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                            'createdAt',
-                            'updatedAt',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {

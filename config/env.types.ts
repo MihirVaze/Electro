@@ -1,5 +1,4 @@
 import z from 'zod';
-import { User } from '../src/feature-modules/user/user.types';
 import { Payload } from '../src/feature-modules/auth/auth.type';
 
 export const ZEnv = z.object({

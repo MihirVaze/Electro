@@ -16,6 +16,7 @@ import { ROLE } from '../role/role.data';
 import { sequelize } from '../../connections/pg.connection';
 import workerService from '../worker/worker.service';
 import userRepo from '../user/user.repo';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class CustomerServices {
     async addCustomer(customer: RegisterCustomer, schema: SchemaName) {
@@ -76,15 +77,7 @@ class CustomerServices {
                 {
                     where: customer,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -139,17 +132,7 @@ class CustomerServices {
                         ...remainingCustomer,
                     },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                            'createdAt',
-                            'updatedAt',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -311,15 +294,7 @@ class CustomerServices {
                 {
                     where: customerMeter,
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -379,15 +354,7 @@ class CustomerServices {
                 {
                     where: { isDeleted: false, ...remainingCustomerMeter },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
@@ -470,15 +437,7 @@ class CustomerServices {
                 {
                     where: { isDeleted: false, ...customerWorker },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                     include: [
                         {
