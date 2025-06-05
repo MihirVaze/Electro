@@ -1,6 +1,6 @@
 import z from 'zod';
 import { ZBaseSchema } from '../../../utility/base-schema';
-import { ZCustomer, ZCustomerMeter } from '../../customer/customer.type';
+import { ZCustomer } from '../../customer/customer.type';
 
 export const ZCustomerBill = ZBaseSchema.partial().extend({
     customerMeterId: z.string().trim().uuid(),

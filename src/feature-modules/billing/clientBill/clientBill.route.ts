@@ -5,7 +5,6 @@ import { validate } from '../../../utility/validate';
 import { ROLE } from '../../role/role.data';
 import clientBillService from './clientBill.service';
 import {
-    ZFindClientBill,
     ZValidateFindClientBill,
     ZValidateUpdateClientBill,
 } from './clientBill.types';
