@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import { Discount } from './discount.type';
 import discountRepo from './discount.repo';
 import { DISCOUNT_RESPONSES } from './discount.responses';
+import { EXCLUDED_KEYS } from '../../utility/base-schema';
 
 class DiscountServices {
     async findOneDiscount(discount: Partial<Discount>, schema: SchemaName) {
@@ -11,15 +12,7 @@ class DiscountServices {
                 {
                     where: { ...discount, isDeleted: false },
                     attributes: {
-                        exclude: [
-                            'isDeleted',
-                            'deletedBy',
-                            'deletedAt',
-                            'restoredBy',
-                            'restoredAt',
-                            'createdBy',
-                            'updatedBy',
-                        ],
+                        exclude: EXCLUDED_KEYS,
                     },
                 },
                 schema,
@@ -64,6 +57,9 @@ class DiscountServices {
             const result = await discountRepo.getAll(
                 {
                     where: { isDeleted: false, ...where },
+                    attributes: {
+                        exclude: EXCLUDED_KEYS,
+                    },
                     limit,
                     offset,
                 },
