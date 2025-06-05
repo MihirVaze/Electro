@@ -15,7 +15,6 @@ class CustomerBillService {
         try {
             const consumptionForTheMonth =
                 await consumptionService.getConsumptionForBillingCycle(schema);
-            console.dir(consumptionForTheMonth);
 
             const newBillEntries: CustomerBill[] = [];
             const billData: BillData[] = [];

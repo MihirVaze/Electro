@@ -20,7 +20,6 @@ import { Payload } from '../auth/auth.type';
 import { City, District, State } from '../location/location.type';
 import userLocationService from '../userLocation/userLocation.service';
 import { EXCLUDED_KEYS } from '../../utility/base-schema';
-import locationService from '../location/location.service';
 
 class GrievanceService {
     async raiseGrievance(
@@ -63,7 +62,6 @@ class GrievanceService {
     }
 
     async searchStateGrievances(
-        userId: string,
         stateWhere: WhereOptions<State>,
         limit: number,
         offset: number,
@@ -128,13 +126,12 @@ class GrievanceService {
                                                     attributes: {
                                                         exclude: [
                                                             ...EXCLUDED_KEYS,
-                                                            'name',
+                                                            'userId',
                                                             'createdAt',
                                                             'updatedAt',
                                                         ],
                                                     },
                                                     where: {
-                                                        userId: userId,
                                                         isDeleted: false,
                                                     },
                                                 },
@@ -157,7 +154,6 @@ class GrievanceService {
     }
 
     async searchDistrictGrievances(
-        userId: string,
         districtWhere: WhereOptions<District>,
         limit: number,
         offset: number,
@@ -207,13 +203,12 @@ class GrievanceService {
                                             attributes: {
                                                 exclude: [
                                                     ...EXCLUDED_KEYS,
-                                                    'name',
+                                                    'userId',
                                                     'createdAt',
                                                     'updatedAt',
                                                 ],
                                             },
                                             where: {
-                                                userId: userId,
                                                 isDeleted: false,
                                             },
                                         },
@@ -234,7 +229,6 @@ class GrievanceService {
     }
 
     async searchCityGrievances(
-        userId: string,
         cityWhere: WhereOptions<City>,
         limit: number,
         offset: number,
@@ -269,13 +263,12 @@ class GrievanceService {
                                     attributes: {
                                         exclude: [
                                             ...EXCLUDED_KEYS,
-                                            'name',
+                                            'userId',
                                             'createdAt',
                                             'updatedAt',
                                         ],
                                     },
                                     where: {
-                                        userId: userId,
                                         isDeleted: false,
                                     },
                                 },
@@ -311,7 +304,7 @@ class GrievanceService {
 
             switch (GetLocType) {
                 case 'state':
-                    let stateIds: string[];
+                    let stateIds: string[] | undefined;
 
                     if (roleIds.includes(ROLE.STATE_MANAGER))
                         stateIds = await userLocationService.GetUserLocationIds(
@@ -320,22 +313,21 @@ class GrievanceService {
                             'state',
                             GetLocType,
                         );
-                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
-                        stateIds = await locationService.getAllLocationIds(
-                            schema,
-                            'state',
-                        );
-                    else throw "CAN'T SEARCH BY STATE";
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
+                        stateIds = undefined; // NO NEED FOR A WHERE IF IT IS A CLIENT ADMIN
+                        if (searchTerm)
+                            stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
+                    } else throw "CAN'T SEARCH BY STATE";
 
-                    stateWhere.id = {
-                        [Op.in]: stateIds,
-                    };
-
-                    if (searchTerm)
-                        stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
+                    if (stateIds) {
+                        stateWhere.id = {
+                            [Op.in]: stateIds,
+                        };
+                        if (searchTerm)
+                            stateWhere.name = { [Op.iLike]: `%${searchTerm}%` };
+                    }
 
                     return await this.searchStateGrievances(
-                        userId,
                         stateWhere,
                         limit,
                         offset,
@@ -343,7 +335,7 @@ class GrievanceService {
                     );
 
                 case 'district':
-                    let districtIds: string[];
+                    let districtIds: string[] | undefined;
 
                     if (roleIds.includes(ROLE.DISTRICT_MANAGER))
                         districtIds =
@@ -361,24 +353,25 @@ class GrievanceService {
                                 'state',
                                 GetLocType,
                             );
-                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
-                        districtIds = await locationService.getAllLocationIds(
-                            schema,
-                            'district',
-                        );
-                    else throw "CAN'T SEARCH BY DISTRICT";
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
+                        districtIds = undefined; // NO NEED FOR A WHERE IF IT IS A CLIENT ADMIN
+                        if (searchTerm)
+                            districtWhere.name = {
+                                [Op.iLike]: `%${searchTerm}%`,
+                            };
+                    } else throw "CAN'T SEARCH BY DISTRICT";
 
-                    districtWhere.id = {
-                        [Op.in]: districtIds,
-                    };
-
-                    if (searchTerm)
-                        districtWhere.name = {
-                            [Op.iLike]: `%${searchTerm}%`,
+                    if (districtIds) {
+                        districtWhere.id = {
+                            [Op.in]: districtIds,
                         };
+                        if (searchTerm)
+                            districtWhere.name = {
+                                [Op.iLike]: `%${searchTerm}%`,
+                            };
+                    }
 
                     return await this.searchDistrictGrievances(
-                        userId,
                         districtWhere,
                         limit,
                         offset,
@@ -386,7 +379,7 @@ class GrievanceService {
                     );
 
                 case 'city':
-                    let cityIds: string[];
+                    let cityIds: string[] | undefined;
 
                     if (
                         roleIds.some((e) =>
@@ -415,24 +408,25 @@ class GrievanceService {
                             'state',
                             GetLocType,
                         );
-                    else if (roleIds.includes(ROLE.CLIENT_ADMIN))
-                        cityIds = await locationService.getAllLocationIds(
-                            schema,
-                            'city',
-                        );
-                    else throw "CAN'T SEARCH BY CITY";
+                    else if (roleIds.includes(ROLE.CLIENT_ADMIN)) {
+                        cityIds = undefined; // NO NEED FOR A WHERE IF IT IS A CLIENT ADMIN
+                        if (searchTerm)
+                            cityWhere.name = {
+                                [Op.iLike]: `%${searchTerm}%`,
+                            };
+                    } else throw "CAN'T SEARCH BY CITY";
 
-                    cityWhere.id = {
-                        [Op.in]: cityIds,
-                    };
-
-                    if (searchTerm)
-                        cityWhere.name = {
-                            [Op.iLike]: `%${searchTerm}%`,
+                    if (cityIds) {
+                        cityWhere.id = {
+                            [Op.in]: cityIds,
                         };
+                        if (searchTerm)
+                            cityWhere.name = {
+                                [Op.iLike]: `%${searchTerm}%`,
+                            };
+                    }
 
                     return await this.searchCityGrievances(
-                        userId,
                         cityWhere,
                         limit,
                         offset,
@@ -449,13 +443,13 @@ class GrievanceService {
     }
 
     async assignOrEscalateGrievance(
-        userId: string,
-        roleId: string[],
         id: string,
         action: 'pick' | 'escalate' | 'resolved',
-        schema: SchemaName,
+        payload: Payload,
     ) {
         try {
+            const { id: userId, schema, roleIds: roleId } = payload;
+
             const grievance = await grievanceRepo.get(
                 { where: { id } },
                 schema,
@@ -533,8 +527,9 @@ class GrievanceService {
         }
     }
 
-    async DeleteGrievance(userId: string, id: string, schema: SchemaName) {
+    async DeleteGrievance(id: string, payload: Payload) {
         try {
+            const { id: userId, schema } = payload;
             await grievanceRepo.delete(
                 userId,
                 {

@@ -4,6 +4,7 @@ import planRepo from './plan.repo';
 import { PLAN_RESPONSES } from './plan.responses';
 import { Plan } from './plan.type';
 import { EXCLUDED_KEYS } from '../../utility/base-schema';
+import { Payload } from '../auth/auth.type';
 
 class planServices {
     async findOnePlan(plan: Partial<Plan>, schema: SchemaName) {
@@ -116,8 +117,9 @@ class planServices {
         }
     }
 
-    async deleteplan(userId: string, id: string, schema: SchemaName) {
+    async deleteplan(id: string, payload: Payload) {
         try {
+            const { id: userId, schema } = payload;
             const result = await planRepo.delete(
                 userId,
                 { where: { id } },

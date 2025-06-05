@@ -21,8 +21,6 @@ router.get(
         async (req, res, next) => {
             try {
                 const schema = req.payload.schema;
-                if (typeof schema !== 'string' || !schema)
-                    throw Error('Enter Valid Schema');
                 const { limit, page, ...search } = req.query;
                 const result = await grievanceTypeService.getAllGrievanceType(
                     Number(limit),
